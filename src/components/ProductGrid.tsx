@@ -10,7 +10,7 @@ const products = [
     price: '$259',
     tag: 'Best Seller',
     img: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800&h=640&fit=crop&auto=format',
-    accent: '#c8ff00',
+    accent: '#f5a623 ',
     span: 'col-span-1 row-span-1',
   },
   {
@@ -40,7 +40,7 @@ const products = [
     price: '$179',
     tag: 'Limited',
     img: 'https://images.unsplash.com/photo-1600185365778-7875a359b924?w=800&h=640&fit=crop&auto=format',
-    accent: '#c8ff00',
+    accent: '#f5a623 ',
     span: 'col-span-1 row-span-1',
   },
   {
@@ -60,7 +60,7 @@ const products = [
     price: '$229',
     tag: 'New Drop',
     img: 'https://images.unsplash.com/photo-1746206673199-5b75dcec1018?w=800&h=640&fit=crop&auto=format',
-    accent: '#c8ff00',
+    accent: '#f5a623 ',
     span: 'col-span-1 row-span-1',
   },
 ]
@@ -100,9 +100,9 @@ export default function ProductGrid() {
                 className="px-4 py-2 text-xs tracking-[0.12em] uppercase transition-all duration-200"
                 style={{
                   fontFamily: 'DM Mono, monospace',
-                  background: active === c ? '#c8ff00' : 'transparent',
+                  background: active === c ? '#f5a623 ' : 'transparent',
                   color: active === c ? '#050505' : '#888',
-                  border: `1px solid ${active === c ? '#c8ff00' : 'rgba(255,255,255,0.1)'}`,
+                  border: `1px solid ${active === c ? '#f5a623 ' : 'rgba(255,255,255,0.1)'}`,
                 }}
               >
                 {c}
@@ -168,7 +168,7 @@ export default function ProductGrid() {
                   style={{
                     fontFamily: 'DM Mono, monospace',
                     background: p.accent,
-                    color: p.accent === '#c8ff00' ? '#050505' : '#050505',
+                    color: p.accent === '#f5a623 ' ? '#050505' : '#050505',
                   }}
                 >
                   {p.tag}

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-
 const sizes = ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
 const colors = ['#e8e0d4', '#c8ff00', '#e85d3a', '#0066cc']
 
@@ -136,8 +135,8 @@ export default function FeaturedProduct() {
                     className="px-4 py-2 text-xs border transition-all duration-200"
                     style={{
                       fontFamily: 'DM Mono, monospace',
-                      borderColor: selectedSize === s ? '#c8ff00' : 'rgba(255,255,255,0.1)',
-                      color: selectedSize === s ? '#c8ff00' : '#888',
+                      borderColor: selectedSize === s ? '#f5a623' : 'rgba(255,255,255,0.1)',
+                      color: selectedSize === s ? '#f5a623' : '#888',
                       background: selectedSize === s ? 'rgba(200,255,0,0.08)' : 'transparent',
                     }}
                   >
@@ -153,7 +152,7 @@ export default function FeaturedProduct() {
                 onClick={handleAdd}
                 className="flex-1 sm:flex-none px-10 py-4 text-sm font-semibold tracking-[0.1em] uppercase transition-all duration-300"
                 style={{
-                  background: addedToCart ? '#c8ff00' : (selectedSize ? '#c8ff00' : 'rgba(200,255,0,0.15)'),
+                  background: addedToCart ? '#f5a623' : (selectedSize ? '#f5a623' : 'rgba(200,255,0,0.15)'),
                   color: '#050505',
                   opacity: selectedSize ? 1 : 0.5,
                   cursor: selectedSize ? 'pointer' : 'not-allowed',

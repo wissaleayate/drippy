@@ -5,12 +5,12 @@
   --font-sans: 'Outfit', sans-serif;
   --font-mono: 'DM Mono', monospace;
 
-  --color-volt: #c8ff00;
-  --color-ink: #050505;
-  --color-bone: #f5f5f0;
-  --color-ash: #888888;
-  --color-carbon: #111111;
-  --color-zinc: #1a1a1a;
+  --color-volt: #f5a623;
+  --color-ink: #1a0e05;
+  --color-bone: #f0e6cc;
+  --color-ash: #8a7f72;
+  --color-carbon: #140c03;
+  --color-zinc: #221407;
 }
 
 html {
@@ -18,16 +18,16 @@ html {
 }
 
 body {
-  background: #050505;
-  color: #f5f5f0;
+  background: #1a0e05;
+  color: #f0e6cc;
   font-family: 'Outfit', sans-serif;
   overflow-x: hidden;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #050505; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+::-webkit-scrollbar-track { background: #1a0e05; }
+::-webkit-scrollbar-thumb { background: #3d2a10; border-radius: 2px; }
 
 /* Display font utility */
 .font-display {
@@ -98,7 +98,7 @@ body {
   bottom: -4px;
   width: 0;
   height: 2px;
-  background: #c8ff00;
+  background: #f5a623;
   transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .volt-underline:hover::after {

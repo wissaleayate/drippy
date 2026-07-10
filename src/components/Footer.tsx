@@ -1,3 +1,5 @@
+import logo from '../imports/logo.jpeg'
+
 const footerLinks = {
   Collections: ['Running', 'Training', 'Lifestyle', 'Basketball', 'Collaborations'],
   Support: ['Size Guide', 'Shipping & Returns', 'Track My Order', 'Contact Us', 'Store Locator'],
@@ -41,18 +43,18 @@ const socials = [
 export default function Footer() {
   return (
     <footer className="bg-carbon border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-      {/* Top volt line */}
-      <div className="h-px w-full" style={{ background: 'linear-gradient(to right, #c8ff00 0%, rgba(200,255,0,0.2) 40%, transparent 70%)' }} />
+      {/* Top amber line */}
+      <div className="h-px w-full" style={{ background: 'linear-gradient(to right, #f5a623 0%, rgba(245,166,35,0.2) 40%, transparent 70%)' }} />
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-16 pb-10">
         {/* Brand + tagline */}
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-12 mb-16">
           <div className="max-w-xs">
-            <a href="#" className="font-display font-black text-4xl text-bone tracking-[-0.02em]">
-              NK<span className="text-volt">.</span>
+            <a href="/" className="flex items-center">
+              <img src={logo} alt="Drippy" className="h-10 w-auto object-contain" />
             </a>
             <p className="text-ash text-sm leading-relaxed mt-4">
-              Engineered for the relentless pursuit of better. Since 1972.
+              Engineered for the relentless pursuit of better. Since 2025.
             </p>
             <div className="flex items-center gap-4 mt-6">
               {socials.map((s) => (

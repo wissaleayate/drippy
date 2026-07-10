@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import logo from '../imports/drippy logo.png'
 
-
-const links =['Accueil','Products','Etat de commande','Trafis de livraison','Contactez-nous']
+const links =['Home','Products','Order Status','Delivery Trading','Contact Us']
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -22,15 +22,15 @@ export default function Nav() {
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
-        background: isSolid ? 'rgba(5,5,5,0.97)' : 'transparent',
+         background: isSolid ? 'rgba(26,14,5,0.97)' : 'transparent',
         backdropFilter: isSolid ? 'blur(20px)' : 'none',
-        borderBottom: isSolid ? '1px solid rgba(255,255,255,0.06)' : 'none',
+        borderBottom: isSolid ? '1px solid rgba(245,166,35,0.10)' : 'none',
       }}
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="font-display font-black text-2xl tracking-[-0.02em] text-bone">
-          NK<span className="text-volt">.</span>
+       <a href="/" className="flex items-center">
+          <img src={logo} alt="Drippy" className="h-40 w-auto object-contain" />
         </a>
 
         {/* Desktop Nav */}
@@ -40,10 +40,10 @@ export default function Nav() {
               key={l}
               href={
                 l === 'Products' ? '/products' :
-                l === 'Etat de commande' ? '/tracking' :
-                l === 'Trafis de livraison' ? '/shipping' :
-                l === 'Contactez-nous' ? '/contact' :
-                l === 'Accueil' ? '/' : '#'
+                l === 'Order Status' ? '/tracking' :
+                l === 'Delivery Trading' ? '/shipping' :
+                l === 'Contact Us' ? '/contact' :
+                l === 'Home' ? '/' : '#'
               }
               className="volt-underline text-sm font-medium tracking-wide text-ash hover:text-bone transition-colors duration-200"
               style={{ fontFamily: 'Outfit, sans-serif' }}
@@ -89,7 +89,8 @@ export default function Nav() {
       {/* Mobile Menu */}
       <div
         className="md:hidden overflow-hidden transition-all duration-400"
-        style={{ maxHeight: menuOpen ? '400px' : '0', background: 'rgba(5,5,5,0.98)' }}
+          style={{ maxHeight: menuOpen ? '400px' : '0', background: 'rgba(26,14,5,0.98)' }}
+      
       >
         <div className="px-6 py-6 flex flex-col gap-5 border-t border-white/5">
           {links.map((l) => (
@@ -97,10 +98,10 @@ export default function Nav() {
               key={l}
               href={
                 l === 'Products' ? '/products' :
-                l === 'Etat de commande' ? '/tracking' :
-                l === 'Trafis de livraison' ? '/shipping' :
-                l === 'Contactez-nous' ? '/contact' :
-                l === 'Accueil' ? '/' : '#'
+                l === 'Order Status' ? '/tracking' :
+                l === 'Delivery Trading' ? '/shipping' :
+                l === 'Contact Us' ? '/contact' :
+                l === 'Home' ? '/' : '#'
               }
               className="font-display font-bold text-3xl tracking-tight text-bone"
             >
