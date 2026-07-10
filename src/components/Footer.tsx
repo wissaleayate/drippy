@@ -82,7 +82,7 @@ export default function Footer() {
                   {items.map((item) => (
                     <li key={item}>
                       <a
-                        href="#"
+                        href={item === 'Track My Order' ? '/tracking' : '#'}
                         className="text-ash text-sm hover:text-bone transition-colors duration-200 volt-underline"
                       >
                         {item}

@@ -38,7 +38,13 @@ export default function Nav() {
           {links.map((l) => (
             <a
               key={l}
-              href={l === 'Products' ? '/products' : '#'}
+              href={
+                l === 'Products' ? '/products' :
+                l === 'Etat de commande' ? '/tracking' :
+                l === 'Trafis de livraison' ? '/shipping' :
+                l === 'Contactez-nous' ? '/contact' :
+                l === 'Accueil' ? '/' : '#'
+              }
               className="volt-underline text-sm font-medium tracking-wide text-ash hover:text-bone transition-colors duration-200"
               style={{ fontFamily: 'Outfit, sans-serif' }}
             >
@@ -89,7 +95,13 @@ export default function Nav() {
           {links.map((l) => (
             <a
               key={l}
-              href={l === 'Products' ? '/products' : '#'}
+              href={
+                l === 'Products' ? '/products' :
+                l === 'Etat de commande' ? '/tracking' :
+                l === 'Trafis de livraison' ? '/shipping' :
+                l === 'Contactez-nous' ? '/contact' :
+                l === 'Accueil' ? '/' : '#'
+              }
               className="font-display font-bold text-3xl tracking-tight text-bone"
             >
               {l}

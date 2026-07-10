@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ShoppingBag,
@@ -15,6 +16,7 @@ import ProductCard from '../../components/ProductCard';
 import FilterBar from '../../components/FilterBar';
 import ProductDetailView from '../../components/ProductDetailView';
 import Nav from '../../components/Nav';
+import Footer from '../../components/Footer';
 
 interface CartItem {
   id: string; // Unique for cart (combination of product.id + size)
@@ -159,7 +161,7 @@ export default function Product() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fcfcfd]" id="app-root-container">
+    <div className="min-h-screen flex flex-col bg-ink text-bone" id="app-root-container">
       {/* NK. Brand Navigation */}
       <Nav />
 
@@ -170,21 +172,21 @@ export default function Product() {
             initial={{ opacity: 0, y: -40, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-sm font-semibold border border-white/10 backdrop-blur-md"
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-zinc text-bone px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-sm font-semibold border border-white/10 backdrop-blur-md"
             id="toast-notification"
           >
-            <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="h-2 w-2 rounded-full bg-volt animate-pulse" />
             <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Cart + Info Header Strip (below Nav) */}
-      <div className="sticky top-16 z-20 bg-white/90 backdrop-blur-md border-b border-gray-100" id="main-header">
+      <div className="sticky top-16 z-20 bg-ink/90 backdrop-blur-md border-b border-white/5" id="main-header">
         <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
-          <div className="hidden lg:flex items-center gap-6 text-xs font-semibold text-gray-400">
+          <div className="hidden lg:flex items-center gap-6 text-xs font-semibold text-ash">
             <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="h-1.5 w-1.5 rounded-full bg-volt" />
               Free shipping above $150
             </span>
             <span>•</span>
@@ -192,13 +194,13 @@ export default function Product() {
           </div>
           <button
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center justify-center h-9 px-4 rounded-xl border border-gray-100 hover:border-gray-200 bg-white shadow-xs hover:bg-gray-50 transition-all cursor-pointer ml-auto"
+            className="relative flex items-center justify-center h-9 px-4 rounded-xl border border-white/5 hover:border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer ml-auto"
             id="header-cart-btn"
           >
-            <ShoppingBag className="w-4 h-4 text-gray-700" />
-            <span className="text-xs font-semibold text-gray-700 ml-2 hidden sm:inline">Bag</span>
+            <ShoppingBag className="w-4 h-4 text-bone" />
+            <span className="text-xs font-semibold text-bone ml-2 hidden sm:inline">Bag</span>
             {cartItemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-black text-white shadow-md animate-bounce">
+              <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-volt text-[10px] font-black text-ink shadow-md animate-bounce">
                 {cartItemCount}
               </span>
             )}
@@ -215,10 +217,10 @@ export default function Product() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <h2 className="text-4xl sm:text-5xl fonts-black text-gray-950 font-display tracking-tight mb-4" id="my-products-title">
-              My Products
+            <h2 className="text-5xl sm:text-7xl font-black text-bone font-display tracking-tight uppercase mb-4" id="my-products-title">
+              Our Collections
             </h2>
-            <p className="text-sm sm:text-base text-gray-500 font-medium max-w-xl mx-auto">
+            <p className="text-sm sm:text-base text-ash font-medium max-w-xl mx-auto">
               Discover clean silhouettes, functional designs, and premium organic fabrics tailored for the modern closet.
             </p>
           </motion.div>
@@ -226,7 +228,7 @@ export default function Product() {
 
         {/* Categories Tab Bar Selector (Men, Women, Children) */}
         <div className="max-w-5xl mx-auto px-6 mb-8 flex justify-center" id="categories-container">
-          <div className="inline-flex bg-gray-100/75 p-1.5 rounded-2xl gap-1 border border-gray-50/50">
+          <div className="inline-flex bg-white/[0.02] p-1.5 rounded-2xl gap-1 border border-white/5 backdrop-blur-md">
             {(['all', 'men', 'women', 'children'] as const).map((cat) => {
               const isActive = selectedCategory === cat;
               return (
@@ -234,12 +236,11 @@ export default function Product() {
                   key={cat}
                   onClick={() => {
                     setSelectedCategory(cat);
-                    // Retain general search but reset specific nested selections for focus
                   }}
                   className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-white text-gray-900 shadow-sm font-extrabold'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-white/40'
+                      ? 'bg-volt text-ink shadow-sm font-extrabold'
+                      : 'text-ash hover:text-bone hover:bg-white/[0.04]'
                   }`}
                   id={`category-tab-${cat}`}
                 >
@@ -286,11 +287,11 @@ export default function Product() {
                 className="flex flex-col items-center justify-center text-center py-20 px-6 max-w-md mx-auto"
                 id="empty-results-view"
               >
-                <div className="h-16 w-16 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 mb-6">
+                <div className="h-16 w-16 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center text-ash mb-6">
                   <ShoppingBag className="w-7 h-7 stroke-[1.5]" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">No Products Found</h3>
-                <p className="text-sm text-gray-500 leading-relaxed mb-6">
+                <h3 className="text-lg font-bold text-bone mb-2">No Products Found</h3>
+                <p className="text-sm text-ash leading-relaxed mb-6">
                   We couldn't find any items matching your exact filters. Try adjusting your keyword search or resetting active filters.
                 </p>
                 <button
@@ -304,7 +305,7 @@ export default function Product() {
                     });
                     setSelectedCategory('all');
                   }}
-                  className="px-5 py-3 rounded-xl bg-gray-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors cursor-pointer shadow-md shadow-gray-100"
+                  className="px-5 py-3 rounded-xl bg-volt text-ink text-xs font-mono font-bold uppercase tracking-wider hover:bg-bone transition-all duration-300 cursor-pointer shadow-md shadow-volt/5"
                   id="empty-reset-btn"
                 >
                   Clear All Filters
@@ -316,19 +317,7 @@ export default function Product() {
       </main>
 
       {/* Footer Area */}
-      <footer className="bg-white border-t border-gray-100 py-12" id="main-footer">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-md bg-indigo-600 flex items-center justify-center text-white font-black text-xs">
-              A
-            </div>
-            <span className="text-xs font-bold text-gray-700 tracking-wider">ATELIER STORES CO.</span>
-          </div>
-          <p className="text-xs text-gray-400 font-medium">
-            © 2026 Atelier. Constructed with responsive grids and real-time state. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Product Detail View (Shein-inspired) */}
       <AnimatePresence>
@@ -351,7 +340,7 @@ export default function Product() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsCartOpen(false)}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+              className="absolute inset-0 bg-ink/80 backdrop-blur-sm transition-opacity"
             />
 
             {/* Panel */}
@@ -361,21 +350,21 @@ export default function Product() {
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-                className="w-screen max-w-md bg-white shadow-2xl flex flex-col"
+                className="w-screen max-w-md bg-zinc border-l border-white/10 shadow-2xl flex flex-col text-bone"
                 id="cart-drawer-content"
               >
                 {/* Drawer Header */}
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                <div className="p-6 border-b border-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ShoppingBag className="w-5 h-5 text-indigo-600" />
-                    <h3 className="text-base font-bold text-gray-900">Shopping Bag</h3>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">
+                    <ShoppingBag className="w-5 h-5 text-volt" />
+                    <h3 className="text-base font-bold text-bone">Shopping Bag</h3>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-volt/10 text-volt">
                       {cartItemCount}
                     </span>
                   </div>
                   <button
                     onClick={() => setIsCartOpen(false)}
-                    className="h-9 w-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
+                    className="h-9 w-9 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center text-ash hover:text-bone transition-colors cursor-pointer"
                     id="close-cart-btn"
                   >
                     <X className="w-4 h-4" />
@@ -386,8 +375,8 @@ export default function Product() {
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                   {cart.length > 0 ? (
                     cart.map((item) => (
-                      <div key={item.id} className="flex gap-4 pb-6 border-b border-gray-50" id={`cart-item-${item.id}`}>
-                        <div className="h-20 w-16 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
+                      <div key={item.id} className="flex gap-4 pb-6 border-b border-white/[0.03]" id={`cart-item-${item.id}`}>
+                        <div className="h-20 w-16 rounded-xl overflow-hidden bg-ink/50 border border-white/5 flex-shrink-0">
                           <img
                             src={item.product.image}
                             alt={item.product.name}
@@ -398,42 +387,42 @@ export default function Product() {
                         <div className="flex-1 flex flex-col justify-between">
                           <div>
                             <div className="flex justify-between items-start gap-2">
-                              <h4 className="text-xs font-bold text-gray-900 line-clamp-1">{item.product.name}</h4>
+                              <h4 className="text-xs font-bold text-bone line-clamp-1">{item.product.name}</h4>
                               <button
                                 onClick={() => handleRemoveFromCart(item.id, item.product.name)}
-                                className="text-gray-300 hover:text-rose-500 transition-colors"
+                                className="text-ash hover:text-rose-400 transition-colors cursor-pointer"
                                 id={`remove-item-btn-${item.id}`}
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
-                            <span className="text-[10px] font-semibold text-gray-400">Brand: {item.product.brand}</span>
+                            <span className="text-[10px] font-semibold text-ash">Brand: {item.product.brand}</span>
                             <div className="mt-1">
-                              <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-gray-100 text-gray-600">
+                              <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-white/[0.05] text-bone">
                                 Size: {item.size}
                               </span>
                             </div>
                           </div>
                           <div className="flex items-center justify-between">
                             {/* Quantity Controls */}
-                            <div className="flex items-center border border-gray-100 rounded-lg p-0.5 bg-gray-50/50">
+                            <div className="flex items-center border border-white/5 rounded-lg p-0.5 bg-white/[0.02]">
                               <button
                                 onClick={() => handleUpdateQuantity(item.id, -1)}
-                                className="p-1 rounded-md text-gray-400 hover:text-gray-800 hover:bg-white transition-all cursor-pointer"
+                                className="p-1 rounded-md text-ash hover:text-bone hover:bg-white/[0.05] transition-all cursor-pointer"
                                 id={`decrease-qty-btn-${item.id}`}
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
-                              <span className="text-xs font-bold text-gray-800 px-2.5">{item.quantity}</span>
+                              <span className="text-xs font-bold text-bone px-2.5">{item.quantity}</span>
                               <button
                                 onClick={() => handleUpdateQuantity(item.id, 1)}
-                                className="p-1 rounded-md text-gray-400 hover:text-gray-800 hover:bg-white transition-all cursor-pointer"
+                                className="p-1 rounded-md text-ash hover:text-bone hover:bg-white/[0.05] transition-all cursor-pointer"
                                 id={`increase-qty-btn-${item.id}`}
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
                             </div>
-                            <span className="text-xs font-bold text-gray-900">
+                            <span className="text-xs font-bold text-bone font-mono">
                               ${(item.product.price * item.quantity).toFixed(2)}
                             </span>
                           </div>
@@ -443,16 +432,16 @@ export default function Product() {
                   ) : (
                     /* Cart Empty State */
                     <div className="flex flex-col items-center justify-center text-center h-full max-w-xs mx-auto">
-                      <div className="h-12 w-12 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center mb-4">
+                      <div className="h-12 w-12 rounded-full bg-volt/10 text-volt flex items-center justify-center mb-4">
                         <ShoppingBag className="w-5 h-5" />
                       </div>
-                      <h4 className="text-sm font-bold text-gray-800 mb-1">Your bag is empty</h4>
-                      <p className="text-xs text-gray-400 leading-relaxed mb-6">
+                      <h4 className="text-sm font-bold text-bone mb-1">Your bag is empty</h4>
+                      <p className="text-xs text-ash leading-relaxed mb-6">
                         Explore our curation and find comfortable silhouettes designed to last.
                       </p>
                       <button
                         onClick={() => setIsCartOpen(false)}
-                        className="px-4 py-2.5 rounded-lg border border-indigo-200 text-indigo-600 text-[11px] font-bold tracking-wider uppercase hover:bg-indigo-50/50 transition-colors cursor-pointer"
+                        className="px-4 py-2.5 rounded-lg border border-volt text-volt text-[11px] font-bold tracking-wider uppercase hover:bg-volt/10 transition-colors cursor-pointer"
                         id="start-shopping-btn"
                       >
                         Start Shopping
@@ -463,33 +452,33 @@ export default function Product() {
 
                 {/* Drawer Footer Summary (Totals & Checkout) */}
                 {cart.length > 0 && (
-                  <div className="p-6 border-t border-gray-100 bg-gray-50/50 space-y-4">
-                    <div className="space-y-1.5 text-xs font-medium text-gray-500">
+                  <div className="p-6 border-t border-white/5 bg-white/[0.01] space-y-4">
+                    <div className="space-y-1.5 text-xs font-medium text-ash">
                       <div className="flex justify-between">
                         <span>Subtotal</span>
-                        <span className="text-gray-900 font-bold">${cartSubtotal.toFixed(2)}</span>
+                        <span className="text-bone font-bold font-mono">${cartSubtotal.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Est. Shipping</span>
                         {shippingFee === 0 ? (
-                          <span className="text-emerald-600 font-bold">FREE</span>
+                          <span className="text-volt font-bold font-mono">FREE</span>
                         ) : (
-                          <span className="text-gray-900 font-bold">${shippingFee.toFixed(2)}</span>
+                          <span className="text-bone font-bold font-mono">${shippingFee.toFixed(2)}</span>
                         )}
                       </div>
                       <div className="flex justify-between">
                         <span>Est. Sales Tax (8%)</span>
-                        <span className="text-gray-900 font-bold">${estimatedTax.toFixed(2)}</span>
+                        <span className="text-bone font-bold font-mono">${estimatedTax.toFixed(2)}</span>
                       </div>
-                      <div className="pt-3 border-t border-gray-100 flex justify-between text-sm font-bold text-gray-900">
+                      <div className="pt-3 border-t border-white/5 flex justify-between text-sm font-bold text-bone">
                         <span>Total Amount</span>
-                        <span className="text-base text-indigo-600 font-black">${cartTotal.toFixed(2)}</span>
+                        <span className="text-base text-volt font-black font-mono">${cartTotal.toFixed(2)}</span>
                       </div>
                     </div>
 
                     <button
                       onClick={handleCheckout}
-                      className="w-full py-3.5 rounded-2xl bg-indigo-600 text-white text-xs font-bold tracking-wider uppercase hover:bg-indigo-700 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-indigo-100"
+                      className="w-full py-3.5 rounded-2xl bg-volt text-ink text-xs font-mono font-bold tracking-wider uppercase hover:bg-bone transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-volt/5"
                       id="checkout-btn"
                     >
                       <span>Proceed to Secure Checkout</span>
@@ -513,7 +502,7 @@ export default function Product() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsCheckoutSuccess(false)}
-              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="fixed inset-0 bg-ink/85 backdrop-blur-sm"
             />
 
             {/* Modal Body */}
@@ -521,26 +510,26 @@ export default function Product() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative max-w-md w-full bg-white rounded-3xl p-8 text-center shadow-2xl z-10 overflow-hidden"
+              className="relative max-w-md w-full bg-zinc border border-white/10 rounded-3xl p-8 text-center shadow-2xl z-10 overflow-hidden text-bone"
               id="checkout-success-body"
             >
               {/* Confetti visual effects */}
-              <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-emerald-500 via-teal-500 to-indigo-500" />
+              <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-volt to-bone" />
 
-              <div className="h-16 w-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="h-16 w-16 bg-volt/10 text-volt rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-8 h-8 stroke-[2]" />
               </div>
 
-              <h3 className="text-xl font-black text-gray-900 tracking-tight mb-2">
+              <h3 className="text-xl font-black text-bone tracking-tight mb-2">
                 Order Received successfully!
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed mb-6">
-                Thank you for shopping at Atelier. We have sent a confirmation details invoice to your email, and we are preparing your curated products for packing.
+              <p className="text-sm text-ash leading-relaxed mb-6">
+                Thank you for shopping at NK. We have sent a confirmation details invoice to your email, and we are preparing your curated products for packing.
               </p>
 
               <button
                 onClick={() => setIsCheckoutSuccess(false)}
-                className="w-full py-3 bg-gray-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors cursor-pointer"
+                className="w-full py-3 bg-volt text-ink rounded-xl text-xs font-mono font-bold uppercase tracking-wider hover:bg-bone transition-all duration-300 cursor-pointer shadow-md shadow-volt/5"
                 id="close-success-btn"
               >
                 Continue Browsing

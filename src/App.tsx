@@ -8,6 +8,9 @@ import BrandStatement from './components/BrandStatement'
 import Newsletter from './components/Newsletter'
 import Footer from './components/Footer'
 import ProductsPage from './pages/Products/products'
+import TrackingPage from './pages/tracking/track'
+import ShippingPage from './pages/shipping/Shiping'
+import ContactPage from './pages/Contact/contact'
 
 function Home() {
   return (
@@ -29,6 +32,9 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/products" element={<ProductsPage />} />
+      <Route path="/tracking" element={<TrackingPage />} />
+      <Route path="/shipping" element={<ShippingPage />} />
+      <Route path="/contact" element={<ContactPage />} />
     </Routes>
   )
 }
