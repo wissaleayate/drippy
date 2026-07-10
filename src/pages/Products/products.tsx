@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -40,8 +40,14 @@ export default function Product() {
 
   // Modal & Cart Drawer States
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+  const savedCart = localStorage.getItem("cart");
+  return savedCart ? JSON.parse(savedCart) : [];
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
   const [isCheckoutSuccess, setIsCheckoutSuccess] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -541,3 +547,5 @@ export default function Product() {
     </div>
   );
 }
+
+
