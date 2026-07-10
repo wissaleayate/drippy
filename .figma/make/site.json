@@ -1,0 +1,10 @@
+{
+  "description": "Showcases premium sportswear with a sleek, magazine-style landing page featuring bold typography and smooth animations to engage and inspire users.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
