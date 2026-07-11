@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import logo from '../imports/drippy logo.png'
 import { Link } from 'react-router'
+import { useCart } from '../hooks/useCart'
 
 const links =['Home','Products','Order Status','Delivery Trading','Contact Us']
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const { itemCount } = useCart()
   const isHome = location.pathname === '/'
 
   useEffect(() => {
@@ -61,11 +63,20 @@ export default function Nav() {
               <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
             </svg>
           </button>
-          <button className="hidden md:flex items-center gap-2 text-sm text-ash hover:text-bone transition-colors duration-200">
+          <Link
+            to="/products"
+            className="hidden md:flex relative items-center gap-2 text-sm text-ash hover:text-bone transition-colors duration-200"
+            aria-label="Shopping Bag"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-          </button>
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-volt text-[9px] font-black text-ink">
+                {itemCount > 99 ? '99+' : itemCount}
+              </span>
+            )}
+          </Link>
           <a
             href="#"
             className="hidden md:inline-flex items-center px-5 py-2 text-xs font-semibold tracking-[0.12em] uppercase bg-volt text-ink hover:bg-bone transition-colors duration-200"

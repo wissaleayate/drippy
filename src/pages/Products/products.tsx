@@ -17,13 +17,7 @@ import FilterBar from '../../components/FilterBar';
 import ProductDetailView from '../../components/ProductDetailView';
 import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
-
-interface CartItem {
-  id: string; // Unique for cart (combination of product.id + size)
-  product: Product;
-  quantity: number;
-  size: string;
-}
+import { useCart } from '../../hooks/useCart';
 
 export default function Product() {
   // Navigation & Category States
@@ -38,9 +32,11 @@ export default function Product() {
     sortBy: 'featured',
   });
 
-  // Modal & Cart Drawer States
+  // Global cart from context (persisted across pages & refreshes)
+  const { items: cart, itemCount: cartItemCount, subtotal: cartSubtotal, addItem, removeItem, updateQuantity, clearCart } = useCart();
+
+  // Modal & UI States
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
-  const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutSuccess, setIsCheckoutSuccess] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -107,56 +103,32 @@ export default function Product() {
     }, 2500);
   };
 
-  // Add to Cart handler
+  // Add to Cart handler (delegates to global context)
   const handleAddToCart = (product: Product, size: string = '') => {
-    // If no size is supplied (from direct card add), pick the first available size
     const finalSize = size || product.sizes[0] || 'Free Size';
-    const cartItemId = `${product.id}-${finalSize}`;
-
-    setCart((prevCart) => {
-      const existingIndex = prevCart.findIndex((item) => item.id === cartItemId);
-      if (existingIndex > -1) {
-        const updated = [...prevCart];
-        updated[existingIndex].quantity += 1;
-        return updated;
-      }
-      return [...prevCart, { id: cartItemId, product, quantity: 1, size: finalSize }];
-    });
-
+    addItem(product, finalSize);
     showToast(`Added ${product.name} (${finalSize}) to your bag`);
   };
 
-  // Update Cart Quantity
+  // Update Cart Quantity (delegates to global context)
   const handleUpdateQuantity = (itemId: string, delta: number) => {
-    setCart((prevCart) => {
-      return prevCart
-        .map((item) => {
-          if (item.id === itemId) {
-            const newQty = item.quantity + delta;
-            return { ...item, quantity: newQty };
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0);
-    });
+    updateQuantity(itemId, delta);
   };
 
-  // Remove Item from Cart
+  // Remove Item from Cart (delegates to global context)
   const handleRemoveFromCart = (itemId: string, name: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+    removeItem(itemId);
     showToast(`Removed ${name} from your bag`);
   };
 
   // Cart pricing math
-  const cartSubtotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
-  const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
   const shippingFee = cartSubtotal > 150 || cartSubtotal === 0 ? 0 : 9.99;
   const estimatedTax = cartSubtotal * 0.08;
   const cartTotal = cartSubtotal + shippingFee + estimatedTax;
 
   const handleCheckout = () => {
     setIsCheckoutSuccess(true);
-    setCart([]);
+    clearCart();
     setIsCartOpen(false);
   };
 
