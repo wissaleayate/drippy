@@ -13,7 +13,7 @@ import ProductsPage from './pages/Products/products'
 import TrackingPage from './pages/tracking/track'
 import ShippingPage from './pages/shipping/Shiping'
 import ContactPage from './pages/Contact/contact'
-
+import AdminPage from './pages/Admin/admin';
 function Home() {
   return (
     <div className="bg-ink text-bone min-h-screen">
@@ -34,6 +34,7 @@ export default function App() {
     <CartProvider>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/tracking" element={<TrackingPage />} />
         <Route path="/shipping" element={<ShippingPage />} />
