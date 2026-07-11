@@ -106,9 +106,9 @@ export default function Nav() {
       >
         <div className="px-6 py-6 flex flex-col gap-5 border-t border-white/5">
           {links.map((l) => (
-            <a
+            <Link
               key={l}
-              href={
+              to={
                 l === 'Products' ? '/products' :
                 l === 'Order Status' ? '/tracking' :
                 l === 'Delivery Trading' ? '/shipping' :
@@ -118,11 +118,11 @@ export default function Nav() {
               className="font-display font-bold text-3xl tracking-tight text-bone"
             >
               {l}
-            </a>
+            </Link>
           ))}
-          <a href="#" className="inline-flex items-center gap-2 text-volt text-sm font-mono mt-2">
+          <Link to="/products" className="inline-flex items-center gap-2 text-volt text-sm font-mono mt-2">
             Shop Now →
-          </a>
+          </Link>
         </div>
       </div>
     </header>
