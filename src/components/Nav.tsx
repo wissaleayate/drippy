@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import logo from '../imports/drippy logo.png'
+import { Link } from 'react-router'
 
 const links =['Home','Products','Order Status','Delivery Trading','Contact Us']
 export default function Nav() {
@@ -36,9 +37,9 @@ export default function Nav() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a
+            <Link
               key={l}
-              href={
+              to={
                 l === 'Products' ? '/products' :
                 l === 'Order Status' ? '/tracking' :
                 l === 'Delivery Trading' ? '/shipping' :
@@ -49,7 +50,7 @@ export default function Nav() {
               style={{ fontFamily: 'Outfit, sans-serif' }}
             >
               {l}
-            </a>
+            </Link>
           ))}
         </nav>
 

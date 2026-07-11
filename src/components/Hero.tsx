@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-
+import { Link } from 'react-router'
 export default function Hero() {
   const [loaded, setLoaded] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
@@ -90,7 +90,7 @@ export default function Hero() {
               transition: 'all 0.7s ease 0.3s',
             }}
           >
-            AIR MAX ULTRA
+            New Balance 
           </p>
 
           {/* Headline */}
@@ -131,25 +131,19 @@ export default function Hero() {
             }}
           >
             <p className="text-ash text-base leading-relaxed max-w-xs">
-              Engineered for the relentless. Zero compromise on speed, comfort, or form.
+              Born drippy , built different Top tier sneakers only
             </p>
             <div className="flex items-center gap-4">
-              <a
-                href="#"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-volt text-ink text-sm font-semibold tracking-[0.1em] uppercase hover:bg-bone transition-colors duration-300"
+              <Link
+                to="/products"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-volt  text-ink text-sm font-semibold tracking-[0.1em] uppercase hover:bg-bone transition-colors duration-300"
               >
                 Explore
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-              </a>
-              <a
-                href="#"
-                className="text-sm text-ash hover:text-bone transition-colors duration-200 tracking-wide"
-                style={{ fontFamily: 'DM Mono, monospace' }}
-              >
-                $249
-              </a>
+              </Link>
+            
             </div>
           </div>
         </div>

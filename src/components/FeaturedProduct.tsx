@@ -70,7 +70,7 @@ export default function FeaturedProduct() {
           {/* Info side */}
           <div className="lg:pl-16 xl:pl-24">
             <p className="text-ash text-xs tracking-[0.2em] uppercase mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>
-              Air Max Series — 2025
+              ASICS GEL-1130 "Black Carbon
             </p>
             <h2 className="font-display font-black text-bone leading-none mb-2" style={{ fontSize: 'clamp(48px, 6vw, 88px)', letterSpacing: '-0.02em' }}>
               PEGASUS
@@ -93,10 +93,10 @@ export default function FeaturedProduct() {
 
             {/* Price */}
             <div className="flex items-baseline gap-4 mb-8">
-              <span className="font-display font-black text-volt text-4xl">$279</span>
-              <span className="text-ash text-sm line-through" style={{ fontFamily: 'DM Mono, monospace' }}>$320</span>
+              <span className="font-display font-black text-volt text-4xl">9800 DA</span>
+              <span className="text-ash text-sm line-through" style={{ fontFamily: 'DM Mono, monospace' }}>1150DA</span>
               <span className="px-2 py-0.5 text-xs bg-volt/10 text-volt border border-volt/30" style={{ fontFamily: 'DM Mono, monospace' }}>
-                −13%
+                −15%
               </span>
             </div>
 

@@ -1,18 +1,14 @@
-import { Routes, Route } from 'react-router-dom'
+
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Marquee from './components/Marquee'
 import FeaturedProduct from './components/FeaturedProduct'
 import ProductGrid from './components/ProductGrid'
 import BrandStatement from './components/BrandStatement'
-import Newsletter from './components/Newsletter'
 import Footer from './components/Footer'
-import ProductsPage from './pages/Products/products'
-import TrackingPage from './pages/tracking/track'
-import ShippingPage from './pages/shipping/Shiping'
-import ContactPage from './pages/Contact/contact'
 
-function Home() {
+
+export default function Home() {
   return (
     <div className="bg-ink text-bone min-h-screen">
       <Nav />
@@ -21,20 +17,9 @@ function Home() {
       <FeaturedProduct />
       <ProductGrid />
       <BrandStatement />
-      <Newsletter />
+   
       <Footer />
     </div>
   )
 }
 
-export default function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/products" element={<ProductsPage />} />
-      <Route path="/tracking" element={<TrackingPage />} />
-      <Route path="/shipping" element={<ShippingPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-    </Routes>
-  )
-}
