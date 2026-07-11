@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
+import { CartProvider } from './context/CartContext'
+import CartUI from './components/CartUI'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Marquee from './components/Marquee'
@@ -29,12 +31,15 @@ function Home() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/products" element={<ProductsPage />} />
-      <Route path="/tracking" element={<TrackingPage />} />
-      <Route path="/shipping" element={<ShippingPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-    </Routes>
+    <CartProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/tracking" element={<TrackingPage />} />
+        <Route path="/shipping" element={<ShippingPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+      </Routes>
+      <CartUI />
+    </CartProvider>
   )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Hero() {
   const [loaded, setLoaded] = useState(false)
@@ -11,7 +12,6 @@ export default function Hero() {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden bg-ink flex items-end">
-      {/* Background image */}
       <div className="absolute inset-0">
         <img
           ref={imgRef}
@@ -27,12 +27,10 @@ export default function Hero() {
             ;(e.target as HTMLImageElement).style.transform = 'scale(1)'
           }}
         />
-        {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-transparent to-transparent" />
       </div>
 
-      {/* Volt accent line */}
       <div
         className="absolute top-0 right-0 w-px bg-volt"
         style={{
@@ -50,7 +48,6 @@ export default function Hero() {
         }}
       />
 
-      {/* Label top-left */}
       <div
         className="absolute top-24 left-6 md:left-10 text-ash text-xs tracking-[0.2em] uppercase"
         style={{
@@ -63,7 +60,6 @@ export default function Hero() {
         SS / 2025 — Collection 01
       </div>
 
-      {/* Season badge top-right */}
       <div
         className="absolute top-24 right-6 md:right-10 flex items-center gap-2"
         style={{
@@ -77,10 +73,8 @@ export default function Hero() {
         </span>
       </div>
 
-      {/* Main content */}
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-10 pb-16 md:pb-20">
         <div className="max-w-3xl">
-          {/* Eyebrow */}
           <p
             className="text-volt text-sm tracking-[0.3em] uppercase mb-4"
             style={{
@@ -93,7 +87,6 @@ export default function Hero() {
             AIR MAX ULTRA
           </p>
 
-          {/* Headline */}
           <h1
             className="font-display font-black text-bone leading-none"
             style={{
@@ -121,7 +114,6 @@ export default function Hero() {
             TO RUN
           </h1>
 
-          {/* Sub + CTA row */}
           <div
             className="mt-8 flex flex-col sm:flex-row items-start sm:items-end gap-6"
             style={{
@@ -134,27 +126,19 @@ export default function Hero() {
               Engineered for the relentless. Zero compromise on speed, comfort, or form.
             </p>
             <div className="flex items-center gap-4">
-              <a
-                href="#"
+              <Link
+                to="/products"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-volt text-ink text-sm font-semibold tracking-[0.1em] uppercase hover:bg-bone transition-colors duration-300"
               >
                 Explore
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-              </a>
-              <a
-                href="#"
-                className="text-sm text-ash hover:text-bone transition-colors duration-200 tracking-wide"
-                style={{ fontFamily: 'DM Mono, monospace' }}
-              >
-                $249
-              </a>
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div
           className="absolute bottom-0 right-10 hidden md:flex flex-col items-center gap-2 pb-4"
           style={{
