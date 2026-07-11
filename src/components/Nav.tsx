@@ -26,7 +26,7 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const isSolid = !isHome || scrolled
+  const isSolid = true
 
   return (
     <header
@@ -56,11 +56,11 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-5">
-          <button className="hidden md:flex items-center gap-2 text-sm text-ash hover:text-bone transition-colors duration-200">
+          <Link to="/products" className="hidden md:flex items-center gap-2 text-sm text-ash hover:text-bone transition-colors duration-200">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
             </svg>
-          </button>
+          </Link>
 
           <button
             onClick={openCart}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, Trash2, Plus, Minus, CheckCircle2, X, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-
+import { Link } from 'react-router-dom';
 function formatDA(n: number) {
   return `${n.toLocaleString('en-US', { maximumFractionDigits: 0 })} DA`;
 }
@@ -102,12 +102,13 @@ export default function CartUI() {
                       {cartItemCount}
                     </span>
                   </div>
-                  <button
+                  <Link
+                    to="/products"
                     onClick={closeCart}
-                    className="h-9 w-9 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center text-ash hover:text-bone transition-colors cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+                    className="px-4 py-2.5 rounded-lg border border-volt text-volt text-[11px] font-bold tracking-wider uppercase hover:bg-volt/10 transition-colors cursor-pointer inline-block"
+                    >
+                        Start Shopping
+                    </Link>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -169,15 +170,9 @@ export default function CartUI() {
                         <ShoppingBag className="w-5 h-5" />
                       </div>
                       <h4 className="text-sm font-bold text-bone mb-1">Your bag is empty</h4>
-                      <p className="text-xs text-ash leading-relaxed mb-6">
+                      <p className="text-xs text-ash leading-relaxed">
                         Explore our curation and find comfortable silhouettes designed to last.
                       </p>
-                      <button
-                        onClick={closeCart}
-                        className="px-4 py-2.5 rounded-lg border border-volt text-volt text-[11px] font-bold tracking-wider uppercase hover:bg-volt/10 transition-colors cursor-pointer"
-                      >
-                        Start Shopping
-                      </button>
                     </div>
                   )}
                 </div>

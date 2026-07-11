@@ -92,7 +92,17 @@ def add_order():
 
     return jsonify(order.to_dict()), 201
 
+@app.route("/orders/<int:id>", methods=["GET"])
+def get_order(id):
 
+    order = Order.query.get(id)
+
+    if not order:
+        return jsonify({
+            "error": "Order not found"
+        }), 404
+
+    return jsonify(order.to_dict())
 
 @app.route("/orders/<int:id>", methods=["PUT"])
 def update_order_status(id):
