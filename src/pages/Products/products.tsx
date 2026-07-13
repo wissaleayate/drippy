@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -20,8 +21,18 @@ import Footer from '../../components/Footer';
 import { useCart } from '../../hooks/useCart';
 
 export default function Product() {
+  const [searchParams] = useSearchParams();
+  const requestedCategory = searchParams.get('category');
+  const urlCategory: Category = requestedCategory === 'men' || requestedCategory === 'women' || requestedCategory === 'children'
+    ? requestedCategory
+    : 'all';
+
   // Navigation & Category States
-  const [selectedCategory, setSelectedCategory] = useState<Category>('all');
+  const [selectedCategory, setSelectedCategory] = useState<Category>(urlCategory);
+
+  useEffect(() => {
+    setSelectedCategory(urlCategory);
+  }, [urlCategory]);
 
   // Filter States
   const [filters, setFilters] = useState<FilterState>({

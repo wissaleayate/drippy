@@ -1,9 +1,10 @@
 
 import Nav from './components/Nav'
 import Hero from './components/Hero'
+import Categories from './components/Categories'
 import Marquee from './components/Marquee'
 import FeaturedProduct from './components/FeaturedProduct'
-import ProductGrid from './components/ProductGrid'
+
 import BrandStatement from './components/BrandStatement'
 import Footer from './components/Footer'
 
@@ -14,8 +15,9 @@ export default function Home() {
       <Nav />
       <Hero />
       <Marquee />
+      <Categories />
       <FeaturedProduct />
-      <ProductGrid />
+      
       <BrandStatement />
    
       <Footer />

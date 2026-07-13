@@ -73,7 +73,7 @@ export default function FeaturedProduct() {
               ASICS GEL-1130 "Black Carbon
             </p>
             <h2 className="font-display font-black text-bone leading-none mb-2" style={{ fontSize: 'clamp(48px, 6vw, 88px)', letterSpacing: '-0.02em' }}>
-              PEGASUS
+             ASICS
             </h2>
             <h2
               className="font-display font-black leading-none mb-8"
@@ -84,11 +84,11 @@ export default function FeaturedProduct() {
                 WebkitTextStroke: '1.5px rgba(245,245,240,0.4)',
               }}
             >
-              ULTRA X
+            GEL-1130
             </h2>
 
             <p className="text-ash text-sm leading-relaxed max-w-sm mb-8">
-              Reactfoam midsole delivers exceptional energy return with every stride. A precision-engineered outsole grips any surface. Built for those who refuse to slow down.
+            
             </p>
 
             {/* Price */}

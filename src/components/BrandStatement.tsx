@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 
 const stats = [
-  { value: '40M+', label: 'Runners Worldwide' },
-  { value: '180+', label: 'Countries' },
-  { value: '50yr', label: 'Of Innovation' },
-  { value: '99%', label: 'Return Rate' },
+  { value: '98%', label: 'Positive Reviews' },
+  { value: '69', label: 'ًWilaya' },
+  { value: '48H', label: 'Fast Shipping' },
+  { value: '100%', label: 'Authentic Products' },
 ]
 
 export default function BrandStatement() {
@@ -64,7 +64,7 @@ export default function BrandStatement() {
               transition: 'all 1s cubic-bezier(0.22, 1, 0.36, 1)',
             }}
           >
-            WE DON'T MAKE SHOES.
+           NOT JUST SNEAKERS.
           </h2>
           <h2
             className="font-display font-black leading-tight"
@@ -78,7 +78,7 @@ export default function BrandStatement() {
               transition: 'all 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s',
             }}
           >
-            WE MAKE ATHLETES.
+          A LIFESTYLE.
           </h2>
           <p
             className="text-ash text-base leading-relaxed mt-6 max-w-lg"
@@ -88,7 +88,7 @@ export default function BrandStatement() {
               transition: 'all 0.8s ease 0.35s',
             }}
           >
-            Every design begins with a single question: how do we make you faster, stronger, more unstoppable? From the track to the street, we engineer for the edge.
+          At Drippy, we believe sneakers are more than footwear. They represent confidence, creativity, and everyday comfort. We bring authentic collections from the brands you love.
           </p>
         </div>
 

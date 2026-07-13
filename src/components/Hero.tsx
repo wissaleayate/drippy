@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 export default function Hero() {
   const [loaded, setLoaded] = useState(false)
+  const [isCategorySelectorOpen, setIsCategorySelectorOpen] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
@@ -12,7 +13,15 @@ export default function Hero() {
   return (
     <section className="relative w-full min-h-screen overflow-hidden bg-ink flex items-end">
       {/* Background image */}
-      <div className="absolute inset-0">
+      <div
+        className="absolute inset-0"
+        onMouseEnter={() => setIsCategorySelectorOpen(true)}
+        onMouseLeave={() => setIsCategorySelectorOpen(false)}
+        onFocusCapture={() => setIsCategorySelectorOpen(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setIsCategorySelectorOpen(false)
+        }}
+      >
         <img
           ref={imgRef}
           src="https://i.pinimg.com/736x/ca/7b/fa/ca7bfa7018e8440cbde42ac63e29ecd3.jpg"
@@ -30,6 +39,32 @@ export default function Hero() {
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-transparent to-transparent" />
+
+        {/* Interactive category selector */}
+        <div
+          className={`absolute inset-0 z-20 flex items-center justify-center bg-ink/70 backdrop-blur-sm transition-opacity duration-500 ease-out ${
+            isCategorySelectorOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+          }`}
+        >
+          <div className="flex flex-col items-center gap-3 px-6 text-center sm:flex-row sm:gap-4">
+            {[
+              { label: 'Men', to: '/products?category=men' },
+              { label: 'Women', to: '/products?category=women' },
+              { label: 'Children', to: '/products?category=children' },
+            ].map((category, index) => (
+              <Link
+                key={category.label}
+                to={category.to}
+                className={`rounded-full border border-bone/30 bg-bone/10 px-8 py-3 font-mono text-xs uppercase tracking-[0.18em] text-bone shadow-lg shadow-ink/30 backdrop-blur-md transition-all duration-500 ease-out hover:border-[#a78bfa] hover:bg-[#7c3aed] hover:text-white focus-visible:border-[#a78bfa] focus-visible:bg-[#7c3aed] focus-visible:text-white focus-visible:outline-none ${
+                  isCategorySelectorOpen ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
+                }`}
+                style={{ transitionDelay: `${120 + index * 90}ms` }}
+              >
+                {category.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Volt accent line */}
