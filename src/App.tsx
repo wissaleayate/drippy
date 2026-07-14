@@ -7,8 +7,7 @@ import FeaturedProduct from './components/FeaturedProduct'
 
 import BrandStatement from './components/BrandStatement'
 import Footer from './components/Footer'
-
-
+import ProductGrid from './components/ProductGrid'
 export default function Home() {
   return (
     <div className="bg-ink text-bone min-h-screen">
@@ -17,7 +16,8 @@ export default function Home() {
       <Marquee />
       <Categories />
       <FeaturedProduct />
-      
+     
+      <ProductGrid/>
       <BrandStatement />
    
       <Footer />
