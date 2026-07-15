@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, Trash2, Plus, Minus, CheckCircle2, X, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Trash2, Plus, Minus, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 function formatDA(n: number) {

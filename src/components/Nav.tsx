@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useLocation, Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import logo from '../imports/drippy logo.png'
 import { ShoppingBag } from 'lucide-react'
 import { useCart } from '../context/CartContext'
@@ -13,18 +13,9 @@ const links = [
 ]
 
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const location = useLocation()
-  const isHome = location.pathname === '/'
   const { cart, openCart } = useCart()
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   const isSolid = true
 

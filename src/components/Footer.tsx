@@ -108,7 +108,7 @@ export default function Footer() {
           }}
           aria-hidden
         >
-          JUST DO IT
+          STAY DRIPPY
         </div>
 
         {/* Bottom bar */}

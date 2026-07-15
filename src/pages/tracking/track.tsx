@@ -15,23 +15,8 @@ import {
   AlertCircle,
 } from 'lucide-react';
 
-const Nav = () => (
-  <nav className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-ink/95 backdrop-blur-md">
-    <div className="max-w-[1000px] mx-auto px-4 sm:px-6 md:px-10 py-4 flex items-center justify-between">
-      <div className="text-sm font-bold uppercase text-bone tracking-[0.35em]">NK.</div>
-      <div className="text-xs text-ash">Order Tracking</div>
-    </div>
-  </nav>
-);
-
-const Footer = () => (
-  <footer className="border-t border-white/10 bg-ink/95 py-6">
-    <div className="max-w-[1000px] mx-auto px-4 sm:px-6 md:px-10 text-center text-xs text-ash">
-      © {new Date().getFullYear()} NK. Order Tracking. All rights reserved.
-    </div>
-  </footer>
-);
-
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
 interface RealOrder {
   id: number;
   customer: string;

@@ -7,7 +7,7 @@ import Marquee from './components/Marquee'
 import FeaturedProduct from './components/FeaturedProduct'
 import ProductGrid from './components/ProductGrid'
 import BrandStatement from './components/BrandStatement'
-import Newsletter from './components/Newsletter'
+import Categories from './components/Categories'
 import Footer from './components/Footer'
 import ProductsPage from './pages/Products/products'
 import TrackingPage from './pages/tracking/track'
@@ -20,10 +20,11 @@ function Home() {
       <Nav />
       <Hero />
       <Marquee />
+      <Categories/>
       <FeaturedProduct />
       <ProductGrid />
       <BrandStatement />
-      <Newsletter />
+    
       <Footer />
     </div>
   )
