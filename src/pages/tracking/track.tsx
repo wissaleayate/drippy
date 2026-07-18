@@ -17,8 +17,10 @@ import {
 
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+
 interface RealOrder {
   id: number;
+  uuid: string; // <--- CHANGED FROM ID TO UUID
   customer: string;
   phone: string;
   address: string;
@@ -41,7 +43,7 @@ const STATUS_INFO: Record<string, { label: string; color: string; description: s
   'Ne répond pas': {
     label: 'Attempting Contact',
     color: 'text-amber-400',
-    description: 'We tried to reach you to confirm your order but couldn\'t get through. Please check your phone or contact us.',
+    description: "We tried to reach you to confirm your order but couldn't get through. Please check your phone or contact us.",
   },
   'Expédiée': {
     label: 'Shipped',
@@ -63,10 +65,7 @@ export default function TrackingPage() {
     const trimmed = searchQuery.trim();
     if (!trimmed) return;
 
-    if (!/^\d+$/.test(trimmed)) {
-      setErrorMsg('Please enter a valid numeric Order ID.');
-      return;
-    }
+    // ---> REMOVED THE NUMERIC DIGIT CHECK REGEX HERE TO ALLOW UUID CHARACTERS & HYPHENS
 
     setIsLoading(true);
     setErrorMsg('');
@@ -75,7 +74,7 @@ export default function TrackingPage() {
     try {
       const res = await fetch(`http://127.0.0.1:5000/orders/${trimmed}`);
       if (res.status === 404) {
-        setErrorMsg(`No order found with ID "${trimmed}". Double-check your order confirmation.`);
+        setErrorMsg(`No order found with key "${trimmed}". Double-check your unique code.`);
         setIsLoading(false);
         return;
       }
@@ -113,7 +112,7 @@ export default function TrackingPage() {
             Track Your Order
           </h1>
           <p className="text-sm sm:text-base text-ash max-w-lg mx-auto font-medium">
-            Enter your Order ID (from your checkout confirmation) to check its current status.
+            Enter your Unique Order Key (from your checkout confirmation) to check its current status.
           </p>
         </motion.div>
 
@@ -124,8 +123,8 @@ export default function TrackingPage() {
               <Search className="w-5 h-5 text-ash ml-4 flex-shrink-0" />
               <input
                 type="text"
-                inputMode="numeric"
-                placeholder="Enter Order ID (e.g. 1, 2, 3...)"
+                // REMOVED inputMode="numeric" to support alphabetic UUID strings safely
+                placeholder="Enter your Unique Order UUID Key..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-0 outline-0 py-3 px-4 text-sm sm:text-base text-bone placeholder:text-ash/60 focus:ring-0 focus:outline-none"
@@ -155,7 +154,7 @@ export default function TrackingPage() {
         <AnimatePresence mode="wait">
           {activeOrder && statusInfo && (
             <motion.div
-              key={activeOrder.id}
+              key={activeOrder.uuid}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -173,9 +172,11 @@ export default function TrackingPage() {
                       {statusInfo.label}
                     </h2>
                   </div>
-                  <div className="text-left sm:text-right">
-                    <span className="text-xs font-mono uppercase tracking-widest text-ash">Order ID</span>
-                    <p className="text-lg font-bold text-bone font-mono mt-1">#{activeOrder.id}</p>
+                  <div className="text-left sm:text-right max-w-xs overflow-hidden">
+                    <span className="text-xs font-mono uppercase tracking-widest text-ash">Unique Key</span>
+                    <p className="text-xs font-bold text-volt font-mono mt-1 break-all bg-white/[0.02] p-2 rounded-xl border border-white/5">
+                      {activeOrder.uuid}
+                    </p>
                   </div>
                 </div>
 
@@ -207,7 +208,7 @@ export default function TrackingPage() {
                 </div>
               </div>
 
-              {/* Generic decorative "what happens next" panel — NOT tied to real per-order data */}
+              {/* Generic decorative panels */}
               <div className="rounded-3xl border border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent p-6 sm:p-8">
                 <h3 className="text-lg font-bold font-display uppercase tracking-wider text-bone mb-6 border-b border-white/5 pb-4">
                   What Happens Next
@@ -275,7 +276,7 @@ export default function TrackingPage() {
               <MapPin className="w-6 h-6 stroke-[1.5]" />
             </div>
             <p className="text-sm text-ash leading-relaxed">
-              Enter your Order ID above to see your order's current status.
+              Enter your Unique Order Key above to see your order's current status.
             </p>
           </div>
         )}
@@ -345,12 +346,12 @@ export default function TrackingPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">Order ID</label>
+                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">Unique Order Key</label>
                       <input
                         type="text"
-                        defaultValue={activeOrder ? String(activeOrder.id) : ''}
+                        defaultValue={activeOrder ? activeOrder.uuid : ''}
                         disabled
-                        className="w-full bg-white/[0.02] border border-white/5 rounded-xl py-3 px-4 text-sm text-ash font-mono focus:outline-none cursor-not-allowed"
+                        className="w-full bg-white/[0.02] border border-white/5 rounded-xl py-3 px-4 text-xs text-ash font-mono focus:outline-none cursor-not-allowed truncate"
                       />
                     </div>
 

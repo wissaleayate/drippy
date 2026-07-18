@@ -13,6 +13,7 @@ import {
   BadgeCheck,
   Camera,
   ThumbsUp,
+  Share2, // <--- IMPORTED SHARE ICON
 } from 'lucide-react';
 import { Product } from '../types';
 
@@ -115,7 +116,7 @@ function buildReviews(product: Product): Review[] {
       photos: [
         { url: product.image, alt: 'Gift unboxing' },
         { url: `https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=400&q=70`, alt: 'Detail shot' },
-        { url: `https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=400&q=70`, alt: 'Styled photo' },
+        { url: `https://images.unsplash.com/photo-103342394128-c104d54dba01?auto=format&fit=crop&w=400&q=70`, alt: 'Styled photo' },
       ],
       helpful: 41,
     },
@@ -170,6 +171,7 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
   const [successMsg, setSuccessMsg] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
+  const [copied, setCopied] = useState(false); // <--- ADDED STATE FOR SHARE BUTTON
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!product) return null;
@@ -178,7 +180,16 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
   const reviews = buildReviews(product);
   const fitSummary = buildFitSummary(reviews);
   const avgRating = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-
+  const handleShare = () => {
+    // Since your unique string ID is stored in 'id', we use product.id here
+    const shareUrl = `${window.location.protocol}//${window.location.host}/products/uuid/${product.id}`;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+ 
   const handleAdd = () => {
     if (!selectedSize) { setErrorMsg('Please select a size first'); return; }
     setErrorMsg('');
@@ -293,13 +304,38 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
                 <span className="text-xs font-bold text-volt bg-volt/10 px-2.5 py-1 rounded-lg uppercase tracking-wider font-mono">
                   {product.brand}
                 </span>
-                <span className="text-xs font-medium text-ash capitalize">for {product.category}</span>
+                <span className="text-xs font-semibold text-ash capitalize">for {product.category}</span>
               </div>
 
-              {/* Title */}
-              <h2 className="text-[22px] font-bold text-bone tracking-tight leading-snug mb-3">
-                {product.name}
-              </h2>
+              {/* Title & Share Row */}
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <h2 className="text-[22px] font-bold text-bone tracking-tight leading-snug">
+                  {product.name}
+                </h2>
+
+                {/* SHARE BUTTON */}
+                <button
+                  onClick={handleShare}
+                  className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 text-xs font-mono font-bold shrink-0 ${
+                    copied
+                      ? 'bg-volt/10 border-volt/30 text-volt'
+                      : 'bg-white/[0.02] border-white/10 text-ash hover:text-bone hover:border-white/20'
+                  }`}
+                  title="Copy product link"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>COPIED!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-3.5 h-3.5" />
+                      <span>SHARE</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
               {/* Rating bar */}
               <div className="flex items-center gap-2 mb-4">
@@ -370,7 +406,9 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
                     </button>
                   ))}
                 </div>
-                {errorMsg && <p className="text-rose-455 text-xs font-bold mt-2">{errorMsg}</p>}
+                {errorMsg && (
+                  <p className="text-rose-455 text-xs font-bold mt-2">{errorMsg}</p>
+                )}
               </div>
 
               {/* Add to Cart */}

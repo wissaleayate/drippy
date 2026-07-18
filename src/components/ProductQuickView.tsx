@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Star, X, ShoppingCart, Check, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
+import { Star, X, ShoppingCart, Check, ShieldCheck, Truck, RefreshCw, Share2 } from 'lucide-react';
 import { Product } from '../types';
 
 interface ProductQuickViewProps {
@@ -13,8 +13,18 @@ export default function ProductQuickView({ product, onClose, onAddToCart }: Prod
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
 
   if (!product) return null;
+
+  const handleShare = () => {
+    // Generates the shareable link based on your dynamic product uuid route
+    const productUrl = `${window.location.origin}/products/uuid/${product.uuid}`;
+    navigator.clipboard.writeText(productUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   const handleAdd = () => {
     if (!selectedSize) {
@@ -87,10 +97,35 @@ export default function ProductQuickView({ product, onClose, onAddToCart }: Prod
                 </span>
               </div>
 
-              {/* Title */}
-              <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-3">
-                {product.name}
-              </h2>
+              {/* Title & Share Row */}
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+                  {product.name}
+                </h2>
+                
+                {/* SHARE BUTTON */}
+                <button
+                  onClick={handleShare}
+                  className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 text-xs font-bold ${
+                    copied
+                      ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                      : 'bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                  }`}
+                  title="Copy share link"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 stroke-[2.5]" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-4 h-4" />
+                      <span>Share</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
               {/* Price Row */}
               <div className="flex items-baseline gap-3 mb-5">

@@ -11,7 +11,7 @@ import Footer from '../../components/Footer';
 import { useCart } from '../../context/CartContext';
 
 type ApiProduct = {
-  id: string | number;
+  uuid: string;
   name: string;
   brand: string;
   category: string;
@@ -31,11 +31,12 @@ function normalizeProduct(raw: ApiProduct): Product {
   const image = raw.image ?? '';
 
   return {
-    id: String(raw.id),
+    id: raw.uuid,
     name: raw.name,
     brand: raw.brand,
     category,
     price: raw.price,
+    // ---> UPDATED FOR DIRECT SERVER UPLOADS & LOCAL IMAGES <---
     image: image.startsWith('http') || image.startsWith('/') ? image : `/images/${image}`,
     inStock: (raw.stock ?? 1) > 0,
     description: raw.description ?? '',
