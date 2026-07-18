@@ -50,6 +50,7 @@ function normalizeProduct(raw: ApiProduct): Product {
 export default function ProductsPage() {
   const [searchParams] = useSearchParams();
   const requestedCategory = searchParams.get('category');
+  const requestedDepartment = searchParams.get('department');
   const urlCategory: Category =
     requestedCategory === 'men' || requestedCategory === 'women' || requestedCategory === 'children'
       ? requestedCategory
@@ -61,6 +62,7 @@ export default function ProductsPage() {
     maxPrice: 50000,
     size: 'All',
     sortBy: 'featured',
+    department: requestedDepartment ?? 'all',
   });
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -71,7 +73,11 @@ export default function ProductsPage() {
 
   useEffect(() => {
     setSelectedCategory(urlCategory);
-  }, [urlCategory]);
+    setFilters((prev) => ({
+      ...prev,
+      department: requestedDepartment ?? 'all',
+    }));
+  }, [urlCategory, requestedDepartment]);
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/products')
@@ -91,6 +97,24 @@ export default function ProductsPage() {
     return products
       .filter((product) => {
         if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
+
+        // Department filter from URL (sneakers / clothes / accessories)
+        if (filters.department && filters.department !== 'all') {
+          if (!product.name.toLowerCase().includes(filters.department) &&
+              !product.description.toLowerCase().includes(filters.department) &&
+              !(product as unknown as Record<string, unknown>).department?.toString().toLowerCase().includes(filters.department) &&
+              product.brand.toLowerCase() !== filters.department) {
+            // fall back to category-name matching for sneakers → shoes
+            const deptMap: Record<string, string[]> = {
+              sneakers: ['sneaker', 'shoe', 'kick', 'trainer', 'boot'],
+              clothes: ['cloth', 'shirt', 'pant', 'jacket', 'hoodie', 'top', 'dress', 'wear'],
+              accessories: ['accessory', 'accessories', 'bag', 'cap', 'hat', 'belt', 'watch', 'socks'],
+            };
+            const keywords = deptMap[filters.department] ?? [filters.department];
+            const productText = `${product.name} ${product.description} ${product.brand}`.toLowerCase();
+            if (!keywords.some((kw) => productText.includes(kw))) return false;
+          }
+        }
 
         const query = filters.searchQuery.toLowerCase().trim();
         if (
@@ -116,7 +140,7 @@ export default function ProductsPage() {
   }, [filters, products, selectedCategory]);
 
   const resetFilters = () => {
-    setFilters({ searchQuery: '', brand: 'All', maxPrice: 50000, size: 'All', sortBy: 'featured' });
+    setFilters({ searchQuery: '', brand: 'All', maxPrice: 50000, size: 'All', sortBy: 'featured', department: 'all' });
     setSelectedCategory('all');
   };
 

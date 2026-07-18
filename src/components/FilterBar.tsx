@@ -25,7 +25,8 @@ export default function FilterBar({
     filters.brand !== 'All' ||
     filters.maxPrice < 250 ||
     filters.size !== 'All' ||
-    filters.sortBy !== 'featured';
+    filters.sortBy !== 'featured' ||
+    (!!filters.department && filters.department !== 'all');
 
   const resetFilters = () => {
     setFilters({
@@ -34,6 +35,7 @@ export default function FilterBar({
       maxPrice: 250,
       size: 'All',
       sortBy: 'featured',
+      department: 'all',
     });
   };
 
@@ -220,6 +222,15 @@ export default function FilterBar({
               <div className="flex items-center justify-between mt-3 px-2">
                 <div className="flex flex-wrap gap-2 items-center">
                   <span className="text-xs font-semibold text-ash">Active filters:</span>
+                  {filters.department && filters.department !== 'all' && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-volt/10 text-volt border border-volt/20">
+                      Dept: {filters.department.charAt(0).toUpperCase() + filters.department.slice(1)}
+                      <X
+                        className="w-3 h-3 cursor-pointer text-volt/70 hover:text-volt"
+                        onClick={() => setFilters((prev) => ({ ...prev, department: 'all' }))}
+                      />
+                    </span>
+                  )}
                   {filters.brand !== 'All' && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] text-bone border border-white/5">
                       Brand: {filters.brand}

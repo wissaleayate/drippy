@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import CartUI from './components/CartUI';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
@@ -18,6 +19,8 @@ import AdminPage from './pages/Admin/admin';
 import ProductDetailsPage from './pages/ProductDetails/ProductDetails';
 import AdminOrders from './pages/Admin/AdminOrders';
 import AdminTracking from "./pages/tracking/AdminTracking";
+import LoginPage from './pages/Auth/Login';
+import RegisterPage from './pages/Auth/Register';
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const isAdmin = localStorage.getItem('isAdmin') === 'true'; 
@@ -46,48 +49,53 @@ function Home() {
 
 export default function App() {
   return (
-    <CartProvider>
-      {/* Toaster is now inside the Provider and the main App component */}
-      <Toaster position="top-right" />
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
+    <AuthProvider>
+      <CartProvider>
+        <Toaster position="top-right" />
         
-        {/* Protected Admin Routes */}
-        <Route 
-          path="/admin" 
-          element={
-            <AdminRoute>
-              <AdminPage />
-            </AdminRoute>
-          } 
-        />
-        <Route 
-          path="/admin/orders" 
-          element={
-            <AdminRoute>
-              <AdminOrders />
-            </AdminRoute>
-          } 
-        />
-        <Route 
-          path="/admin/tracking" 
-          element={
-            <AdminRoute>
-              <AdminTracking />
-            </AdminRoute>
-          } 
-        />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          
+          {/* Auth Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/tracking" element={<TrackingPage />} />
-        <Route path="/shipping" element={<ShippingPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        
-        {/* Route for Shareable Links */}
-        <Route path="/products/uuid/:id" element={<ProductDetailsPage />} />
-      </Routes>
-      <CartUI />
-    </CartProvider>
+          {/* Protected Admin Routes */}
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/orders" 
+            element={
+              <AdminRoute>
+                <AdminOrders />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/tracking" 
+            element={
+              <AdminRoute>
+                <AdminTracking />
+              </AdminRoute>
+            } 
+          />
+
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/tracking" element={<TrackingPage />} />
+          <Route path="/shipping" element={<ShippingPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          
+          {/* Route for Shareable Links */}
+          <Route path="/products/uuid/:id" element={<ProductDetailsPage />} />
+        </Routes>
+        <CartUI />
+      </CartProvider>
+    </AuthProvider>
   );
 }

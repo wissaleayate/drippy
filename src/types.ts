@@ -22,5 +22,6 @@ export interface FilterState {
   maxPrice: number;
   size: string;
   sortBy: string;
+  department?: string;
 }
 
