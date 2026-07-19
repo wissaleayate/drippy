@@ -50,6 +50,7 @@ function normalizeProduct(raw: ApiProduct): Product {
 export default function ProductsPage() {
   const [searchParams] = useSearchParams();
   const requestedCategory = searchParams.get('category');
+  const requestedSearch = searchParams.get('search') ?? '';
   const requestedDepartment = searchParams.get('department');
   const urlCategory: Category =
     requestedCategory === 'men' || requestedCategory === 'women' || requestedCategory === 'children'
@@ -57,12 +58,11 @@ export default function ProductsPage() {
       : 'all';
   const [selectedCategory, setSelectedCategory] = useState<Category>(urlCategory);
   const [filters, setFilters] = useState<FilterState>({
-    searchQuery: '',
+    searchQuery: requestedSearch,
     brand: 'All',
     maxPrice: 50000,
     size: 'All',
     sortBy: 'featured',
-    department: requestedDepartment ?? 'all',
   });
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -78,6 +78,10 @@ export default function ProductsPage() {
       department: requestedDepartment ?? 'all',
     }));
   }, [urlCategory, requestedDepartment]);
+
+  useEffect(() => {
+    setFilters((prev) => ({ ...prev, searchQuery: requestedSearch }));
+  }, [requestedSearch]);
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/products')
@@ -148,7 +152,7 @@ export default function ProductsPage() {
     <div className="min-h-screen flex flex-col bg-ink text-bone" id="app-root-container">
       <Nav />
 
-      <div className="sticky top-16 z-20 bg-ink/90 backdrop-blur-md border-b border-white/5">
+      <div className="sticky top-16 z-20 bg-[#1a0e05]/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
           <div className="hidden lg:flex items-center gap-6 text-xs font-semibold text-ash">
             <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-volt" />Free shipping above 15,000 DA</span>

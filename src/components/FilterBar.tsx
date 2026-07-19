@@ -20,7 +20,6 @@ export default function FilterBar({
 }: FilterBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Check if any secondary filters are active
   const isFiltered =
     filters.brand !== 'All' ||
     filters.maxPrice < 250 ||
@@ -64,7 +63,7 @@ export default function FilterBar({
       {/* Search Input and Filter Toggle Icon Row */}
       <div className="relative flex flex-col md:flex-row gap-4 items-stretch mb-4">
         <div className="relative flex-1 group">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-ash group-focus-within:text-volt transition-colors">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[#8a7f72] group-focus-within:text-volt transition-colors">
             <Search className="w-5 h-5 stroke-[1.8]" />
           </div>
           <input
@@ -72,13 +71,13 @@ export default function FilterBar({
             value={filters.searchQuery}
             onChange={handleSearchChange}
             placeholder="Search products by title, description or details..."
-            className="w-full pl-12 pr-4 py-3.5 bg-white/[0.02] border border-white/5 rounded-2xl hover:border-white/10 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none text-sm transition-all placeholder:text-ash/50 text-bone font-medium"
+            className="w-full pl-12 pr-4 py-3.5 bg-[#221407] border border-white/10 rounded-2xl hover:border-white/20 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none text-sm transition-all placeholder:text-[#8a7f72] text-[#f0e6cc] font-medium"
             id="product-search-input"
           />
           {filters.searchQuery && (
             <button
               onClick={() => setFilters((prev) => ({ ...prev, searchQuery: '' }))}
-              className="absolute inset-y-0 right-4 flex items-center text-ash hover:text-bone"
+              className="absolute inset-y-0 right-4 flex items-center text-[#8a7f72] hover:text-[#f0e6cc]"
               id="clear-search-btn"
             >
               <X className="w-4 h-4" />
@@ -88,13 +87,12 @@ export default function FilterBar({
 
         {/* Filter Toggle and Sort Trigger Row */}
         <div className="flex gap-3">
-          {/* Collapsible Filters Toggle Button */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className={`flex items-center gap-2 px-5 py-3.5 rounded-2xl border transition-all text-sm font-semibold select-none cursor-pointer ${
               isExpanded || isFiltered
                 ? 'bg-volt/10 border-volt/35 text-volt hover:bg-volt/20'
-                : 'bg-white/[0.02] border-white/5 text-bone hover:bg-white/[0.04] hover:border-white/10'
+                : 'bg-[#221407] border-white/10 text-[#f0e6cc] hover:bg-white/[0.06] hover:border-white/20'
             }`}
             id="filter-toggle-btn"
           >
@@ -110,7 +108,7 @@ export default function FilterBar({
             <select
               value={filters.sortBy}
               onChange={(e) => handleSortChange(e.target.value)}
-              className="appearance-none bg-white/[0.02] border border-white/5 rounded-2xl px-5 py-3.5 pr-10 text-sm font-semibold text-bone hover:border-white/10 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none transition-all cursor-pointer w-full"
+              className="appearance-none bg-[#221407] border border-white/10 rounded-2xl px-5 py-3.5 pr-10 text-sm font-semibold text-[#f0e6cc] hover:border-white/20 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none transition-all cursor-pointer w-full"
               id="product-sort-select"
             >
               <option value="featured" className="bg-zinc text-bone">Sort: Featured</option>
@@ -118,7 +116,7 @@ export default function FilterBar({
               <option value="price-high-to-low" className="bg-zinc text-bone">Price: High to Low</option>
               <option value="rating" className="bg-zinc text-bone">Top Rated</option>
             </select>
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-ash">
+            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#8a7f72]">
               <ChevronDown className="w-4 h-4" />
             </div>
           </div>
@@ -136,17 +134,17 @@ export default function FilterBar({
             className="overflow-hidden mb-6"
             id="collapsible-filter-panel"
           >
-            <div className="p-6 bg-zinc border border-white/10 rounded-3xl shadow-lg mt-2 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-6 bg-[#221407] border border-white/10 rounded-3xl shadow-lg mt-2 grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Brand Filter */}
               <div className="flex flex-col gap-3">
-                <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">Brand</span>
+                <span className="text-xs font-bold text-[#8a7f72] uppercase tracking-wider font-mono">Brand</span>
                 <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
                   <button
                     onClick={() => handleBrandChange('All')}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                       filters.brand === 'All'
-                        ? 'bg-volt border-volt text-ink font-bold shadow-xs'
-                        : 'bg-white/[0.02] border-white/5 text-bone hover:border-white/10 hover:bg-white/[0.05]'
+                        ? 'bg-volt border-volt text-[#1a0e05] font-bold shadow-xs'
+                        : 'bg-white/[0.04] border-white/10 text-[#f0e6cc] hover:border-white/20 hover:bg-white/[0.08]'
                     }`}
                     id="brand-filter-all"
                   >
@@ -158,8 +156,8 @@ export default function FilterBar({
                       onClick={() => handleBrandChange(b)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                         filters.brand === b
-                          ? 'bg-volt border-volt text-ink font-bold shadow-xs'
-                          : 'bg-white/[0.02] border-white/5 text-bone hover:border-white/10 hover:bg-white/[0.05]'
+                          ? 'bg-volt border-volt text-[#1a0e05] font-bold shadow-xs'
+                          : 'bg-white/[0.04] border-white/10 text-[#f0e6cc] hover:border-white/20 hover:bg-white/[0.08]'
                       }`}
                       id={`brand-filter-${b.toLowerCase().replace(/\s+/g, '-')}`}
                     >
@@ -172,7 +170,7 @@ export default function FilterBar({
               {/* Price Range Filter */}
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">Max Price</span>
+                  <span className="text-xs font-bold text-[#8a7f72] uppercase tracking-wider font-mono">Max Price</span>
                   <span className="text-sm font-bold text-volt bg-volt/10 px-2 py-0.5 rounded-lg font-mono">
                     ${filters.maxPrice}
                   </span>
@@ -188,7 +186,7 @@ export default function FilterBar({
                     className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-volt"
                     id="price-range-slider"
                   />
-                  <div className="flex justify-between text-[11px] font-bold text-ash px-1 font-mono">
+                  <div className="flex justify-between text-[11px] font-bold text-[#8a7f72] px-1 font-mono">
                     <span>Min: $10</span>
                     <span>Max: $250+</span>
                   </div>
@@ -197,7 +195,7 @@ export default function FilterBar({
 
               {/* Size Filter */}
               <div className="flex flex-col gap-3">
-                <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">Size</span>
+                <span className="text-xs font-bold text-[#8a7f72] uppercase tracking-wider font-mono">Size</span>
                 <div className="flex flex-wrap gap-2">
                   {ALL_SIZES.map((size) => (
                     <button
@@ -205,8 +203,8 @@ export default function FilterBar({
                       onClick={() => handleSizeChange(size)}
                       className={`h-9 min-w-[36px] px-2 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center justify-center ${
                         filters.size === size
-                          ? 'bg-volt border-volt text-ink hover:bg-bone'
-                          : 'bg-white/[0.02] border-white/5 text-bone hover:border-white/10 hover:bg-white/[0.05]'
+                          ? 'bg-volt border-volt text-[#1a0e05] hover:bg-bone'
+                          : 'bg-white/[0.04] border-white/10 text-[#f0e6cc] hover:border-white/20 hover:bg-white/[0.08]'
                       }`}
                       id={`size-filter-${size}`}
                     >
@@ -221,7 +219,7 @@ export default function FilterBar({
             {isFiltered && (
               <div className="flex items-center justify-between mt-3 px-2">
                 <div className="flex flex-wrap gap-2 items-center">
-                  <span className="text-xs font-semibold text-ash">Active filters:</span>
+                  <span className="text-xs font-semibold text-[#8a7f72]">Active filters:</span>
                   {filters.department && filters.department !== 'all' && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-volt/10 text-volt border border-volt/20">
                       Dept: {filters.department.charAt(0).toUpperCase() + filters.department.slice(1)}
@@ -232,37 +230,37 @@ export default function FilterBar({
                     </span>
                   )}
                   {filters.brand !== 'All' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] text-bone border border-white/5">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
                       Brand: {filters.brand}
                       <X
-                        className="w-3 h-3 cursor-pointer text-ash hover:text-bone"
+                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
                         onClick={() => handleBrandChange('All')}
                       />
                     </span>
                   )}
                   {filters.maxPrice < 250 && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] text-bone border border-white/5">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
                       Under ${filters.maxPrice}
                       <X
-                        className="w-3 h-3 cursor-pointer text-ash hover:text-bone"
+                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
                         onClick={() => setFilters((prev) => ({ ...prev, maxPrice: 250 }))}
                       />
                     </span>
                   )}
                   {filters.size !== 'All' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] text-bone border border-white/5">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
                       Size: {filters.size}
                       <X
-                        className="w-3 h-3 cursor-pointer text-ash hover:text-bone"
+                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
                         onClick={() => handleSizeChange(filters.size)}
                       />
                     </span>
                   )}
                   {filters.sortBy !== 'featured' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.04] text-bone border border-white/5">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
                       Sorted
                       <X
-                        className="w-3 h-3 cursor-pointer text-ash hover:text-bone"
+                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
                         onClick={() => handleSortChange('featured')}
                       />
                     </span>
@@ -283,7 +281,7 @@ export default function FilterBar({
       </AnimatePresence>
 
       {/* Results Count Summary */}
-      <div className="flex items-center justify-between text-xs font-bold text-ash tracking-wider uppercase px-2 mb-2">
+      <div className="flex items-center justify-between text-xs font-bold text-[#8a7f72] tracking-wider uppercase px-2 mb-2">
         <span>Category: {selectedCategory === 'all' ? 'All Products' : selectedCategory}</span>
         <span>Showing {totalResults} {totalResults === 1 ? 'Product' : 'Products'}</span>
       </div>

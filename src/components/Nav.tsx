@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../imports/drippy logo.png'
-import { ShoppingBag, User, ChevronDown, Package, LogOut, UserCircle2 } from 'lucide-react'
+import { ShoppingBag, User, ChevronDown, Package, LogOut, UserCircle2, Search, Sun, Moon } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import toast from 'react-hot-toast'
 
 const links = [
@@ -17,9 +18,12 @@ const links = [
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
   const { cart, openCart } = useCart()
   const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0)
 
@@ -35,6 +39,16 @@ export default function Nav() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const trimmed = searchQuery.trim()
+    if (trimmed) {
+      navigate(`/products?search=${encodeURIComponent(trimmed)}`)
+      setSearchOpen(false)
+      setSearchQuery('')
+    }
+  }
 
   function handleLogout() {
     setDropdownOpen(false)
@@ -82,11 +96,29 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-5">
-          <Link to="/products" className="hidden md:flex items-center gap-2 text-sm text-ash hover:text-bone transition-colors duration-200">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-            </svg>
-          </Link>
+          <div className="hidden md:flex items-center relative">
+            {searchOpen ? (
+              <form onSubmit={handleSearchSubmit} className="flex items-center">
+                <input
+                  autoFocus
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
+                  placeholder="Search products..."
+                  className="w-44 px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
+                />
+              </form>
+            ) : (
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="flex items-center gap-2 text-sm text-ash hover:text-bone transition-colors duration-200 cursor-pointer"
+                aria-label="Search"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+            )}
+          </div>
 
           <button
             onClick={openCart}
@@ -98,6 +130,14 @@ export default function Nav() {
                 {cartItemCount}
               </span>
             )}
+          </button>
+
+          <button
+            onClick={toggleTheme}
+            className="flex items-center justify-center w-8 h-8 rounded-xl border border-white/10 hover:border-volt/40 text-ash hover:text-volt transition-all duration-200 cursor-pointer"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
           {/* Auth: logged out → Login button */}

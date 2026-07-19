@@ -257,10 +257,12 @@ export default function CartUI() {
                         className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
                       />
                       <input
-                        type="text"
+                        type="tel"
+                        inputMode="numeric"
                         placeholder="Phone Number"
                         value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        onChange={(e) => setCustomerPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                        maxLength={15}
                         className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
                       />
                       <input

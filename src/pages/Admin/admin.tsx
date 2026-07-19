@@ -173,20 +173,18 @@ export default function AdminPage() {
           </button>
         </div>
 
-        <div className="mb-10">
-         <Link
-          to="/admin/orders"
-          className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-volt hover:text-ink transition-all flex items-center justify-between"
+        <div className="mb-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+         <Link 
+          to="/admin/orders" 
+          className="p-6 rounded-2xl bg-volt text-ink hover:bg-bone transition-all flex items-center justify-between font-mono uppercase tracking-wider"
          >
           <span className="font-bold text-lg">Manage Orders</span>
           <span className="text-2xl">→</span>
          </Link>
-        </div>
-
-        <div className="mb-10">
-          <Link
-            to="/admin/tracking"
-            className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-volt hover:text-ink transition-all flex items-center justify-between"
+        {/* --- ADDED TRACKING NAVIGATION LINK --- */}
+          <Link 
+            to="/admin/tracking" 
+            className="p-6 rounded-2xl bg-volt text-ink hover:bg-bone transition-all flex items-center justify-between font-mono uppercase tracking-wider"
           >
             <span className="font-bold text-lg">Manage Shipment Tracking</span>
             <span className="text-2xl">→</span>

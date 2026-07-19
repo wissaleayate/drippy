@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { CartProvider } from './context/CartContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import CartUI from './components/CartUI';
 import Nav from './components/Nav';
@@ -50,10 +51,12 @@ function Home() {
 export default function App() {
   return (
     <AuthProvider>
-      <CartProvider>
-        <Toaster position="top-right" />
-        
-        <Routes>
+    <ThemeProvider>
+    <CartProvider>
+      {/* Toaster is now inside the Provider and the main App component */}
+      <Toaster position="top-right" />
+      
+      <Routes>
           <Route path="/" element={<Home />} />
           
           {/* Auth Routes */}
@@ -94,8 +97,9 @@ export default function App() {
           {/* Route for Shareable Links */}
           <Route path="/products/uuid/:id" element={<ProductDetailsPage />} />
         </Routes>
-        <CartUI />
-      </CartProvider>
+      <CartUI />
+    </CartProvider>
+    </ThemeProvider>
     </AuthProvider>
   );
 }
