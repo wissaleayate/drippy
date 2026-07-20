@@ -19,7 +19,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart }: Prod
 
   const handleShare = () => {
     // Generates the shareable link based on your dynamic product uuid route
-    const productUrl = `${window.location.origin}/products/uuid/${product.uuid}`;
+    const productUrl = `${window.location.origin}/products/uuid/${product.id}`;
     navigator.clipboard.writeText(productUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

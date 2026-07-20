@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LanguageContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, Trash2, Plus, Minus, CheckCircle2, ArrowRight, Printer, Copy, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -22,6 +24,8 @@ interface OrderResponse {
 
 export default function CartUI() {
   const { cart, isCartOpen, closeCart, updateQuantity, removeFromCart, clearCart, toastMessage, showToast } = useCart();
+  const { user } = useAuth();
+  const { t } = useLang();
 
   const [isCheckoutSuccess, setIsCheckoutSuccess] = useState(false);
   const [customerName, setCustomerName] = useState('');
@@ -99,7 +103,16 @@ export default function CartUI() {
       // Store the response details to display on the receipt
       setCreatedOrder(data);
       setIsCheckoutSuccess(true);
-      
+
+      // Record purchased product IDs so verified-purchase gating works
+      if (user) {
+        const storageKey = `drippy_purchases_${user.id}`;
+        const existing: string[] = JSON.parse(localStorage.getItem(storageKey) ?? '[]');
+        const newIds = cart.map((item) => item.product.id);
+        const merged = Array.from(new Set([...existing, ...newIds]));
+        localStorage.setItem(storageKey, JSON.stringify(merged));
+      }
+
       clearCart();
       closeCart();
       setCustomerName('');
@@ -148,7 +161,7 @@ export default function CartUI() {
       {/* Cart Drawer */}
       <AnimatePresence>
         {isCartOpen && (
-          <div className="fixed inset-0 z-50 overflow-hidden print:hidden">
+          <div className="fixed inset-0 z-50 overflow-hidden print:hidden" role="dialog" aria-modal="true" aria-label={t.cart_title}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -157,18 +170,18 @@ export default function CartUI() {
               className="absolute inset-0 bg-ink/80 backdrop-blur-sm transition-opacity"
             />
 
-            <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div className="absolute inset-y-0 end-0 max-w-full flex ps-10">
               <motion.div
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-                className="w-screen max-w-md bg-zinc border-l border-white/10 shadow-2xl flex flex-col text-bone"
+                className="w-screen max-w-md bg-zinc border-s border-white/10 shadow-2xl flex flex-col text-bone"
               >
                 <div className="p-6 border-b border-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ShoppingBag className="w-5 h-5 text-volt" />
-                    <h3 className="text-base font-bold text-bone">Shopping Bag</h3>
+                    <h3 className="text-base font-bold text-bone">{t.cart_title}</h3>
                     <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-volt/10 text-volt">
                       {cartItemCount}
                     </span>
@@ -178,7 +191,7 @@ export default function CartUI() {
                     onClick={closeCart}
                     className="px-4 py-2.5 rounded-lg border border-volt text-volt text-[11px] font-bold tracking-wider uppercase hover:bg-volt/10 transition-colors cursor-pointer inline-block"
                   >
-                    Start Shopping
+                    {t.cart_start_shopping}
                   </Link>
                 </div>
 
@@ -205,10 +218,10 @@ export default function CartUI() {
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
-                            <span className="text-[10px] font-semibold text-ash">Brand: {item.product.brand}</span>
+                            <span className="text-[10px] font-semibold text-ash">{t.cart_brand} {item.product.brand}</span>
                             <div className="mt-1">
                               <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-white/[0.05] text-bone">
-                                Size: {item.size}
+                                {t.cart_size} {item.size}
                               </span>
                             </div>
                           </div>
@@ -240,9 +253,9 @@ export default function CartUI() {
                       <div className="h-12 w-12 rounded-full bg-volt/10 text-volt flex items-center justify-center mb-4">
                         <ShoppingBag className="w-5 h-5" />
                       </div>
-                      <h4 className="text-sm font-bold text-bone mb-1">Your bag is empty</h4>
+                      <h4 className="text-sm font-bold text-bone mb-1">{t.cart_empty}</h4>
                       <p className="text-xs text-ash leading-relaxed">
-                        Explore our curation and find comfortable silhouettes designed to last.
+                        {t.cart_empty_sub}
                       </p>
                     </div>
                   )}
@@ -252,23 +265,23 @@ export default function CartUI() {
                   <div className="p-6 border-t border-white/5 bg-white/[0.01] space-y-4">
                     <div className="space-y-1.5 text-xs font-medium text-ash">
                       <div className="flex justify-between">
-                        <span>Subtotal</span>
+                        <span>{t.cart_subtotal}</span>
                         <span className="text-bone font-bold font-mono">{formatDA(cartSubtotal)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Est. Shipping</span>
+                        <span>{t.cart_shipping}</span>
                         {shippingFee === 0 ? (
-                          <span className="text-volt font-bold font-mono">FREE</span>
+                          <span className="text-volt font-bold font-mono">{t.cart_free}</span>
                         ) : (
                           <span className="text-bone font-bold font-mono">{formatDA(shippingFee)}</span>
                         )}
                       </div>
                       <div className="flex justify-between">
-                        <span>Est. Tax (8%)</span>
+                        <span>{t.cart_tax}</span>
                         <span className="text-bone font-bold font-mono">{formatDA(estimatedTax)}</span>
                       </div>
                       <div className="pt-3 border-t border-white/5 flex justify-between text-sm font-bold text-bone">
-                        <span>Total Amount</span>
+                        <span>{t.cart_total}</span>
                         <span className="text-base text-volt font-black font-mono">{formatDA(cartTotal)}</span>
                       </div>
                     </div>
@@ -276,7 +289,7 @@ export default function CartUI() {
                     <div className="space-y-2">
                       <input
                         type="text"
-                        placeholder="Full Name"
+                        placeholder={t.cart_name_placeholder}
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
                         className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
@@ -284,7 +297,7 @@ export default function CartUI() {
                       <input
                         type="tel"
                         inputMode="numeric"
-                        placeholder="Phone Number"
+                        placeholder={t.cart_phone_placeholder}
                         value={customerPhone}
                         onChange={(e) => setCustomerPhone(e.target.value.replace(/[^0-9]/g, ''))}
                         maxLength={15}
@@ -292,7 +305,7 @@ export default function CartUI() {
                       />
                       <input
                         type="text"
-                        placeholder="Delivery Address"
+                        placeholder={t.cart_address_placeholder}
                         value={customerAddress}
                         onChange={(e) => setCustomerAddress(e.target.value)}
                         className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
@@ -304,7 +317,7 @@ export default function CartUI() {
                       disabled={isSubmittingOrder}
                       className="w-full py-3.5 rounded-2xl bg-volt text-ink text-xs font-mono font-bold tracking-wider uppercase hover:bg-bone transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-volt/5 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <span>{isSubmittingOrder ? 'Placing Order...' : 'Proceed to Secure Checkout'}</span>
+                      <span>{isSubmittingOrder ? t.cart_placing : t.cart_checkout}</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -342,11 +355,11 @@ export default function CartUI() {
                   <CheckCircle2 className="w-6 h-6 stroke-[2]" />
                 </div>
                 <h3 className="text-lg font-black text-bone tracking-tight mb-1">
-                  Order Received!
-                </h3>
-                <p className="text-xs text-ash mb-4">
-                  Save your Order Key below to track this order later.
-                </p>
+                    {t.cart_order_received}
+                  </h3>
+                  <p className="text-xs text-ash mb-4">
+                    {t.cart_save_key}
+                  </p>
 
                 <button
                   onClick={handleCopyOrderKey}
@@ -360,11 +373,11 @@ export default function CartUI() {
                   <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider shrink-0">
                     {orderKeyCopied ? (
                       <>
-                        <Check className="w-3.5 h-3.5" /> Copied!
+                        <Check className="w-3.5 h-3.5" /> {t.cart_copied}
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" /> Copy Key
+                        <Copy className="w-3.5 h-3.5" /> {t.cart_copy_key}
                       </>
                     )}
                   </span>
@@ -378,7 +391,7 @@ export default function CartUI() {
                 <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4 print:border-black">
                   <div>
                     <h2 className="text-xl font-black text-bone tracking-wider print:text-black">NK STORE</h2>
-                    <p className="text-[10px] text-ash uppercase tracking-wider print:text-black">Order Receipt / Bon d'achat</p>
+                    <p className="text-[10px] text-ash uppercase tracking-wider print:text-black">{t.cart_receipt}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs font-mono font-bold text-volt print:text-black">Order N°: #{createdOrder.id}</p>
@@ -389,19 +402,19 @@ export default function CartUI() {
                 {/* Customer Details */}
                 <div className="grid grid-cols-2 gap-4 text-xs mb-6 border-b border-white/5 pb-4 print:border-black">
                   <div>
-                    <span className="text-[10px] text-ash block uppercase font-mono print:text-black">Customer Details</span>
+                    <span className="text-[10px] text-ash block uppercase font-mono print:text-black">{t.cart_customer_details}</span>
                     <strong className="text-bone print:text-black">{createdOrder.customer}</strong>
                     <span className="block text-ash print:text-black">{createdOrder.phone}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-ash block uppercase font-mono print:text-black">Ship to</span>
+                    <span className="text-[10px] text-ash block uppercase font-mono print:text-black">{t.cart_ship_to}</span>
                     <p className="text-ash leading-snug print:text-black">{createdOrder.address}</p>
                   </div>
                 </div>
 
                 {/* Products Purchased Table */}
                 <div className="space-y-3 mb-6">
-                  <span className="text-[10px] text-ash block uppercase font-mono mb-2 print:text-black">Purchased Items</span>
+                  <span className="text-[10px] text-ash block uppercase font-mono mb-2 print:text-black">{t.cart_purchased_items}</span>
                   {getReceiptItems().map((item: any, idx: number) => (
                     <div key={idx} className="flex justify-between items-center text-xs pb-2.5 border-b border-white/[0.03] print:border-gray-200">
                       <div>
@@ -433,7 +446,7 @@ export default function CartUI() {
                     <span>{createdOrder.total_price > 15000 ? 'FREE' : '500 DA'}</span>
                   </div>
                   <div className="flex justify-between w-full max-w-xs text-sm font-bold text-bone pt-2 border-t border-white/5 print:text-black print:border-black">
-                    <span>Total Paid:</span>
+                    <span>{t.cart_total_paid}</span>
                     <span className="text-volt print:text-black">{formatDA(createdOrder.total_price > 15000 ? createdOrder.total_price : createdOrder.total_price + 500)}</span>
                   </div>
                 </div>
@@ -447,13 +460,13 @@ export default function CartUI() {
                   className="flex-1 py-3 bg-white/[0.05] border border-white/10 text-bone hover:bg-white/10 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Printer className="w-4 h-4" />
-                  Print Receipt (Bon)
+                  {t.cart_print}
                 </button>
                 <button
                   onClick={() => setIsCheckoutSuccess(false)}
                   className="flex-1 py-3 bg-volt text-ink rounded-xl text-xs font-mono font-bold uppercase tracking-wider hover:bg-bone transition-all duration-300 cursor-pointer shadow-md shadow-volt/5"
                 >
-                  Close Receipt
+                  {t.cart_close}
                 </button>
               </div>
             </motion.div>

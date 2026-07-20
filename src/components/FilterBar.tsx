@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Search, SlidersHorizontal, X, RotateCcw, ChevronDown } from 'lucide-react';
 import { FilterState, Category } from '../types';
 import { ALL_BRANDS, ALL_SIZES } from '../data/product';
+import { useLang } from '../context/LanguageContext';
 
 interface FilterBarProps {
   filters: FilterState;
@@ -18,6 +19,7 @@ export default function FilterBar({
   selectedCategory,
   totalResults,
 }: FilterBarProps) {
+  const { t } = useLang();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isFiltered =
@@ -59,20 +61,21 @@ export default function FilterBar({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto mb-10 px-4" id="filter-bar-container">
+    <div className="w-full max-w-5xl mx-auto mb-10 px-3 sm:px-4" id="filter-bar-container">
       {/* Search Input and Filter Toggle Icon Row */}
-      <div className="relative flex flex-col md:flex-row gap-4 items-stretch mb-4">
+      <div className="relative flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch mb-4">
         <div className="relative flex-1 group">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[#8a7f72] group-focus-within:text-volt transition-colors">
             <Search className="w-5 h-5 stroke-[1.8]" />
           </div>
           <input
-            type="text"
+            type="search"
             value={filters.searchQuery}
             onChange={handleSearchChange}
-            placeholder="Search products by title, description or details..."
-            className="w-full pl-12 pr-4 py-3.5 bg-[#221407] border border-white/10 rounded-2xl hover:border-white/20 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none text-sm transition-all placeholder:text-[#8a7f72] text-[#f0e6cc] font-medium"
+            placeholder={t.fb_search_placeholder}
+            className="w-full pl-12 pr-4 py-3.5 bg-zinc border border-white/10 rounded-2xl hover:border-white/20 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none text-sm transition-all placeholder:text-ash text-bone font-medium"
             id="product-search-input"
+            aria-label={t.fb_search_placeholder}
           />
           {filters.searchQuery && (
             <button
@@ -89,7 +92,7 @@ export default function FilterBar({
         <div className="flex gap-3">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`flex items-center gap-2 px-5 py-3.5 rounded-2xl border transition-all text-sm font-semibold select-none cursor-pointer ${
+            className={`tap-target flex items-center gap-2 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl border transition-all text-sm font-semibold select-none cursor-pointer ${
               isExpanded || isFiltered
                 ? 'bg-volt/10 border-volt/35 text-volt hover:bg-volt/20'
                 : 'bg-[#221407] border-white/10 text-[#f0e6cc] hover:bg-white/[0.06] hover:border-white/20'
@@ -97,7 +100,7 @@ export default function FilterBar({
             id="filter-toggle-btn"
           >
             <SlidersHorizontal className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`} />
-            <span>Filters</span>
+            <span>{t.fb_filters}</span>
             {isFiltered && (
               <span className="flex h-2 w-2 rounded-full bg-volt animate-pulse" />
             )}
@@ -106,16 +109,17 @@ export default function FilterBar({
           {/* Sort Dropdown */}
           <div className="relative flex-1 sm:flex-initial">
             <select
-              value={filters.sortBy}
-              onChange={(e) => handleSortChange(e.target.value)}
-              className="appearance-none bg-[#221407] border border-white/10 rounded-2xl px-5 py-3.5 pr-10 text-sm font-semibold text-[#f0e6cc] hover:border-white/20 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none transition-all cursor-pointer w-full"
-              id="product-sort-select"
-            >
-              <option value="featured" className="bg-zinc text-bone">Sort: Featured</option>
-              <option value="price-low-to-high" className="bg-zinc text-bone">Price: Low to High</option>
-              <option value="price-high-to-low" className="bg-zinc text-bone">Price: High to Low</option>
-              <option value="rating" className="bg-zinc text-bone">Top Rated</option>
-            </select>
+                value={filters.sortBy}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="appearance-none bg-zinc border border-white/10 rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 pr-10 text-sm font-semibold text-bone hover:border-white/20 focus:border-volt/50 focus:ring-4 focus:ring-volt/10 outline-none transition-all cursor-pointer w-full"
+                id="product-sort-select"
+                aria-label="Sort products"
+              >
+                <option value="featured" className="bg-zinc text-bone">{t.fb_sort_featured}</option>
+                <option value="price-low-to-high" className="bg-zinc text-bone">{t.fb_sort_price_asc}</option>
+                <option value="price-high-to-low" className="bg-zinc text-bone">{t.fb_sort_price_desc}</option>
+                <option value="rating" className="bg-zinc text-bone">{t.fb_sort_rating}</option>
+              </select>
             <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#8a7f72]">
               <ChevronDown className="w-4 h-4" />
             </div>
@@ -134,43 +138,43 @@ export default function FilterBar({
             className="overflow-hidden mb-6"
             id="collapsible-filter-panel"
           >
-            <div className="p-6 bg-[#221407] border border-white/10 rounded-3xl shadow-lg mt-2 grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Brand Filter */}
-              <div className="flex flex-col gap-3">
-                <span className="text-xs font-bold text-[#8a7f72] uppercase tracking-wider font-mono">Brand</span>
-                <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+            <div className="p-4 sm:p-6 bg-zinc border border-white/10 rounded-3xl shadow-lg mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-8">
+            {/* Brand Filter */}
+            <div className="flex flex-col gap-3">
+              <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">{t.fb_brand}</span>
+              <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+                <button
+                  onClick={() => handleBrandChange('All')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                    filters.brand === 'All'
+                      ? 'bg-volt border-volt text-ink font-bold shadow-xs'
+                      : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
+                  }`}
+                  id="brand-filter-all"
+                >
+                  {t.fb_all_brands}
+                </button>
+                {ALL_BRANDS.map((b) => (
                   <button
-                    onClick={() => handleBrandChange('All')}
+                    key={b}
+                    onClick={() => handleBrandChange(b)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
-                      filters.brand === 'All'
-                        ? 'bg-volt border-volt text-[#1a0e05] font-bold shadow-xs'
-                        : 'bg-white/[0.04] border-white/10 text-[#f0e6cc] hover:border-white/20 hover:bg-white/[0.08]'
+                      filters.brand === b
+                        ? 'bg-volt border-volt text-ink font-bold shadow-xs'
+                        : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
                     }`}
-                    id="brand-filter-all"
+                    id={`brand-filter-${b.toLowerCase().replace(/\s+/g, '-')}`}
                   >
-                    All Brands
+                    {b}
                   </button>
-                  {ALL_BRANDS.map((b) => (
-                    <button
-                      key={b}
-                      onClick={() => handleBrandChange(b)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
-                        filters.brand === b
-                          ? 'bg-volt border-volt text-[#1a0e05] font-bold shadow-xs'
-                          : 'bg-white/[0.04] border-white/10 text-[#f0e6cc] hover:border-white/20 hover:bg-white/[0.08]'
-                      }`}
-                      id={`brand-filter-${b.toLowerCase().replace(/\s+/g, '-')}`}
-                    >
-                      {b}
-                    </button>
-                  ))}
-                </div>
+                ))}
               </div>
+            </div>
 
-              {/* Price Range Filter */}
-              <div className="flex flex-col gap-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-[#8a7f72] uppercase tracking-wider font-mono">Max Price</span>
+            {/* Price Range Filter */}
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">{t.fb_max_price}</span>
                   <span className="text-sm font-bold text-volt bg-volt/10 px-2 py-0.5 rounded-lg font-mono">
                     ${filters.maxPrice}
                   </span>
@@ -195,7 +199,7 @@ export default function FilterBar({
 
               {/* Size Filter */}
               <div className="flex flex-col gap-3">
-                <span className="text-xs font-bold text-[#8a7f72] uppercase tracking-wider font-mono">Size</span>
+                <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">{t.fb_size}</span>
                 <div className="flex flex-wrap gap-2">
                   {ALL_SIZES.map((size) => (
                     <button
@@ -203,10 +207,12 @@ export default function FilterBar({
                       onClick={() => handleSizeChange(size)}
                       className={`h-9 min-w-[36px] px-2 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center justify-center ${
                         filters.size === size
-                          ? 'bg-volt border-volt text-[#1a0e05] hover:bg-bone'
-                          : 'bg-white/[0.04] border-white/10 text-[#f0e6cc] hover:border-white/20 hover:bg-white/[0.08]'
+                          ? 'bg-volt border-volt text-ink hover:bg-bone'
+                          : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
                       }`}
                       id={`size-filter-${size}`}
+                      aria-pressed={filters.size === size}
+                      aria-label={`Size ${size}`}
                     >
                       {size}
                     </button>
@@ -217,62 +223,77 @@ export default function FilterBar({
 
             {/* Active Filters Summary Drawer */}
             {isFiltered && (
-              <div className="flex items-center justify-between mt-3 px-2">
+              <div className="flex flex-wrap items-center justify-between mt-3 px-2 gap-3">
                 <div className="flex flex-wrap gap-2 items-center">
-                  <span className="text-xs font-semibold text-[#8a7f72]">Active filters:</span>
+                  <span className="text-xs font-semibold text-ash">{t.fb_active_filters}</span>
                   {filters.department && filters.department !== 'all' && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-volt/10 text-volt border border-volt/20">
-                      Dept: {filters.department.charAt(0).toUpperCase() + filters.department.slice(1)}
-                      <X
-                        className="w-3 h-3 cursor-pointer text-volt/70 hover:text-volt"
+                      {t.fb_dept} {filters.department.charAt(0).toUpperCase() + filters.department.slice(1)}
+                      <button
+                        className="cursor-pointer text-volt/70 hover:text-volt"
                         onClick={() => setFilters((prev) => ({ ...prev, department: 'all' }))}
-                      />
+                        aria-label="Remove department filter"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   )}
                   {filters.brand !== 'All' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
-                      Brand: {filters.brand}
-                      <X
-                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-bone border border-white/10">
+                      {t.fb_brand_label} {filters.brand}
+                      <button
+                        className="cursor-pointer text-ash hover:text-bone"
                         onClick={() => handleBrandChange('All')}
-                      />
+                        aria-label="Remove brand filter"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   )}
                   {filters.maxPrice < 250 && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
-                      Under ${filters.maxPrice}
-                      <X
-                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-bone border border-white/10">
+                      {t.fb_under}{filters.maxPrice}
+                      <button
+                        className="cursor-pointer text-ash hover:text-bone"
                         onClick={() => setFilters((prev) => ({ ...prev, maxPrice: 250 }))}
-                      />
+                        aria-label="Remove price filter"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   )}
                   {filters.size !== 'All' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
-                      Size: {filters.size}
-                      <X
-                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-bone border border-white/10">
+                      {t.fb_size_label} {filters.size}
+                      <button
+                        className="cursor-pointer text-ash hover:text-bone"
                         onClick={() => handleSizeChange(filters.size)}
-                      />
+                        aria-label="Remove size filter"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   )}
                   {filters.sortBy !== 'featured' && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-[#f0e6cc] border border-white/10">
-                      Sorted
-                      <X
-                        className="w-3 h-3 cursor-pointer text-[#8a7f72] hover:text-[#f0e6cc]"
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-bone border border-white/10">
+                      {t.fb_sorted}
+                      <button
+                        className="cursor-pointer text-ash hover:text-bone"
                         onClick={() => handleSortChange('featured')}
-                      />
+                        aria-label="Remove sort filter"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
                     </span>
                   )}
                 </div>
                 <button
                   onClick={resetFilters}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-450 hover:underline cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-400 hover:underline cursor-pointer tap-target"
                   id="reset-all-filters-btn"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  Reset Filters
+                  <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+                  {t.fb_reset}
                 </button>
               </div>
             )}
@@ -281,9 +302,9 @@ export default function FilterBar({
       </AnimatePresence>
 
       {/* Results Count Summary */}
-      <div className="flex items-center justify-between text-xs font-bold text-[#8a7f72] tracking-wider uppercase px-2 mb-2">
-        <span>Category: {selectedCategory === 'all' ? 'All Products' : selectedCategory}</span>
-        <span>Showing {totalResults} {totalResults === 1 ? 'Product' : 'Products'}</span>
+      <div className="flex items-center justify-between text-xs font-bold text-[#8a7f72] tracking-wider uppercase px-2 mb-2 flex-wrap gap-2">
+        <span>{t.fb_category} {selectedCategory === 'all' ? t.fb_all_products : selectedCategory}</span>
+        <span>{t.fb_showing} {totalResults} {totalResults === 1 ? t.fb_product : t.fb_products}</span>
       </div>
     </div>
   );

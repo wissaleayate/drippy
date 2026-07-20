@@ -13,22 +13,39 @@
   --color-zinc: #221407;
 }
 
+/* ─── Semantic CSS variables (Dark mode = default) ─────────────────────────── */
 :root {
-  --color-ink: #1a0e05;
-  --color-bone: #f0e6cc;
-  --color-ash: #8a7f72;
+  --bg-primary:   #1a0e05;   /* ink  */
+  --bg-surface:   #140c03;   /* carbon */
+  --bg-elevated:  #221407;   /* zinc */
+  --text-primary: #f0e6cc;   /* bone */
+  --text-muted:   #8a7f72;   /* ash */
+
+  /* Keep raw tokens too */
+  --color-ink:    #1a0e05;
+  --color-bone:   #f0e6cc;
+  --color-ash:    #8a7f72;
   --color-carbon: #140c03;
-  --color-zinc: #221407;
+  --color-zinc:   #221407;
 }
 
+/* ─── Light mode overrides ──────────────────────────────────────────────────── */
 html.light {
-  --color-ink: #ffffff;
-  --color-bone: #1a0e05;
-  --color-ash: #6b5f50;
+  --bg-primary:   #f0e6cc;
+  --bg-surface:   #f7f7f7;
+  --bg-elevated:  #f0f0f0;
+  --text-primary: #1a0e05;
+  --text-muted:   #6b5f50;
+
+  /* Swap ink ↔ bone so components using var(--color-ink) / var(--color-bone) adapt */
+  --color-ink:    #f0e6cc;
+  --color-bone:   #1a0e05;
+  --color-ash:    #6b5f50;
   --color-carbon: #f7f7f7;
-  --color-zinc: #f0f0f0;
+  --color-zinc:   #f0f0f0;
 }
 
+/* ─── Base ──────────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
@@ -41,17 +58,55 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Scrollbar */
+/* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #1a0e05; }
+::-webkit-scrollbar-track { background: var(--color-ink); }
 ::-webkit-scrollbar-thumb { background: #3d2a10; border-radius: 2px; }
 
-/* Display font utility */
+/* ─── RTL utilities ─────────────────────────────────────────────────────────── */
+[dir="rtl"] .font-display { letter-spacing: 0; }
+[dir="rtl"] .animate-marquee { animation-direction: reverse; }
+[dir="rtl"] .volt-underline::after { left: auto; right: 0; }
+
+/* Flip directional icons in RTL */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* RTL-aware spacing helpers */
+[dir="rtl"] .ltr-only { display: none; }
+[dir="ltr"] .rtl-only { display: none; }
+
+/* Arabic font enhancement */
+[lang="ar"] {
+  font-family: 'Outfit', 'Noto Sans Arabic', 'Segoe UI', Arial, sans-serif;
+  line-height: 1.8;
+}
+
+[lang="ar"] .font-display {
+  font-family: 'Barlow Condensed', 'Cairo', 'Noto Sans Arabic', sans-serif;
+}
+
+/* ─── Touch-friendly minimum tap targets ────────────────────────────────────── */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ─── Typography utilities ──────────────────────────────────────────────────── */
 .font-display {
   font-family: 'Barlow Condensed', sans-serif;
 }
 
-/* Marquee animation */
+/* Responsive typography */
+.text-responsive-hero {
+  font-size: clamp(2rem, 8vw, 7rem);
+}
+.text-responsive-section {
+  font-size: clamp(1.5rem, 4vw, 4.5rem);
+}
+
+/* ─── Marquee animation ─────────────────────────────────────────────────────── */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -61,7 +116,7 @@ body {
   animation: marquee 24s linear infinite;
 }
 
-/* Fade-up animation */
+/* ─── Fade-up animation ─────────────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(40px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -75,7 +130,7 @@ body {
 .animate-fade-up-delay-2 { animation-delay: 0.3s; }
 .animate-fade-up-delay-3 { animation-delay: 0.45s; }
 
-/* Slide-in from right */
+/* ─── Slide-in from right ───────────────────────────────────────────────────── */
 @keyframes slideRight {
   from { opacity: 0; transform: translateX(60px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -86,7 +141,7 @@ body {
   animation-delay: 0.2s;
 }
 
-/* Hover scale transition */
+/* ─── Hover scale transition ────────────────────────────────────────────────── */
 .hover-scale {
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -94,7 +149,7 @@ body {
   transform: scale(1.03);
 }
 
-/* Image overlay on hover */
+/* ─── Product card overlay ──────────────────────────────────────────────────── */
 .product-card .overlay {
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -103,7 +158,7 @@ body {
   opacity: 1;
 }
 
-/* Volt underline animation */
+/* ─── Volt underline animation ──────────────────────────────────────────────── */
 .volt-underline {
   position: relative;
   display: inline-block;
@@ -122,28 +177,54 @@ body {
   width: 100%;
 }
 
-/* Number counter style */
+/* RTL volt-underline */
+[dir="rtl"] .volt-underline::after {
+  left: auto;
+  right: 0;
+}
+
+/* ─── Number counter style ──────────────────────────────────────────────────── */
 .stat-number {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900;
   line-height: 0.9;
 }
-/* Print stylesheet logic to print only the receipt */
+
+/* ─── Accessible focus ring ─────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #f5a623;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─── Responsive container helper ──────────────────────────────────────────── */
+.page-container {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+/* ─── Responsive table ──────────────────────────────────────────────────────── */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Print receipt ─────────────────────────────────────────────────────────── */
 @media print {
-  /* 1. Hide the entire screen by default */
   body {
     visibility: hidden;
     background: white !important;
   }
 
-  /* 2. ONLY show the receipt container and force it to be visible */
   #receipt-paper, #receipt-paper * {
     visibility: visible !important;
   }
 
-  /* 3. Position the receipt perfectly on the white printed paper */
   #receipt-paper {
-    position: fixed; /* Use fixed to pull it out of the hidden layout flow */
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
@@ -156,7 +237,6 @@ body {
     box-shadow: none !important;
   }
 
-  /* 4. Force black text on white paper for high-quality printing */
   #receipt-paper * {
     color: #000000 !important;
   }

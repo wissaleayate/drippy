@@ -17,6 +17,7 @@ import {
 
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import { useLang } from '@/context/LanguageContext';
 
 interface RealOrder {
   id: number;
@@ -27,32 +28,8 @@ interface RealOrder {
   status: string;
 }
 
-// Maps the real backend statuses to display info.
-// allowed_status in backend/app.py: "Nouveau", "Confirmé", "Ne répond pas", "Expédiée"
-const STATUS_INFO: Record<string, { label: string; color: string; description: string }> = {
-  'Nouveau': {
-    label: 'Order Received',
-    color: 'text-volt',
-    description: 'Your order has been received and is awaiting confirmation.',
-  },
-  'Confirmé': {
-    label: 'Confirmed',
-    color: 'text-emerald-400',
-    description: 'Your order has been confirmed and is being prepared.',
-  },
-  'Ne répond pas': {
-    label: 'Attempting Contact',
-    color: 'text-amber-400',
-    description: "We tried to reach you to confirm your order but couldn't get through. Please check your phone or contact us.",
-  },
-  'Expédiée': {
-    label: 'Shipped',
-    color: 'text-sky-400',
-    description: 'Your order is on its way to you.',
-  },
-};
-
 export default function TrackingPage() {
+  const { t } = useLang();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeOrder, setActiveOrder] = useState<RealOrder | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +66,12 @@ export default function TrackingPage() {
     }
   };
 
+  const STATUS_INFO: Record<string, { label: string; color: string; description: string }> = {
+    'Nouveau': { label: t.track_status_received, color: 'text-volt', description: t.track_status_received_desc },
+    'Confirmé': { label: t.track_status_confirmed, color: 'text-emerald-400', description: t.track_status_confirmed_desc },
+    'Ne répond pas': { label: t.track_status_contact, color: 'text-amber-400', description: t.track_status_contact_desc },
+    'Expédiée': { label: t.track_status_shipped, color: 'text-sky-400', description: t.track_status_shipped_desc },
+  };
   const statusInfo = activeOrder ? STATUS_INFO[activeOrder.status] : null;
 
   return (
@@ -97,44 +80,24 @@ export default function TrackingPage() {
 
       <main className="flex-grow pt-24 pb-20 px-4 sm:px-6 md:px-10 max-w-[1000px] mx-auto w-full">
 
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-12 mt-4"
-        >
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="text-center mb-12 mt-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/[0.02] mb-4">
             <span className="h-1.5 w-1.5 rounded-full bg-volt animate-pulse" />
-            <span className="text-[10px] font-mono tracking-widest text-ash uppercase">Order Status</span>
+            <span className="text-[10px] font-mono tracking-widest text-ash uppercase">{t.track_eyebrow}</span>
           </div>
-          <h1 className="text-5xl sm:text-7xl font-display font-black tracking-tight text-bone uppercase mb-4">
-            Track Your Order
-          </h1>
-          <p className="text-sm sm:text-base text-ash max-w-lg mx-auto font-medium">
-            Enter your Unique Order Key (from your checkout confirmation) to check its current status.
-          </p>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-black tracking-tight text-bone uppercase mb-4">{t.track_heading}</h1>
+          <p className="text-sm sm:text-base text-ash max-w-lg mx-auto font-medium">{t.track_subheading}</p>
         </motion.div>
 
-        {/* Search bar */}
         <div className="max-w-xl mx-auto mb-12">
           <form onSubmit={handleSearch} className="relative">
             <div className="relative flex items-center bg-white/[0.02] border border-white/10 hover:border-white/20 focus-within:border-volt/50 rounded-2xl p-1.5 transition-all duration-300 backdrop-blur-md">
               <Search className="w-5 h-5 text-ash ml-4 flex-shrink-0" />
-              <input
-                type="text"
-                // REMOVED inputMode="numeric" to support alphabetic UUID strings safely
-                placeholder="Enter your Unique Order UUID Key..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+              <input type="text" placeholder={t.track_placeholder} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-0 outline-0 py-3 px-4 text-sm sm:text-base text-bone placeholder:text-ash/60 focus:ring-0 focus:outline-none"
               />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="bg-volt text-ink font-mono font-bold text-xs uppercase px-6 py-3 rounded-xl hover:bg-bone transition-all duration-300 cursor-pointer shadow-lg shadow-volt/10 disabled:opacity-50"
-              >
-                {isLoading ? 'Searching...' : 'Track'}
+              <button type="submit" disabled={isLoading} className="tap-target bg-volt text-ink font-mono font-bold text-xs uppercase px-4 sm:px-6 py-3 rounded-xl hover:bg-bone transition-all duration-300 cursor-pointer shadow-lg shadow-volt/10 disabled:opacity-50">
+                {isLoading ? t.track_searching : t.track_btn}
               </button>
             </div>
             {errorMsg && (
@@ -167,16 +130,12 @@ export default function TrackingPage() {
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-6">
                   <div>
-                    <span className="text-xs font-mono uppercase tracking-widest text-ash">Current Status</span>
-                    <h2 className={`text-2xl sm:text-3xl font-display font-black uppercase mt-1 ${statusInfo.color}`}>
-                      {statusInfo.label}
-                    </h2>
+                    <span className="text-xs font-mono uppercase tracking-widest text-ash">{t.track_status}</span>
+                    <h2 className={`text-2xl sm:text-3xl font-display font-black uppercase mt-1 ${statusInfo.color}`}>{statusInfo.label}</h2>
                   </div>
                   <div className="text-left sm:text-right max-w-xs overflow-hidden">
-                    <span className="text-xs font-mono uppercase tracking-widest text-ash">Unique Key</span>
-                    <p className="text-xs font-bold text-volt font-mono mt-1 break-all bg-white/[0.02] p-2 rounded-xl border border-white/5">
-                      {activeOrder.uuid}
-                    </p>
+                    <span className="text-xs font-mono uppercase tracking-widest text-ash">{t.track_unique_key}</span>
+                    <p className="text-xs font-bold text-volt font-mono mt-1 break-all bg-white/[0.02] p-2 rounded-xl border border-white/5">{activeOrder.uuid}</p>
                   </div>
                 </div>
 
@@ -186,81 +145,56 @@ export default function TrackingPage() {
               {/* Order details card */}
               <div className="rounded-3xl border border-white/5 bg-white/[0.01] p-6 sm:p-8 space-y-6">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-4">
-                  <div className="h-8 w-8 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt">
-                    <Info className="w-4 h-4" />
-                  </div>
-                  <h3 className="text-lg font-bold font-display uppercase tracking-wider text-bone">Order Details</h3>
+                  <div className="h-8 w-8 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt"><Info className="w-4 h-4" /></div>
+                  <h3 className="text-lg font-bold font-display uppercase tracking-wider text-bone">{t.track_order_details}</h3>
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
                   <div>
-                    <span className="text-xs font-mono text-ash uppercase block mb-1">Customer</span>
+                    <span className="text-xs font-mono text-ash uppercase block mb-1">{t.track_customer}</span>
                     <p className="text-bone font-medium">{activeOrder.customer}</p>
                   </div>
                   <div>
-                    <span className="text-xs font-mono text-ash uppercase block mb-1">Phone</span>
+                    <span className="text-xs font-mono text-ash uppercase block mb-1">{t.track_phone}</span>
                     <p className="text-bone font-medium">{activeOrder.phone}</p>
                   </div>
                   <div className="sm:col-span-2">
-                    <span className="text-xs font-mono text-ash uppercase block mb-1">Delivery Address</span>
+                    <span className="text-xs font-mono text-ash uppercase block mb-1">{t.track_delivery_address}</span>
                     <p className="text-bone font-medium leading-relaxed">{activeOrder.address}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Generic decorative panels */}
               <div className="rounded-3xl border border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent p-6 sm:p-8">
-                <h3 className="text-lg font-bold font-display uppercase tracking-wider text-bone mb-6 border-b border-white/5 pb-4">
-                  What Happens Next
-                </h3>
+                <h3 className="text-lg font-bold font-display uppercase tracking-wider text-bone mb-6 border-b border-white/5 pb-4">{t.track_what_next}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                   <div className="flex flex-col items-center gap-3">
-                    <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt">
-                      <Clock className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs text-ash leading-relaxed">We confirm your order and contact you if needed</p>
+                    <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt"><Clock className="w-5 h-5" /></div>
+                    <p className="text-xs text-ash leading-relaxed">{t.track_step1}</p>
                   </div>
                   <div className="flex flex-col items-center gap-3">
-                    <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt">
-                      <Package className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs text-ash leading-relaxed">Your items are prepared and packed for shipping</p>
+                    <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt"><Package className="w-5 h-5" /></div>
+                    <p className="text-xs text-ash leading-relaxed">{t.track_step2}</p>
                   </div>
                   <div className="flex flex-col items-center gap-3">
-                    <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt">
-                      <Truck className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs text-ash leading-relaxed">Your order ships to the address on file</p>
+                    <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt"><Truck className="w-5 h-5" /></div>
+                    <p className="text-xs text-ash leading-relaxed">{t.track_step3}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Support actions */}
               <div className="rounded-3xl border border-white/5 bg-white/[0.01] p-6 space-y-4">
-                <span className="text-xs font-mono uppercase tracking-widest text-ash block mb-2 text-center">Need Assistance?</span>
-
-                <button
-                  onClick={() => setShowSupportModal(true)}
-                  className="w-full py-4 px-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-volt/30 text-bone hover:text-volt transition-all duration-300 cursor-pointer flex items-center justify-between text-sm group"
-                >
+                <span className="text-xs font-mono uppercase tracking-widest text-ash block mb-2 text-center">{t.track_need_help}</span>
+                <button onClick={() => setShowSupportModal(true)} className="w-full py-4 px-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-volt/30 text-bone hover:text-volt transition-all duration-300 cursor-pointer flex items-center justify-between text-sm group">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-white/[0.05] group-hover:bg-volt/10 flex items-center justify-center text-ash group-hover:text-volt transition-all">
-                      <MessageSquare className="w-4 h-4" />
-                    </div>
-                    <span className="font-semibold tracking-wide">Live Chat Assistance</span>
+                    <div className="h-8 w-8 rounded-xl bg-white/[0.05] group-hover:bg-volt/10 flex items-center justify-center text-ash group-hover:text-volt transition-all"><MessageSquare className="w-4 h-4" /></div>
+                    <span className="font-semibold tracking-wide">{t.track_live_chat}</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-ash group-hover:text-volt transition-transform group-hover:translate-x-1" />
                 </button>
-
-                <button
-                  onClick={() => setShowSupportModal(true)}
-                  className="w-full py-4 px-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-volt/30 text-bone hover:text-volt transition-all duration-300 cursor-pointer flex items-center justify-between text-sm group"
-                >
+                <button onClick={() => setShowSupportModal(true)} className="w-full py-4 px-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-volt/30 text-bone hover:text-volt transition-all duration-300 cursor-pointer flex items-center justify-between text-sm group">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-white/[0.05] group-hover:bg-volt/10 flex items-center justify-center text-ash group-hover:text-volt transition-all">
-                      <PhoneCall className="w-4 h-4" />
-                    </div>
-                    <span className="font-semibold tracking-wide">Contact Support</span>
+                    <div className="h-8 w-8 rounded-xl bg-white/[0.05] group-hover:bg-volt/10 flex items-center justify-center text-ash group-hover:text-volt transition-all"><PhoneCall className="w-4 h-4" /></div>
+                    <span className="font-semibold tracking-wide">{t.track_contact_support}</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-ash group-hover:text-volt transition-transform group-hover:translate-x-1" />
                 </button>
@@ -269,15 +203,12 @@ export default function TrackingPage() {
           )}
         </AnimatePresence>
 
-        {/* Empty state before any search */}
         {!activeOrder && !isLoading && !errorMsg && (
           <div className="text-center py-16 max-w-md mx-auto">
             <div className="h-14 w-14 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-ash mx-auto mb-6">
               <MapPin className="w-6 h-6 stroke-[1.5]" />
             </div>
-            <p className="text-sm text-ash leading-relaxed">
-              Enter your Unique Order Key above to see your order's current status.
-            </p>
+            <p className="text-sm text-ash leading-relaxed">{t.track_empty}</p>
           </div>
         )}
 
@@ -323,8 +254,8 @@ export default function TrackingPage() {
                       <MessageSquare className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold font-display uppercase text-bone">NK. Support</h3>
-                      <p className="text-[10px] font-mono text-volt uppercase tracking-wider">We're here to help</p>
+                      <h3 className="text-xl font-bold font-display uppercase text-bone">{t.track_support_title}</h3>
+                      <p className="text-[10px] font-mono text-volt uppercase tracking-wider">{t.track_support_subtitle}</p>
                     </div>
                   </div>
 
@@ -336,7 +267,7 @@ export default function TrackingPage() {
                     className="space-y-4"
                   >
                     <div>
-                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">Subject</label>
+                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">{t.track_support_subject}</label>
                       <select className="w-full bg-white/[0.02] border border-white/10 rounded-xl py-3 px-4 text-sm text-bone focus:outline-none focus:border-volt/50 transition-colors">
                         <option value="delivery" className="bg-ink text-bone">Inquire about delivery timeline</option>
                         <option value="address" className="bg-ink text-bone">Modify delivery details</option>
@@ -346,7 +277,7 @@ export default function TrackingPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">Unique Order Key</label>
+                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">{t.track_support_order_key}</label>
                       <input
                         type="text"
                         defaultValue={activeOrder ? activeOrder.uuid : ''}
@@ -356,20 +287,17 @@ export default function TrackingPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">Message</label>
+                      <label className="block text-xs font-mono text-ash uppercase mb-1.5">{t.track_support_message}</label>
                       <textarea
                         rows={4}
                         required
-                        placeholder="Detail your request..."
+                        placeholder={t.track_support_message + '...'}
                         className="w-full bg-white/[0.02] border border-white/10 rounded-xl py-3 px-4 text-sm text-bone placeholder:text-ash/40 focus:outline-none focus:border-volt/50 transition-colors"
                       />
                     </div>
 
-                    <button
-                      type="submit"
-                      className="w-full py-4 mt-2 bg-volt text-ink font-mono font-bold uppercase text-xs rounded-xl hover:bg-bone transition-all duration-300 cursor-pointer shadow-lg shadow-volt/5"
-                    >
-                      Send Message
+                    <button type="submit" className="w-full py-4 mt-2 bg-volt text-ink font-mono font-bold uppercase text-xs rounded-xl hover:bg-bone transition-all duration-300 cursor-pointer shadow-lg shadow-volt/5">
+                      {t.track_support_send}
                     </button>
                   </form>
                 </>
@@ -378,18 +306,10 @@ export default function TrackingPage() {
                   <div className="h-14 w-14 rounded-full bg-volt/10 text-volt flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-bold font-display uppercase text-bone mb-2">Message Sent</h3>
-                  <p className="text-xs text-ash leading-relaxed mb-6">
-                    Thanks for reaching out. Our team will get back to you shortly.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setShowSupportModal(false);
-                      setSupportSubmitted(false);
-                    }}
-                    className="px-6 py-3 border border-white/10 hover:border-white/25 text-bone text-xs font-mono uppercase rounded-xl transition-all cursor-pointer bg-white/[0.01]"
-                  >
-                    Close Window
+                  <h3 className="text-xl font-bold font-display uppercase text-bone mb-2">{t.track_support_sent}</h3>
+                  <p className="text-xs text-ash leading-relaxed mb-6">{t.track_support_sent_sub}</p>
+                  <button onClick={() => { setShowSupportModal(false); setSupportSubmitted(false); }} className="px-6 py-3 border border-white/10 hover:border-white/25 text-bone text-xs font-mono uppercase rounded-xl transition-all cursor-pointer bg-white/[0.01]">
+                    {t.track_support_close}
                   </button>
                 </div>
               )}

@@ -1,45 +1,34 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-
-const sizes = ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
-const colors = ['#e8e0d4', '#c8ff00', '#e85d3a', '#0066cc']
+import { useLang } from '../context/LanguageContext'
 
 export default function FeaturedProduct() {
+  const { t } = useLang()
   const [selectedSize, setSelectedSize] = useState('')
   const [selectedColor, setSelectedColor] = useState(0)
 
+  const sizes = ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
+  const colors = ['#e8e0d4', '#c8ff00', '#e85d3a', '#0066cc']
+
   return (
-    <section className="bg-carbon py-20 md:py-32">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10">
-        <div className="flex items-center gap-4 mb-12">
+    <section className="bg-carbon py-16 sm:py-20 md:py-32">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
+        <div className="flex items-center gap-4 mb-8 sm:mb-12">
           <span className="w-8 h-px bg-volt" />
           <span className="text-volt text-xs tracking-[0.25em] uppercase" style={{ fontFamily: 'DM Mono, monospace' }}>
-            Featured Drop
+            {t.feat_eyebrow}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 items-center">
+          {/* Image */}
           <div className="relative group">
-            <div
-              className="absolute -inset-4 rounded-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-              style={{ background: 'radial-gradient(ellipse at 40% 60%, rgba(200,255,0,0.08), transparent 70%)' }}
-            />
-
-            <div
-              className="absolute top-6 left-6 z-10 font-display font-black text-8xl md:text-9xl select-none pointer-events-none"
-              style={{
-                color: 'transparent',
-                WebkitTextStroke: '1px rgba(255,255,255,0.06)',
-                lineHeight: 1,
-              }}
-            >
-              001
-            </div>
-
+            <div className="absolute -inset-4 rounded-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" style={{ background: 'radial-gradient(ellipse at 40% 60%, rgba(200,255,0,0.08), transparent 70%)' }} />
+            <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-10 font-display font-black text-7xl sm:text-8xl md:text-9xl select-none pointer-events-none" style={{ color: 'transparent', WebkitTextStroke: '1px rgba(255,255,255,0.06)', lineHeight: 1 }}>001</div>
             <div className="relative overflow-hidden bg-zinc aspect-[4/3]">
               <img
                 src="https://i.pinimg.com/736x/ef/06/da/ef06dad5580e06dd1aa559b04645b0f1.jpg"
-                alt='ASICS GEL-1130 "Black Carbon"'
+                alt='ASICS GEL-1130'
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
@@ -47,83 +36,56 @@ export default function FeaturedProduct() {
               />
               <div className="absolute top-0 left-0 right-0 h-px bg-volt/30" />
             </div>
-
-            <div
-              className="absolute bottom-6 right-6 px-4 py-2 text-xs tracking-[0.15em] uppercase bg-ink border border-volt/40 text-volt"
-              style={{ fontFamily: 'DM Mono, monospace' }}
-            >
-              Limited Edition
+            <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 px-4 py-2 text-xs tracking-[0.15em] uppercase bg-ink border border-volt/40 text-volt" style={{ fontFamily: 'DM Mono, monospace' }}>
+              {t.feat_badge}
             </div>
           </div>
 
-          <div className="lg:pl-16 xl:pl-24">
+          {/* Info */}
+          <div className="lg:pl-12 xl:pl-24 mt-2 lg:mt-0">
             <p className="text-ash text-xs tracking-[0.2em] uppercase mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>
-              Air Max Series — 2025
+              {t.feat_eyebrow}
             </p>
-            <h2 className="font-display font-black text-bone leading-none mb-2" style={{ fontSize: 'clamp(48px, 6vw, 88px)', letterSpacing: '-0.02em' }}>
+            <h2 className="font-display font-black text-bone leading-none mb-2" style={{ fontSize: 'clamp(40px, 5vw, 88px)', letterSpacing: '-0.02em' }}>
               PEGASUS
             </h2>
-            <h2
-              className="font-display font-black leading-none mb-8"
-              style={{
-                fontSize: 'clamp(48px, 6vw, 88px)',
-                letterSpacing: '-0.02em',
-                color: 'transparent',
-                WebkitTextStroke: '1.5px rgba(245,245,240,0.4)',
-              }}
-            >
+            <h2 className="font-display font-black leading-none mb-6 sm:mb-8" style={{ fontSize: 'clamp(40px, 5vw, 88px)', letterSpacing: '-0.02em', color: 'transparent', WebkitTextStroke: '1.5px rgba(245,245,240,0.4)' }}>
               ULTRA X
             </h2>
-
-            <p className="text-ash text-sm leading-relaxed max-w-sm mb-8">
+            <p className="text-ash text-sm leading-relaxed max-w-sm mb-6 sm:mb-8">
               Reactfoam midsole delivers exceptional energy return with every stride. A precision-engineered outsole grips any surface. Built for those who refuse to slow down.
             </p>
 
-            <div className="flex items-baseline gap-4 mb-8">
-              <span className="font-display font-black text-volt text-4xl">27,900 DA</span>
+            <div className="flex items-baseline gap-3 sm:gap-4 mb-6 sm:mb-8 flex-wrap">
+              <span className="font-display font-black text-volt text-3xl sm:text-4xl">27,900 DA</span>
               <span className="text-ash text-sm line-through" style={{ fontFamily: 'DM Mono, monospace' }}>32,000 DA</span>
-              <span className="px-2 py-0.5 text-xs bg-volt/10 text-volt border border-volt/30" style={{ fontFamily: 'DM Mono, monospace' }}>
-                −13%
-              </span>
+              <span className="px-2 py-0.5 text-xs bg-volt/10 text-volt border border-volt/30" style={{ fontFamily: 'DM Mono, monospace' }}>{t.feat_discount}</span>
             </div>
 
-            <div className="mb-6">
-              <p className="text-xs text-ash tracking-[0.15em] uppercase mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>
-                Color
-              </p>
+            <div className="mb-5 sm:mb-6">
+              <p className="text-xs text-ash tracking-[0.15em] uppercase mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>{t.feat_color}</p>
               <div className="flex items-center gap-3">
                 {colors.map((c, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedColor(i)}
-                    className="w-7 h-7 rounded-full transition-all duration-200"
-                    style={{
-                      background: c,
-                      outline: selectedColor === i ? `2px solid ${c}` : '2px solid transparent',
-                      outlineOffset: '3px',
-                    }}
+                    className="tap-target w-7 h-7 rounded-full transition-all duration-200"
+                    style={{ background: c, outline: selectedColor === i ? `2px solid ${c}` : '2px solid transparent', outlineOffset: '3px' }}
                     aria-label={`Color ${i + 1}`}
                   />
                 ))}
               </div>
             </div>
 
-            <div className="mb-8">
-              <p className="text-xs text-ash tracking-[0.15em] uppercase mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>
-                Size
-              </p>
+            <div className="mb-6 sm:mb-8">
+              <p className="text-xs text-ash tracking-[0.15em] uppercase mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>{t.feat_size}</p>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((s) => (
                   <button
                     key={s}
                     onClick={() => setSelectedSize(s)}
-                    className="px-4 py-2 text-xs border transition-all duration-200"
-                    style={{
-                      fontFamily: 'DM Mono, monospace',
-                      borderColor: selectedSize === s ? '#f5a623' : 'rgba(255,255,255,0.1)',
-                      color: selectedSize === s ? '#f5a623' : '#888',
-                      background: selectedSize === s ? 'rgba(200,255,0,0.08)' : 'transparent',
-                    }}
+                    className="tap-target px-3 sm:px-4 py-2 text-xs border transition-all duration-200"
+                    style={{ fontFamily: 'DM Mono, monospace', borderColor: selectedSize === s ? '#f5a623' : 'rgba(255,255,255,0.1)', color: selectedSize === s ? '#f5a623' : '#888', background: selectedSize === s ? 'rgba(200,255,0,0.08)' : 'transparent' }}
                   >
                     {s}
                   </button>
@@ -132,15 +94,8 @@ export default function FeaturedProduct() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link
-                to="/products"
-                className="flex-1 sm:flex-none px-10 py-4 text-sm font-semibold tracking-[0.1em] uppercase transition-all duration-300 text-center"
-                style={{
-                  background: '#f5a623',
-                  color: '#050505',
-                }}
-              >
-                Shop This Style
+              <Link to="/products" className="flex-1 sm:flex-none px-8 sm:px-10 py-4 text-sm font-semibold tracking-[0.1em] uppercase transition-all duration-300 text-center" style={{ background: '#f5a623', color: '#050505' }}>
+                {t.feat_cta}
               </Link>
             </div>
           </div>

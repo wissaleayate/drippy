@@ -106,7 +106,7 @@ export default function AdminOrders() {
   });
 
   return (
-    <div className="min-h-screen bg-ink text-bone p-6 md:p-12">
+    <div className="min-h-screen bg-ink text-bone p-4 sm:p-6 md:p-12">
       {/* Header */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 border-b border-white/5 pb-6">
         <div>
@@ -115,15 +115,16 @@ export default function AdminOrders() {
               Admin Portal Only
             </span>
           </div>
-          <h1 className="text-2xl font-black tracking-tight">Manage Orders</h1>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight">Manage Orders</h1>
           <p className="text-xs text-ash">Review, track, and manage client orders.</p>
         </div>
-        
-        <button 
+
+        <button
           onClick={fetchOrders}
-          className="px-4 py-2 bg-white/[0.03] border border-white/10 hover:bg-white/5 text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer flex items-center gap-2"
+          className="px-4 py-2 bg-white/[0.03] border border-white/10 hover:bg-white/5 text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer flex items-center gap-2 tap-target"
+          aria-label="Refresh orders"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
           Refresh Orders
         </button>
       </div>
@@ -192,20 +193,20 @@ export default function AdminOrders() {
           </div>
         )}
 
-        {/* Updated Table UI reading from filteredOrders array mapping instead of raw state */}
+        {/* Table */}
         {!loading && !error && orders.length > 0 && (
           <div className="overflow-x-auto border border-white/5 rounded-2xl bg-zinc/40 backdrop-blur-sm">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full text-left border-collapse text-xs min-w-[900px]">
               <thead>
                 <tr className="bg-white/[0.02] text-ash text-[10px] uppercase tracking-wider border-b border-white/5 font-mono">
-                  <th className="px-6 py-4">N° of Order</th>
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Delivery Address</th>
-                  <th className="px-6 py-4">Items Purchased</th>
-                  <th className="px-6 py-4">Total Price</th>
-                  <th className="px-6 py-4">Current Status</th>
-                  <th className="px-6 py-4">Actions</th>
-                  <th className="px-6 py-4 text-right">Date</th>
+                  <th className="px-4 sm:px-6 py-4" scope="col">N° of Order</th>
+                  <th className="px-4 sm:px-6 py-4" scope="col">Customer</th>
+                  <th className="px-4 sm:px-6 py-4" scope="col">Delivery Address</th>
+                  <th className="px-4 sm:px-6 py-4" scope="col">Items Purchased</th>
+                  <th className="px-4 sm:px-6 py-4" scope="col">Total Price</th>
+                  <th className="px-4 sm:px-6 py-4" scope="col">Current Status</th>
+                  <th className="px-4 sm:px-6 py-4" scope="col">Actions</th>
+                  <th className="px-4 sm:px-6 py-4 text-right" scope="col">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.03]">
