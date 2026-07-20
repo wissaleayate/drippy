@@ -96,7 +96,7 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-5">
-          <div className="hidden md:flex items-center relative">
+          <div className="flex items-center relative">
             {searchOpen ? (
               <form onSubmit={handleSearchSubmit} className="flex items-center">
                 <input
@@ -105,8 +105,8 @@ export default function Nav() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
-                  placeholder="Search products..."
-                  className="w-44 px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
+                  placeholder="Search..."
+                  className="w-28 sm:w-44 px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
                 />
               </form>
             ) : (

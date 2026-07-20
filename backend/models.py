@@ -26,8 +26,36 @@ class Product(db.Model):
             "stock": self.stock,
             "image": self.image
         }
-    
 
+
+class Promotion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), unique=True, default=generate_uuid)
+    tag = db.Column(db.String(50))          # e.g. "NEW DROP"
+    subtitle = db.Column(db.String(100))    # e.g. "New Balance / Collection 01"
+    title_line1 = db.Column(db.String(100)) # e.g. "STEP"
+    title_line2 = db.Column(db.String(100)) # e.g. "INTO STYLE"
+    description = db.Column(db.String(300))
+    button_text = db.Column(db.String(50), default="EXPLORE DROP")
+    button_link = db.Column(db.String(200), default="/products")
+    image = db.Column(db.String(300))
+    display_order = db.Column(db.Integer, default=0)
+    active = db.Column(db.Boolean, default=True)
+
+    def to_dict(self):
+        return {
+            "uuid": self.uuid,
+            "tag": self.tag,
+            "subtitle": self.subtitle,
+            "title_line1": self.title_line1,
+            "title_line2": self.title_line2,
+            "description": self.description,
+            "button_text": self.button_text,
+            "button_link": self.button_link,
+            "image": self.image,
+            "display_order": self.display_order,
+            "active": self.active
+        }
 
 
 
@@ -58,18 +86,20 @@ class Order(db.Model):
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer)
+    product_uuid = db.Column(db.String(36))
     username = db.Column(db.String(100))
     rating = db.Column(db.Integer)
     fit = db.Column(db.String(30))
     comment = db.Column(db.String(500))
+    created_at = db.Column(db.String(50), nullable=True)
 
     def to_dict(self):
         return {
             "id": self.id,
-            "product_id": self.product_id,
+            "product_uuid": self.product_uuid,
             "username": self.username,
             "rating": self.rating,
             "fit": self.fit,
-            "comment": self.comment
+            "comment": self.comment,
+            "created_at": self.created_at
         }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, Trash2, Plus, Minus, CheckCircle2, ArrowRight, Printer } from 'lucide-react';
+import { ShoppingBag, Trash2, Plus, Minus, CheckCircle2, ArrowRight, Printer, Copy, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ function formatDA(n: number) {
 
 interface OrderResponse {
   id: number;
+  uuid: string;
   customer: string;
   phone: string;
   address: string;
@@ -30,7 +31,31 @@ export default function CartUI() {
   
   // State to hold the created order from the backend for the receipt
   const [createdOrder, setCreatedOrder] = useState<OrderResponse | null>(null);
+  const [orderKeyCopied, setOrderKeyCopied] = useState(false);
 
+  const handleCopyOrderKey = async () => {
+    if (!createdOrder) return;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(createdOrder.uuid);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = createdOrder.uuid;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setOrderKeyCopied(true);
+      setTimeout(() => setOrderKeyCopied(false), 2500);
+    } catch (err) {
+      console.error('Failed to copy order key:', err);
+      showToast('Could not copy. Order Key: ' + createdOrder.uuid);
+    }
+  };
   const cartSubtotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
   const shippingFee = cartSubtotal > 15000 || cartSubtotal === 0 ? 0 : 500;
@@ -319,9 +344,31 @@ export default function CartUI() {
                 <h3 className="text-lg font-black text-bone tracking-tight mb-1">
                   Order Received!
                 </h3>
-                <p className="text-xs text-ash">
-                  Thank you for shopping at NK. Your print receipt (Bon) is ready.
+                <p className="text-xs text-ash mb-4">
+                  Save your Order Key below to track this order later.
                 </p>
+
+                <button
+                  onClick={handleCopyOrderKey}
+                  className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer ${
+                    orderKeyCopied
+                      ? 'bg-volt/10 border-volt/30 text-volt'
+                      : 'bg-white/[0.03] border-white/10 text-bone hover:border-volt/30'
+                  }`}
+                >
+                  <span className="text-xs font-mono truncate text-left">{createdOrder.uuid}</span>
+                  <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider shrink-0">
+                    {orderKeyCopied ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" /> Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" /> Copy Key
+                      </>
+                    )}
+                  </span>
+                </button>
               </div>
 
               {/* ================================================================= */}

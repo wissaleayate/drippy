@@ -6,8 +6,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 from database import db, DATABASE_URI
-from models import Product, Order, Review
-from routes.reviews import reviews_bp
+from models import Product, Order, Review, Promotion
 
 app = Flask(__name__)
 CORS(app)
@@ -30,7 +29,6 @@ def allowed_file(filename):
 
 
 db.init_app(app)
-app.register_blueprint(reviews_bp)
 
 # ========================
 # STATIC FILE SERVING
@@ -126,6 +124,73 @@ def add_product():
     db.session.commit()
 
     return jsonify(product.to_dict()), 201
+# ========================
+# PROMOTIONS
+# ========================
+@app.route("/promotions", methods=["GET"])
+def get_promotions():
+    promotions = Promotion.query.filter_by(active=True).order_by(Promotion.display_order).all()
+    return jsonify([p.to_dict() for p in promotions])
+
+
+@app.route("/promotions/uuid/<string:uuid_val>", methods=["DELETE"])
+def delete_promotion(uuid_val):
+    promotion = Promotion.query.filter_by(uuid=uuid_val).first()
+    if not promotion:
+        return jsonify({"error": "Promotion not found"}), 404
+
+    db.session.delete(promotion)
+    db.session.commit()
+
+    return jsonify({"message": "Promotion deleted successfully"}), 200
+
+
+@app.route("/promotions", methods=["POST"])
+def add_promotion():
+    if 'image' not in request.files:
+        return jsonify({"error": "No image file provided"}), 400
+
+    file = request.files['image']
+
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        unique_filename = f"{int(datetime.now().timestamp())}_{filename}"
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
+        image_url = f"http://127.0.0.1:5000/uploads/{unique_filename}"
+    else:
+        return jsonify({"error": "File type not allowed"}), 400
+
+    tag = request.form.get("tag", "NEW DROP")
+    subtitle = request.form.get("subtitle", "")
+    title_line1 = request.form.get("title_line1", "")
+    title_line2 = request.form.get("title_line2", "")
+    description = request.form.get("description", "")
+    button_text = request.form.get("button_text", "EXPLORE DROP")
+    button_link = request.form.get("button_link", "/products")
+    display_order = int(request.form.get("display_order", 0))
+
+    promotion = Promotion(
+        tag=tag,
+        subtitle=subtitle,
+        title_line1=title_line1,
+        title_line2=title_line2,
+        description=description,
+        button_text=button_text,
+        button_link=button_link,
+        image=image_url,
+        display_order=display_order,
+        active=True
+    )
+
+    db.session.add(promotion)
+    db.session.commit()
+
+    return jsonify(promotion.to_dict()), 201
+
+
 
 
 # ========================
@@ -256,16 +321,27 @@ def get_reviews():
     ])
 
 
+@app.route("/reviews/product/<string:product_uuid>", methods=["GET"])
+def get_reviews_for_product(product_uuid):
+    reviews = Review.query.filter_by(product_uuid=product_uuid).order_by(Review.id.desc()).all()
+    return jsonify([review.to_dict() for review in reviews])
+
+
 @app.route("/reviews", methods=["POST"])
 def add_review():
     data = request.json
 
+    required = ["product_uuid", "username", "rating", "fit", "comment"]
+    if not all(data.get(field) for field in required):
+        return jsonify({"error": "Missing required fields"}), 400
+
     review = Review(
-        product_id=data["product_id"],
+        product_uuid=data["product_uuid"],
         username=data["username"],
         rating=data["rating"],
         fit=data["fit"],
-        comment=data["comment"]
+        comment=data["comment"],
+        created_at=datetime.now().strftime("%d-%m-%Y %H:%M")
     )
 
     db.session.add(review)
