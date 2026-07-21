@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -36,6 +37,13 @@ function PageLoader() {
     </div>
   );
 }
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const isAdmin = localStorage.getItem('isAdmin') === 'true';
@@ -69,6 +77,7 @@ export default function App() {
     <LanguageProvider>
     <CartProvider>
       <Toaster position="top-right" />
+      <ScrollToTop />
 
       <Suspense fallback={<PageLoader />}>
         <Routes>

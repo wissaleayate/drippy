@@ -6,7 +6,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 from database import db, DATABASE_URI
-from models import Product, Order, Review, Promotion
+from models import Product, Order, Review, Promotion, DeliveryRate
 
 app = Flask(__name__)
 CORS(app)
@@ -191,6 +191,56 @@ def add_promotion():
     return jsonify(promotion.to_dict()), 201
 
 
+# ========================
+# DELIVERY RATES
+# ========================
+@app.route("/delivery-rates", methods=["GET"])
+def get_delivery_rates():
+    rates = DeliveryRate.query.order_by(DeliveryRate.wilaya).all()
+    return jsonify([r.to_dict() for r in rates])
+
+
+@app.route("/delivery-rates", methods=["POST"])
+def add_or_update_delivery_rate():
+    data = request.json
+    wilaya = data.get("wilaya")
+
+    if not wilaya:
+        return jsonify({"error": "Wilaya is required"}), 400
+
+    rate = DeliveryRate.query.filter_by(wilaya=wilaya).first()
+
+    if rate:
+        # Update existing rate for this wilaya
+        rate.home_price = float(data.get("home_price", rate.home_price))
+        rate.pickup_price = float(data.get("pickup_price", rate.pickup_price))
+        rate.delivery_time = data.get("delivery_time", rate.delivery_time)
+    else:
+        # Create new rate
+        rate = DeliveryRate(
+            wilaya=wilaya,
+            home_price=float(data.get("home_price", 0)),
+            pickup_price=float(data.get("pickup_price", 0)),
+            delivery_time=data.get("delivery_time", "2 - 3 Days")
+        )
+        db.session.add(rate)
+
+    db.session.commit()
+    return jsonify(rate.to_dict()), 201
+
+
+@app.route("/delivery-rates/uuid/<string:uuid_val>", methods=["DELETE"])
+def delete_delivery_rate(uuid_val):
+    rate = DeliveryRate.query.filter_by(uuid=uuid_val).first()
+    if not rate:
+        return jsonify({"error": "Delivery rate not found"}), 404
+
+    db.session.delete(rate)
+    db.session.commit()
+
+    return jsonify({"message": "Delivery rate deleted successfully"}), 200
+
+
 
 
 # ========================
@@ -213,17 +263,31 @@ def add_order():
     customer = data.get("customer")
     phone = data.get("phone")
     address = data.get("address")
+    wilaya = data.get("wilaya")
+    delivery_type = data.get("delivery_type", "home")  # "home" or "pickup"
 
     cart_items = data.get("items", [])
     items_json = json.dumps(cart_items)
 
-    total_price = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart_items)
+    items_total = sum(item.get("price", 0) * item.get("quantity", 1) for item in cart_items)
+
+    # Look up the real shipping price for this wilaya + delivery type
+    shipping_price = 500  # fallback if no rate is set for this wilaya
+    if wilaya:
+        rate = DeliveryRate.query.filter_by(wilaya=wilaya).first()
+        if rate:
+            shipping_price = rate.pickup_price if delivery_type == "pickup" else rate.home_price
+
+    total_price = items_total + shipping_price
     current_time = datetime.now().strftime("%d-%m-%Y %H:%M")
 
     order = Order(
         customer=customer,
         phone=phone,
         address=address,
+        wilaya=wilaya,
+        delivery_type=delivery_type,
+        shipping_price=shipping_price,
         status="Nouveau",
         items=items_json,
         total_price=total_price,

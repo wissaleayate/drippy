@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -16,10 +16,27 @@ interface OrderResponse {
   customer: string;
   phone: string;
   address: string;
+  wilaya?: string;
+  delivery_type?: string;
+  shipping_price?: number;
   status: string;
-  items: string; // JSON string of items
-  total_price: number;
-  created_at: string;
+}
+const ALGERIA_WILAYAS = [
+  'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna', 'Béjaïa', 'Biskra', 'Béchar',
+  'Blida', 'Bouira', 'Tamanrasset', 'Tébessa', 'Tlemcen', 'Tiaret', 'Tizi Ouzou', 'Alger',
+  'Djelfa', 'Jijel', 'Sétif', 'Saïda', 'Skikda', 'Sidi Bel Abbès', 'Annaba', 'Guelma',
+  'Constantine', 'Médéa', 'Mostaganem', "M'Sila", 'Mascara', 'Ouargla', 'Oran', 'El Bayadh',
+  'Illizi', 'Bordj Bou Arréridj', 'Boumerdès', 'El Tarf', 'Tindouf', 'Tissemsilt', 'El Oued',
+  'Khenchela', 'Souk Ahras', 'Tipaza', 'Mila', 'Aïn Defla', 'Naâma', 'Aïn Témouchent',
+  'Ghardaïa', 'Relizane', "Timimoun", "Bordj Badji Mokhtar", "Ouled Djellal", "Béni Abbès",
+  "In Salah", "In Guezzam", "Touggourt", "Djanet", "El M'Ghair", "El Meniaa",
+];
+
+interface ApiDeliveryRate {
+  wilaya: string;
+  home_price: number;
+  pickup_price: number;
+  delivery_time: string;
 }
 
 export default function CartUI() {
@@ -31,7 +48,11 @@ export default function CartUI() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
+  const [customerWilaya, setCustomerWilaya] = useState('');
+  const [deliveryType, setDeliveryType] = useState<'home' | 'pickup'>('home');
+  const [deliveryRates, setDeliveryRates] = useState<ApiDeliveryRate[]>([]);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+
   
   // State to hold the created order from the backend for the receipt
   const [createdOrder, setCreatedOrder] = useState<OrderResponse | null>(null);
@@ -60,15 +81,29 @@ export default function CartUI() {
       showToast('Could not copy. Order Key: ' + createdOrder.uuid);
     }
   };
+  useEffect(() => {
+    if (!isCartOpen) return;
+    fetch('http://127.0.0.1:5000/delivery-rates')
+      .then((res) => res.json())
+      .then((data: ApiDeliveryRate[]) => setDeliveryRates(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Failed to load delivery rates:', err));
+  }, [isCartOpen]);
+
   const cartSubtotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);
-  const shippingFee = cartSubtotal > 15000 || cartSubtotal === 0 ? 0 : 500;
-  const estimatedTax = cartSubtotal * 0.08;
-  const cartTotal = cartSubtotal + shippingFee + estimatedTax;
+
+  const selectedRate = deliveryRates.find((r) => r.wilaya === customerWilaya);
+  const shippingFee = cartItemCount === 0
+    ? 0
+    : selectedRate
+    ? (deliveryType === 'pickup' ? selectedRate.pickup_price : selectedRate.home_price)
+    : 500; // fallback if wilaya not chosen yet or has no rate set
+
+  const cartTotal = cartSubtotal + shippingFee;
 
   const handleCheckout = async () => {
-    if (!customerName.trim() || !customerPhone.trim() || !customerAddress.trim()) {
-      showToast('Please fill in your name, phone, and address');
+    if (!customerName.trim() || !customerPhone.trim() || !customerAddress.trim() || !customerWilaya) {
+      showToast('Please fill in your name, phone, address, and select your wilaya');
       return;
     }
 
@@ -92,6 +127,8 @@ export default function CartUI() {
           customer: customerName,
           phone: customerPhone,
           address: customerAddress,
+          wilaya: customerWilaya,
+          delivery_type: deliveryType,
           items: backendItems, // Sending items now!
         }),
       });
@@ -118,6 +155,8 @@ export default function CartUI() {
       setCustomerName('');
       setCustomerPhone('');
       setCustomerAddress('');
+      setCustomerWilaya('');
+      setDeliveryType('home');
     } catch (err) {
       console.error('Order failed:', err);
       showToast('Order failed. Is the backend running?');
@@ -270,15 +309,11 @@ export default function CartUI() {
                       </div>
                       <div className="flex justify-between">
                         <span>{t.cart_shipping}</span>
-                        {shippingFee === 0 ? (
-                          <span className="text-volt font-bold font-mono">{t.cart_free}</span>
-                        ) : (
+                        {customerWilaya ? (
                           <span className="text-bone font-bold font-mono">{formatDA(shippingFee)}</span>
+                        ) : (
+                          <span className="text-ash font-mono text-[11px]">Select wilaya</span>
                         )}
-                      </div>
-                      <div className="flex justify-between">
-                        <span>{t.cart_tax}</span>
-                        <span className="text-bone font-bold font-mono">{formatDA(estimatedTax)}</span>
                       </div>
                       <div className="pt-3 border-t border-white/5 flex justify-between text-sm font-bold text-bone">
                         <span>{t.cart_total}</span>
@@ -310,6 +345,40 @@ export default function CartUI() {
                         onChange={(e) => setCustomerAddress(e.target.value)}
                         className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
                       />
+                      <select
+                        value={customerWilaya}
+                        onChange={(e) => setCustomerWilaya(e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs text-bone focus:outline-none focus:border-volt/50"
+                      >
+                        <option value="" className="bg-zinc">Select your wilaya</option>
+                        {ALGERIA_WILAYAS.map((w) => (
+                          <option key={w} value={w} className="bg-zinc">{w}</option>
+                        ))}
+                      </select>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType('home')}
+                          className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                            deliveryType === 'home'
+                              ? 'bg-volt border-volt text-ink'
+                              : 'bg-white/[0.03] border-white/10 text-bone hover:border-white/20'
+                          }`}
+                        >
+                          Home Delivery
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType('pickup')}
+                          className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                            deliveryType === 'pickup'
+                              ? 'bg-volt border-volt text-ink'
+                              : 'bg-white/[0.03] border-white/10 text-bone hover:border-white/20'
+                          }`}
+                        >
+                          Pickup Point
+                        </button>
+                      </div>
                     </div>
 
                     <button
@@ -437,18 +506,18 @@ export default function CartUI() {
 
                 {/* Totals Section */}
                 <div className="border-t border-white/10 pt-4 flex flex-col items-end gap-1.5 text-xs font-mono print:border-black">
-                  <div className="flex justify-between w-full max-w-xs text-ash print:text-black">
+                <div className="flex justify-between w-full max-w-xs text-ash print:text-black">
                     <span>Subtotal:</span>
-                    <span>{formatDA(createdOrder.total_price)}</span>
+                    <span>{formatDA(createdOrder.total_price - (createdOrder.shipping_price ?? 0))}</span>
                   </div>
                   <div className="flex justify-between w-full max-w-xs text-ash print:text-black">
-                    <span>Shipping:</span>
-                    <span>{createdOrder.total_price > 15000 ? 'FREE' : '500 DA'}</span>
+                    <span>Shipping ({createdOrder.wilaya}, {createdOrder.delivery_type === 'pickup' ? 'Pickup' : 'Home'}):</span>
+                    <span>{formatDA(createdOrder.shipping_price ?? 0)}</span>
                   </div>
                   <div className="flex justify-between w-full max-w-xs text-sm font-bold text-bone pt-2 border-t border-white/5 print:text-black print:border-black">
                     <span>{t.cart_total_paid}</span>
-                    <span className="text-volt print:text-black">{formatDA(createdOrder.total_price > 15000 ? createdOrder.total_price : createdOrder.total_price + 500)}</span>
-                  </div>
+                    <span className="text-volt print:text-black">{formatDA(createdOrder.total_price)}</span>
+                  </div>  
                 </div>
               </div>
               {/* ================================================================= */}

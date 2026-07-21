@@ -57,6 +57,23 @@ class Promotion(db.Model):
             "active": self.active
         }
 
+class DeliveryRate(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), unique=True, default=generate_uuid)
+    wilaya = db.Column(db.String(100), unique=True, nullable=False)
+    home_price = db.Column(db.Float, default=0)
+    pickup_price = db.Column(db.Float, default=0)
+    delivery_time = db.Column(db.String(50), default="2 - 3 Days")
+
+    def to_dict(self):
+        return {
+            "uuid": self.uuid,
+            "wilaya": self.wilaya,
+            "home_price": self.home_price,
+            "pickup_price": self.pickup_price,
+            "delivery_time": self.delivery_time
+        }
+
 
 
 class Order(db.Model):
@@ -65,6 +82,9 @@ class Order(db.Model):
     customer = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(200), nullable=False)
+    wilaya = db.Column(db.String(100), nullable=True)
+    delivery_type = db.Column(db.String(20), nullable=True)  # "home" or "pickup"
+    shipping_price = db.Column(db.Float, default=0.0)
     status = db.Column(db.String(50), default="Nouveau")
     items = db.Column(db.Text, nullable=True)
     total_price = db.Column(db.Float, default=0.0)
@@ -73,10 +93,13 @@ class Order(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "uuid": self.uuid, # <--- Make sure this is returned!
+            "uuid": self.uuid,
             "customer": self.customer,
             "phone": self.phone,
             "address": self.address,
+            "wilaya": self.wilaya,
+            "delivery_type": self.delivery_type,
+            "shipping_price": self.shipping_price,
             "status": self.status,
             "items": self.items,
             "total_price": self.total_price,

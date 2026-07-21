@@ -25,7 +25,15 @@ interface RateRow {
   deliveryTime: string;
 }
 
-const RATE_DATA: RateRow[] = [
+interface ApiDeliveryRate {
+  uuid: string;
+  wilaya: string;
+  home_price: number;
+  pickup_price: number;
+  delivery_time: string;
+}
+
+const FALLBACK_RATE_DATA: RateRow[] = [
   { state: 'Algiers', homePrice: '500 DA', pickupPrice: '300 DA', deliveryTime: '1 - 2 Days' },
   { state: 'Oran', homePrice: '700 DA', pickupPrice: '450 DA', deliveryTime: '2 - 3 Days' },
   { state: 'Constantine', homePrice: '750 DA', pickupPrice: '500 DA', deliveryTime: '2 - 3 Days' },
@@ -46,6 +54,7 @@ interface FAQItem {
 export default function ShippingPage() {
   const { t, isRTL } = useLang();
   const [searchQuery, setSearchQuery] = useState('');
+  const [rateData, setRateData] = useState<RateRow[]>(FALLBACK_RATE_DATA);
   const [isTyping, setIsTyping] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [supportMessage, setSupportMessage] = useState('');
@@ -71,13 +80,33 @@ export default function ShippingPage() {
   ];
 
   useEffect(() => {
+    fetch('http://127.0.0.1:5000/delivery-rates')
+      .then((res) => res.json())
+      .then((data: ApiDeliveryRate[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setRateData(
+            data.map((r) => ({
+              state: r.wilaya,
+              homePrice: `${r.home_price} DA`,
+              pickupPrice: `${r.pickup_price} DA`,
+              deliveryTime: r.delivery_time,
+            }))
+          );
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load delivery rates, using defaults:', err);
+      });
+  }, []);
+
+  useEffect(() => {
     if (!searchQuery) return;
     setIsTyping(true);
     const handler = setTimeout(() => setIsTyping(false), 300);
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  const filteredRates = RATE_DATA.filter((rate) =>
+  const filteredRates = rateData.filter((rate) =>
     rate.state.toLowerCase().includes(searchQuery.toLowerCase().trim())
   );
 
