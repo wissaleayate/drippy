@@ -440,10 +440,8 @@ const en: Translations = {
   brand_desc: 'At Drippy, we believe sneakers are more than footwear. They represent confidence, creativity, and everyday comfort. We bring authentic collections from the brands you love.',
   brand_stat_reviews: 'Positive Reviews', brand_stat_wilaya: 'Wilaya', brand_stat_shipping: 'Fast Shipping', brand_stat_authentic: 'Authentic Products',
 
-  footer_tagline: 'Engineered for the relentless pursuit of better. Since 2025.',
-  footer_copyright: '© 2025 NK Inc. All rights reserved.',
-  footer_built: 'Designed with precision. Built for speed.',
-  footer_col_collections: 'Collections', footer_col_support: 'Support',
+  footer_tagline: '',
+  footer_copyright: '',
   footer_col_company: 'Company', footer_col_legal: 'Legal',
 
   pc_sold_out: 'Sold Out', pc_featured: 'Featured', pc_off: 'OFF',

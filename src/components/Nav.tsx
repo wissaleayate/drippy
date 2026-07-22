@@ -83,14 +83,14 @@ export default function Nav() {
         borderBottom: '1px solid rgba(245,166,35,0.10)',
       }}
     >
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 h-16 flex items-center justify-between gap-3">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 h-14 flex items-center justify-between gap-3">
         {/* Logo */}
         <Link to="/" className="flex items-center shrink-0">
-          <img src={logo} alt="Drippy" className="h-36 w-auto object-contain" />
+          <img src={logo} alt="Drippy" className="h-28 w-auto object-contain" />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
           {links.map((l) => (
             <Link
               key={l.label}

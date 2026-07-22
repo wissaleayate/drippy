@@ -25,7 +25,7 @@ export default function Marquee() {
 
   return (
     <div
-      className="w-full overflow-hidden border-y py-4"
+      className="w-full overflow-hidden border-y py-3"
       style={{ borderColor: 'rgba(200,255,0,0.2)', background: '#0a0a0a' }}
       aria-hidden="true"
     >
@@ -36,8 +36,8 @@ export default function Marquee() {
         {items.map((item, i) => (
           <span
             key={i}
-            className={`mx-6 font-display font-bold text-sm tracking-[0.1em] uppercase ${
-              item === sep ? 'text-volt text-xs' : 'text-ash'
+            className={`mx-4 font-display font-bold text-xs tracking-[0.1em] uppercase ${
+              item === sep ? 'text-volt text-[10px]' : 'text-ash'
             }`}
           >
             {item}

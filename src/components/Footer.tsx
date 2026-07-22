@@ -6,8 +6,7 @@ export default function Footer() {
   const footerLinks = {
     [t.footer_col_collections]: [t.footer_running, t.footer_training, t.footer_lifestyle, t.footer_basketball, t.footer_collaborations],
     [t.footer_col_support]: [t.nav_delivery, t.track_heading, t.nav_contact],
-    [t.footer_col_company]: [t.footer_about, t.footer_sustainability, t.footer_careers, t.footer_press],
-    [t.footer_col_legal]: [t.footer_privacy, t.footer_terms, t.footer_cookies],
+    
   }
 
   const socials = [
@@ -47,16 +46,16 @@ export default function Footer() {
     <footer className="bg-carbon border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
       <div className="h-px w-full" style={{ background: 'linear-gradient(to right, #f5a623 0%, rgba(245,166,35,0.2) 40%, transparent 70%)' }} />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 pt-12 sm:pt-16 pb-8 sm:pb-10">
-        <div className={`flex flex-col md:flex-row md:items-start justify-between gap-10 sm:gap-12 mb-12 sm:mb-16 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 pt-9 sm:pt-12 pb-6 sm:pb-8">
+        <div className={`flex flex-col md:flex-row md:items-start justify-between gap-7 sm:gap-9 mb-9 sm:mb-12 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
           {/* Brand */}
           <div className="max-w-xs">
             <a href="/" className="flex items-center">
-              <img src="/favicon.ico" alt="Drippy" className="h-10 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-              <span className="font-display font-black text-2xl text-bone tracking-tight">DRIPPY</span>
+              <img src="/favicon.ico" alt="Drippy" className="h-8 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+              <span className="font-display font-black text-xl text-bone tracking-tight">DRIPPY</span>
             </a>
-            <p className="text-ash text-sm leading-relaxed mt-4">{t.footer_tagline}</p>
-            <div className={`flex items-center gap-4 mt-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <p className="text-ash text-xs leading-relaxed mt-3">{t.footer_tagline}</p>
+            <div className={`flex items-center gap-3 mt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
               {socials.map((s) => (
                 <a key={s.name} href={s.href} aria-label={s.name} className="text-ash hover:text-volt transition-colors duration-200">
                   {s.icon}
@@ -66,16 +65,16 @@ export default function Footer() {
           </div>
 
           {/* Links grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 flex-1 md:pl-10">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-7 flex-1 md:pl-8">
             {Object.entries(footerLinks).map(([group, items]) => (
               <div key={group}>
-                <p className="text-bone text-xs tracking-[0.2em] uppercase mb-4" style={{ fontFamily: 'DM Mono, monospace' }}>
+                <p className="text-bone text-xs tracking-[0.2em] uppercase mb-3" style={{ fontFamily: 'DM Mono, monospace' }}>
                   {group}
                 </p>
-                <ul className="flex flex-col gap-2.5">
+                <ul className="flex flex-col gap-2">
                   {items.map((item) => (
                     <li key={item}>
-                      <a href="#" className="text-ash text-sm hover:text-bone transition-colors duration-200 volt-underline">
+                      <a href="#" className="text-ash text-xs hover:text-bone transition-colors duration-200 volt-underline">
                         {item}
                       </a>
                     </li>
@@ -88,9 +87,9 @@ export default function Footer() {
 
         {/* Watermark */}
         <div
-          className="font-display font-black text-center leading-none mb-8 select-none pointer-events-none overflow-hidden"
+          className="font-display font-black text-center leading-none mb-6 select-none pointer-events-none overflow-hidden"
           style={{
-            fontSize: 'clamp(32px, 10vw, 160px)',
+            fontSize: 'clamp(24px, 8vw, 120px)',
             letterSpacing: '-0.04em',
             color: 'transparent',
             WebkitTextStroke: '1px rgba(255,255,255,0.04)',
@@ -101,7 +100,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t ${isRTL ? 'sm:flex-row-reverse' : ''}`} style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-3 pt-5 border-t ${isRTL ? 'sm:flex-row-reverse' : ''}`} style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
           <p className="text-ash text-xs" style={{ fontFamily: 'DM Mono, monospace' }}>{t.footer_copyright}</p>
           <p className="text-ash/40 text-xs" style={{ fontFamily: 'DM Mono, monospace' }}>{t.footer_built}</p>
         </div>

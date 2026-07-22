@@ -17,38 +17,38 @@ export default function Categories() {
   ]
 
   return (
-    <section className="bg-carbon px-4 sm:px-6 py-16 sm:py-20 md:px-10 md:py-28">
+    <section className="bg-carbon px-4 sm:px-6 py-12 sm:py-16 md:px-10 md:py-20">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-8 sm:mb-10 flex flex-col justify-between gap-4 sm:gap-5 md:mb-14 md:flex-row md:items-end">
+        <div className="mb-6 sm:mb-8 flex flex-col justify-between gap-3 sm:gap-4 md:mb-10 md:flex-row md:items-end">
           <div>
-            <p className="mb-3 font-mono text-xs uppercase tracking-[0.24em] text-volt">{t.cat_eyebrow}</p>
-            <h2 className="font-display text-4xl sm:text-5xl font-black uppercase leading-[0.85] text-bone md:text-7xl">
+            <p className="mb-2 font-mono text-xs uppercase tracking-[0.24em] text-volt">{t.cat_eyebrow}</p>
+            <h2 className="font-display text-3xl sm:text-4xl font-black uppercase leading-[0.85] text-bone md:text-6xl">
               {t.cat_heading.split('\n').map((line, i) => (
                 <span key={i}>{line}{i === 0 && <br />}</span>
               ))}
             </h2>
           </div>
-          <Link to="/products" className="group inline-flex w-fit items-center gap-3 font-mono text-xs uppercase tracking-[0.16em] text-bone transition-colors hover:text-volt">
-            {t.cat_view_all} <span className="text-lg transition-transform group-hover:translate-x-1">&#8594;</span>
+          <Link to="/products" className="group inline-flex w-fit items-center gap-2.5 font-mono text-xs uppercase tracking-[0.16em] text-bone transition-colors hover:text-volt">
+            {t.cat_view_all} <span className="text-base transition-transform group-hover:translate-x-1">&#8594;</span>
           </Link>
         </div>
 
-        <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
+        <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
           {audiences.map((audience) => (
-            <article key={audience.slug} className="group relative flex h-[380px] sm:h-[450px] items-center justify-center overflow-hidden bg-zinc md:h-[590px]">
+            <article key={audience.slug} className="group relative flex h-[300px] sm:h-[360px] items-center justify-center overflow-hidden bg-zinc md:h-[460px]">
               <img src={audience.image} alt={audience.nameKey} className="absolute inset-0 h-full w-full object-cover opacity-75 transition duration-700 ease-out group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-ink/20" />
 
-              <div className="relative z-10 flex w-full max-w-[23rem] flex-col items-center px-6">
-                <h3 className="mb-6 sm:mb-8 font-display text-5xl sm:text-6xl font-black uppercase leading-none tracking-wide text-white drop-shadow-lg md:text-7xl">
+              <div className="relative z-10 flex w-full max-w-[20rem] flex-col items-center px-5">
+                <h3 className="mb-4 sm:mb-6 font-display text-4xl sm:text-5xl font-black uppercase leading-none tracking-wide text-white drop-shadow-lg md:text-6xl">
                   {audience.nameKey}
                 </h3>
-                <nav aria-label={`${audience.nameKey} categories`} className="flex w-full flex-col gap-3 sm:gap-4">
+                <nav aria-label={`${audience.nameKey} categories`} className="flex w-full flex-col gap-2 sm:gap-3">
                   {departments.map((department) => (
                     <Link
                       key={department.slug}
                       to={`/products?category=${audience.slug}&department=${department.slug}`}
-                      className="rounded-full bg-bone px-6 py-3 sm:py-3.5 text-center text-sm sm:text-base font-semibold text-ink shadow-lg transition duration-300 hover:scale-[1.02] hover:bg-volt focus-visible:bg-volt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+                      className="rounded-full bg-bone px-5 py-2 sm:py-2.5 text-center text-xs sm:text-sm font-semibold text-ink shadow-lg transition duration-300 hover:scale-[1.02] hover:bg-volt focus-visible:bg-volt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
                     >
                       {department.name}
                     </Link>
