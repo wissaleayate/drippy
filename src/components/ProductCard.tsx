@@ -1,7 +1,9 @@
 import { motion } from 'motion/react';
-import { Star, Eye, ShoppingCart } from 'lucide-react';
+import { Star, Eye, ShoppingCart, Heart } from 'lucide-react';
 import { Product } from '../types';
 import { useLang } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +14,19 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onQuickView, onAddToCart }: ProductCardProps) {
   const { t } = useLang();
+  const { user, toggleWishlist, isInWishlist } = useAuth();
+  const saved = isInWishlist(product.id);
+
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      toast.error('Please log in to save items to your wishlist.');
+      return;
+    }
+    toggleWishlist(product.id);
+    toast.success(saved ? 'Removed from wishlist' : 'Saved to wishlist');
+  };
+
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
   const discountPercent = hasDiscount
     ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
@@ -58,6 +73,17 @@ export default function ProductCard({ product, onQuickView, onAddToCart }: Produ
           )}
         </div>
 
+        {/* Wishlist Heart Button */}
+        <button
+          onClick={handleWishlistClick}
+          className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-ink/50 backdrop-blur-md border border-white/10 hover:scale-110 active:scale-95 transition-all duration-200"
+          aria-label={saved ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
+        >
+          <Heart className={`w-4 h-4 transition-colors ${saved ? 'fill-rose-500 text-rose-500' : 'text-bone'}`} />
+        </button>
+
+        {/* Action Button Hover Overlay */}
+        <div className="absolute inset-0 bg-ink/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2.5 z-10"></div>
         {/* Action Button Hover Overlay */}
         <div className="absolute inset-0 bg-ink/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2.5 z-10">
           <button

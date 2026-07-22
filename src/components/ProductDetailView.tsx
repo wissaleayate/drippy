@@ -13,12 +13,14 @@ import {
   Camera,
   Share2,
   BadgeCheck,
+  Heart,
 } from 'lucide-react';
 import { Product } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 import type { Translations } from '../context/LanguageContext';
+import toast from 'react-hot-toast';
 
 interface Review {
   id: number;
@@ -91,7 +93,7 @@ interface ProductDetailViewProps {
 }
 
 export default function ProductDetailView({ product, onClose, onAddToCart }: ProductDetailViewProps) {
-  const { user } = useAuth();
+  const { user, toggleWishlist, isInWishlist } = useAuth();
   const { t, isRTL } = useLang();
 
   const isVerifiedBuyer = useMemo(() => {
@@ -124,6 +126,20 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
       .then((data) => setReviews(data))
       .catch((err) => console.error('Failed to load reviews:', err))
       .finally(() => setIsLoadingReviews(false));
+  }, [product]);
+
+  // Track this product as "recently viewed" (per-browser, works logged out too)
+  useEffect(() => {
+    if (!product) return;
+    const storageKey = 'drippy_recently_viewed';
+    try {
+      const existing: string[] = JSON.parse(localStorage.getItem(storageKey) ?? '[]');
+      const withoutCurrent = existing.filter((id) => id !== product.id);
+      const updated = [product.id, ...withoutCurrent].slice(0, 10);
+      localStorage.setItem(storageKey, JSON.stringify(updated));
+    } catch {
+      // ignore storage errors
+    }
   }, [product]);
 
   if (!product) return null;
@@ -302,27 +318,45 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
                   {product.name}
                 </h2>
 
-                <button
-                  onClick={handleShare}
-                  aria-label={t.pdv_share}
-                  className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 text-xs font-mono font-bold shrink-0 ${
-                    copied
-                      ? 'bg-volt/10 border-volt/30 text-volt'
-                      : 'bg-white/[0.02] border-white/10 text-ash hover:text-bone hover:border-white/20'
-                    }`}
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      if (!user) {
+                        toast.error('Please log in to save items to your wishlist.');
+                        return;
+                      }
+                      const wasSaved = isInWishlist(product.id);
+                      toggleWishlist(product.id);
+                      toast.success(wasSaved ? 'Removed from wishlist' : 'Saved to wishlist');
+                    }}
+                    aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Save to wishlist'}
+                    className="p-2 rounded-xl border border-white/10 bg-white/[0.02] text-ash hover:text-bone hover:border-white/20 transition-all duration-200 cursor-pointer"
                   >
-                    {copied ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                        <span>{t.pdv_copied}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Share2 className="w-3.5 h-3.5" />
-                        <span>{t.pdv_share}</span>
-                      </>
-                    )}
-                </button>
+                    <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id) ? 'fill-rose-500 text-rose-500' : ''}`} aria-hidden="true" />
+                  </button>
+
+                  <button
+                    onClick={handleShare}
+                    aria-label={t.pdv_share}
+                    className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 text-xs font-mono font-bold ${
+                      copied
+                        ? 'bg-volt/10 border-volt/30 text-volt'
+                        : 'bg-white/[0.02] border-white/10 text-ash hover:text-bone hover:border-white/20'
+                      }`}
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                          <span>{t.pdv_copied}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Share2 className="w-3.5 h-3.5" />
+                          <span>{t.pdv_share}</span>
+                        </>
+                      )}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center gap-2 mb-4">

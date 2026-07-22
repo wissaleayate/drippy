@@ -217,8 +217,8 @@ export default function Nav() {
                     <p className="text-xs font-bold text-bone truncate">{user.name}</p>
                     <p className="text-[11px] text-ash truncate mt-0.5">{user.email}</p>
                   </div>
-                  <div className="py-1.5">
-                    <Link to="/tracking" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-ash hover:text-bone hover:bg-white/[0.04] transition-colors">
+                <div className="py-1.5">
+                    <Link to="/profile" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-ash hover:text-bone hover:bg-white/[0.04] transition-colors">
                       <UserCircle2 className="w-4 h-4" />{t.nav_profile}
                     </Link>
                     <Link to="/tracking" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-ash hover:text-bone hover:bg-white/[0.04] transition-colors">

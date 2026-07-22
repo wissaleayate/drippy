@@ -27,7 +27,9 @@ const ShippingPage = lazy(() => import('./pages/shipping/Shiping'));
 const ContactPage = lazy(() => import('./pages/Contact/contact'));
 const AdminPage = lazy(() => import('./pages/Admin/admin'));
 const ProductDetailsPage = lazy(() => import('./pages/ProductDetails/ProductDetails'));
+const ProfilePage = lazy(() => import('./pages/Profile/Profile'));
 const AdminOrders = lazy(() => import('./pages/Admin/AdminOrders'));
+const AdminLogin = lazy(() => import('./pages/Admin/AdminLogin'));
 const AdminTracking = lazy(() => import('./pages/tracking/AdminTracking'));
 
 function PageLoader() {
@@ -47,10 +49,9 @@ function ScrollToTop() {
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const isAdmin = localStorage.getItem('isAdmin') === 'true';
-  const bypassForDevelopment = true;
 
-  if (!isAdmin && !bypassForDevelopment) {
-    return <Navigate to="/" replace />;
+  if (!isAdmin) {
+    return <Navigate to="/admin/login" replace />;
   }
   return <>{children}</>;
 }
@@ -87,6 +88,9 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
+          {/* Admin Login (unprotected) */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
           {/* Protected Admin Routes */}
           <Route
             path="/admin"
@@ -120,6 +124,7 @@ export default function App() {
 
           {/* Route for Shareable Links */}
           <Route path="/products/uuid/:id" element={<ProductDetailsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </Suspense>
 

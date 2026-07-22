@@ -322,13 +322,25 @@ export default function AdminPage() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-display uppercase tracking-tight text-bone">Admin Panel</h1>
             <p className="text-sm text-ash mt-2">Manage products and orders.</p>
           </div>
-          <button
-            onClick={() => { loadProducts(); loadPromotions(); loadDeliveryRates(); }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] text-xs font-bold uppercase tracking-wider text-bone transition-all cursor-pointer tap-target"
-            aria-label="Refresh all data"
-          >
-            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => { loadProducts(); loadPromotions(); loadDeliveryRates(); }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] text-xs font-bold uppercase tracking-wider text-bone transition-all cursor-pointer tap-target"
+              aria-label="Refresh all data"
+            >
+              <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem('isAdmin');
+                localStorage.removeItem('adminToken');
+                window.location.href = '/admin/login';
+              }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-rose-400/30 hover:text-rose-400 text-xs font-bold uppercase tracking-wider text-ash transition-all cursor-pointer tap-target"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="mb-10 grid grid-cols-1 sm:grid-cols-2 gap-4">

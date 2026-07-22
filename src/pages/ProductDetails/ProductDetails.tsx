@@ -32,6 +32,17 @@ export default function ProductDetailsPage() {
       .then((data) => {
         setProduct(data)
         setLoading(false)
+
+        // Track this product as "recently viewed"
+        try {
+          const storageKey = 'drippy_recently_viewed'
+          const existing: string[] = JSON.parse(localStorage.getItem(storageKey) ?? '[]')
+          const withoutCurrent = existing.filter((uid) => uid !== data.uuid)
+          const updated = [data.uuid, ...withoutCurrent].slice(0, 10)
+          localStorage.setItem(storageKey, JSON.stringify(updated))
+        } catch {
+          // ignore storage errors
+        }
       })
       .catch((err) => {
         console.error(err)

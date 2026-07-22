@@ -44,6 +44,9 @@ export default function CartUI() {
   const { user } = useAuth();
   const { t } = useLang();
 
+  // Pre-fill checkout from the logged-in user's saved delivery info
+  const [hasPrefilled, setHasPrefilled] = useState(false);
+
   const [isCheckoutSuccess, setIsCheckoutSuccess] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -88,6 +91,20 @@ export default function CartUI() {
       .then((data: ApiDeliveryRate[]) => setDeliveryRates(Array.isArray(data) ? data : []))
       .catch((err) => console.error('Failed to load delivery rates:', err));
   }, [isCartOpen]);
+
+  useEffect(() => {
+    if (!isCartOpen || hasPrefilled) return;
+    if (user) {
+      setCustomerName((prev) => prev || user.name);
+      if (user.deliveryInfo) {
+        setCustomerPhone((prev) => prev || user.deliveryInfo!.phone);
+        setCustomerAddress((prev) => prev || user.deliveryInfo!.address);
+        setCustomerWilaya((prev) => prev || user.deliveryInfo!.wilaya);
+        setDeliveryType(user.deliveryInfo!.deliveryType || 'home');
+      }
+    }
+    setHasPrefilled(true);
+  }, [isCartOpen, user, hasPrefilled]);
 
   const cartSubtotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0);

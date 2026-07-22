@@ -12,6 +12,12 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================
+# ADMIN AUTH (simple, single-account for now)
+# ========================
+ADMIN_USERNAME = "drippy_admin"
+ADMIN_PASSWORD = "Dr1ppy!Vault#2026"
+
+# ========================
 # STORAGE CONFIGURATION
 # ========================
 UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
@@ -37,6 +43,24 @@ db.init_app(app)
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# ========================
+# ADMIN LOGIN
+# ========================
+@app.route("/admin/login", methods=["POST"])
+def admin_login():
+    data = request.json
+    username = data.get("username", "")
+    password = data.get("password", "")
+
+    if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+        return jsonify({"success": True, "token": "admin-session-token"}), 200
+
+    return jsonify({"success": False, "error": "Invalid username or password"}), 401
+
+
+# ========================
+# HOME
+# ========================
 
 # ========================
 # HOME
