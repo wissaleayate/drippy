@@ -7,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import CartUI from './components/CartUI';
+import AdminLayout from './components/AdminLayout';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 import Marquee from './components/Marquee';
@@ -96,15 +97,19 @@ export default function App() {
             path="/admin"
             element={
               <AdminRoute>
-                <AdminPage />
+                <AdminLayout>
+                  <AdminPage />
+                </AdminLayout>
               </AdminRoute>
-            }
+            } 
           />
           <Route
             path="/admin/orders"
             element={
               <AdminRoute>
-                <AdminOrders />
+                <AdminLayout>
+                  <AdminOrders />
+                </AdminLayout>
               </AdminRoute>
             }
           />
@@ -112,7 +117,9 @@ export default function App() {
             path="/admin/tracking"
             element={
               <AdminRoute>
-                <AdminTracking />
+                <AdminLayout>
+                  <AdminTracking />
+                </AdminLayout>
               </AdminRoute>
             }
           />

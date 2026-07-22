@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
-import Nav from '../../components/Nav';
-import Footer from '../../components/Footer';
 import { useLang } from '../../context/LanguageContext';
 import toast from 'react-hot-toast';
 
@@ -56,8 +54,7 @@ export default function AdminTracking() {
 
   return (
     <div className="min-h-screen bg-ink text-bone" dir={isRTL ? 'rtl' : 'ltr'}>
-      <Nav />
-      <main className="pt-28 pb-24 max-w-4xl mx-auto px-4 sm:px-6">
+      <main className="pt-16 pb-24 max-w-4xl mx-auto px-4 sm:px-6 lg:pt-12">
         <h1 className="text-2xl sm:text-3xl font-black font-display uppercase mb-8">
           {t.admin_tracking_title}
         </h1>
@@ -146,7 +143,6 @@ export default function AdminTracking() {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }
