@@ -52,7 +52,7 @@ export default function ProductGrid() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
           {filtered.map((p) => (
             <Link
               to="/products"
@@ -64,24 +64,24 @@ export default function ProductGrid() {
             >
               <img src={p.img} alt={p.nameKey} loading="lazy" decoding="async" className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" style={{ filter: 'brightness(0.8) contrast(1.05)' }} />
 
-              <div className="overlay absolute inset-0 flex flex-col justify-end p-3 sm:p-4" style={{ background: 'linear-gradient(to top, rgba(5,5,5,0.9) 30%, rgba(5,5,5,0.2) 70%, transparent)' }}>
+              <div className="overlay absolute inset-0 flex flex-col justify-end p-2 " style={{ background: 'linear-gradient(to top, rgba(5,5,5,0.9) 30%, rgba(5,5,5,0.2) 70%, transparent)' }}>
                 <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                   <p className="text-ash text-xs mb-0.5" style={{ fontFamily: 'DM Mono, monospace' }}>{p.category}</p>
-                  <p className="font-display font-bold text-bone text-base sm:text-lg tracking-tight">{p.nameKey}</p>
+                  <p className="font-display font-bold text-bone text-sm tracking-tigh">{p.nameKey}</p>
                   <div className="flex items-center justify-between mt-1.5">
-                    <span className="text-volt font-semibold text-xs" style={{ fontFamily: 'DM Mono, monospace' }}>{p.price}</span>
+                    <span className="text-volt font-semibold text-[11px]" style={{ fontFamily: 'DM Mono, monospace' }}>{p.price}</span>
                     <span className="text-xs text-ink bg-volt px-2 py-1 tracking-wide uppercase">{t.grid_shop}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 group-hover:opacity-0 transition-opacity duration-300" style={{ background: 'linear-gradient(to top, rgba(5,5,5,0.7), transparent)' }}>
-                <p className="font-display font-bold text-bone text-sm sm:text-base tracking-tight">{p.nameKey}</p>
+              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-2 py-2 group-hover:opacity-0 transition-opacity duration-300" style={{ background: 'linear-gradient(to top, rgba(5,5,5,0.7), transparent)' }}>
+                <p className="font-display font-bold text-bone text-xs tracking-tight">{p.nameKey}</p>
                 <span className="text-ash text-xs" style={{ fontFamily: 'DM Mono, monospace' }}>{p.price}</span>
               </div>
 
               {p.tag && (
-                <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 px-2 py-0.5 text-xs tracking-[0.12em] uppercase" style={{ fontFamily: 'DM Mono, monospace', background: p.accent, color: '#050505' }}>
+                <div className="absolute top-2 left-2 px-1.5 py-0.5 text-[10px] tracking-[0.12em] uppercase" style={{ fontFamily: 'DM Mono, monospace', background: p.accent, color: '#050505' }}>
                   {p.tag}
                 </div>
               )}
