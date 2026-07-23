@@ -74,7 +74,18 @@ class DeliveryRate(db.Model):
             "delivery_time": self.delivery_time
         }
 
+class StoreSettings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    store_email = db.Column(db.String(150), default="")
+    store_phone = db.Column(db.String(30), default="")
+    store_name = db.Column(db.String(100), default="Drippy")
 
+    def to_dict(self):
+        return {
+            "store_email": self.store_email,
+            "store_phone": self.store_phone,
+            "store_name": self.store_name,
+        }
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)

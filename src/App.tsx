@@ -31,6 +31,7 @@ const ProductDetailsPage = lazy(() => import('./pages/ProductDetails/ProductDeta
 const ProfilePage = lazy(() => import('./pages/Profile/Profile'));
 const AdminOrders = lazy(() => import('./pages/Admin/AdminOrders'));
 const AdminLogin = lazy(() => import('./pages/Admin/AdminLogin'));
+const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
 const AdminTracking = lazy(() => import('./pages/tracking/AdminTracking'));
 
 function PageLoader() {
@@ -123,7 +124,16 @@ export default function App() {
               </AdminRoute>
             }
           />
-
+          <Route
+            path="/admin/settings"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <AdminSettings />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/tracking" element={<TrackingPage />} />
           <Route path="/shipping" element={<ShippingPage />} />

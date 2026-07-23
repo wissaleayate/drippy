@@ -6,7 +6,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 from database import db, DATABASE_URI
-from models import Product, Order, Review, Promotion, DeliveryRate
+from models import Product, Order, Review, Promotion, DeliveryRate, StoreSettings
 
 app = Flask(__name__)
 CORS(app)
@@ -437,7 +437,38 @@ def add_review():
 
     return jsonify(review.to_dict()), 201
 
+# ========================
+# STORE SETTINGS
+# ========================
+@app.route("/settings", methods=["GET"])
+def get_settings():
+    settings = StoreSettings.query.first()
+    if not settings:
+        settings = StoreSettings()
+        db.session.add(settings)
+        db.session.commit()
+    return jsonify(settings.to_dict())
 
+
+@app.route("/settings", methods=["POST"])
+def update_settings():
+    data = request.json
+    settings = StoreSettings.query.first()
+    if not settings:
+        settings = StoreSettings()
+        db.session.add(settings)
+
+    settings.store_email = data.get("store_email", settings.store_email)
+    settings.store_phone = data.get("store_phone", settings.store_phone)
+    settings.store_name = data.get("store_name", settings.store_name)
+
+    db.session.commit()
+    return jsonify(settings.to_dict()), 200
+
+
+# ========================
+# DATABASE
+# ========================
 # ========================
 # DATABASE
 # ========================

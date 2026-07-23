@@ -1,8 +1,5 @@
-  import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Package, Plus, RefreshCw, Copy, Trash2, Check } from 'lucide-react';
-import Nav from '../../components/Nav';
-import Footer from '../../components/Footer';
 
 interface AdminProduct {
   uuid: string;
@@ -314,50 +311,11 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-ink text-bone">
-      <Nav />
-      <main className="flex-grow pt-28 pb-24 max-w-6xl mx-auto px-4 sm:px-6 w-full">
-        <div className="mb-10 flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-display uppercase tracking-tight text-bone">Admin Panel</h1>
-            <p className="text-sm text-ash mt-2">Manage products and orders.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => { loadProducts(); loadPromotions(); loadDeliveryRates(); }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] text-xs font-bold uppercase tracking-wider text-bone transition-all cursor-pointer tap-target"
-              aria-label="Refresh all data"
-            >
-              <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Refresh
-            </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem('isAdmin');
-                localStorage.removeItem('adminToken');
-                window.location.href = '/admin/login';
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-rose-400/30 hover:text-rose-400 text-xs font-bold uppercase tracking-wider text-ash transition-all cursor-pointer tap-target"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-
-        <div className="mb-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Link
-            to="/admin/orders"
-            className="p-5 sm:p-6 rounded-2xl bg-volt text-ink hover:bg-bone transition-all flex items-center justify-between font-mono uppercase tracking-wider tap-target"
-          >
-            <span className="font-bold text-base sm:text-lg">Manage Orders</span>
-            <span className="text-2xl rtl-flip" aria-hidden="true">→</span>
-          </Link>
-          <Link
-            to="/admin/tracking"
-            className="p-5 sm:p-6 rounded-2xl bg-volt text-ink hover:bg-bone transition-all flex items-center justify-between font-mono uppercase tracking-wider tap-target"
-          >
-            <span className="font-bold text-base sm:text-lg">Manage Shipment Tracking</span>
-            <span className="text-2xl rtl-flip" aria-hidden="true">→</span>
-          </Link>
+    <div className="min-h-screen bg-ink text-bone">
+      <main className="pt-8 pb-24 max-w-6xl mx-auto px-4 sm:px-6 w-full">
+        <div className="mb-10">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-display uppercase tracking-tight text-bone">Admin Panel</h1>
+          <p className="text-sm text-ash mt-2">Manage products and orders.</p>
         </div>
 
         {message && (
@@ -579,7 +537,6 @@ export default function AdminPage() {
           )}
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

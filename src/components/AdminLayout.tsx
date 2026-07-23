@@ -1,21 +1,26 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Package, ShoppingBag, Truck, Tag, Settings, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
-import { useState } from 'react';
-
-const NAV_ITEMS = [
-  { label: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-  { label: 'Products', path: '/admin', icon: Package }, // still on main page for now
-  { label: 'Orders', path: '/admin/orders', icon: ShoppingBag },
-  { label: 'Shipment Tracking', path: '/admin/tracking', icon: Truck },
-  { label: 'Delivery Rates', path: '/admin', icon: Tag }, // still on main page for now
-  { label: 'Settings', path: '/admin/settings', icon: Settings },
-];
+import logo from '../imports/drippy logo.png';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const isAdminHome = location.pathname === '/admin';
+  const hash = location.hash;
+
+  const NAV_ITEMS = [
+    { label: 'Dashboard', to: '/admin', isActive: isAdminHome && !hash },
+    { label: 'Products', to: '/admin#products-heading', isActive: isAdminHome && hash === '#products-heading' },
+    { label: 'Delivery Rates', to: '/admin#delivery-heading', isActive: isAdminHome && hash === '#delivery-heading' },
+    { label: 'Orders', to: '/admin/orders', isActive: location.pathname === '/admin/orders' },
+    { label: 'Shipment Tracking', to: '/admin/tracking', isActive: location.pathname === '/admin/tracking' },
+    { label: 'Settings', to: '/admin/settings', isActive: location.pathname === '/admin/settings' },
+  ];
+
+  const ICONS = [LayoutDashboard, Package, Tag, ShoppingBag, Truck, Settings];
 
   const handleLogout = () => {
     localStorage.removeItem('isAdmin');
@@ -23,37 +28,52 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     navigate('/admin/login');
   };
 
-  return (
-    <div className="min-h-screen bg-ink text-bone flex">
-      {/* Mobile toggle */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 h-10 w-10 flex items-center justify-center rounded-xl bg-zinc border border-white/10 text-bone"
-      >
-        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
+  const handleNavClick = (to: string) => {
+    setSidebarOpen(false);
+    // If navigating to an anchor on the current page, scroll to it manually
+    const [path, hashPart] = to.split('#');
+    if (hashPart && location.pathname === path) {
+      setTimeout(() => {
+        document.getElementById(hashPart)?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    }
+  };
 
-      {/* Sidebar */}
+  return (
+    <div className="min-h-screen bg-ink text-bone">
+      {/* Admin top bar */}
+      <header className="fixed top-0 left-0 right-0 z-[60] h-16 flex items-center gap-4 px-4 sm:px-6 bg-[rgba(26,14,5,0.97)] backdrop-blur-xl border-b border-white/10">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/[0.03] border border-white/10 text-bone hover:border-volt/40 transition-all cursor-pointer shrink-0"
+          aria-label={sidebarOpen ? 'Close admin menu' : 'Open admin menu'}
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+        <Link to="/" className="flex items-center h-full overflow-hidden">
+          <img src={logo} alt="Drippy" className="h-24 w-auto object-contain -my-4" />
+        </Link>
+        <span className="text-xs font-mono uppercase tracking-widest text-ash border-l border-white/10 pl-4 ml-1 hidden sm:inline">
+          Admin
+        </span>
+      </header>
+
+      {/* Sidebar (slide-out panel) */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen w-64 shrink-0 bg-zinc border-r border-white/10 flex flex-col z-40 transition-transform duration-300 ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-72 bg-zinc border-r border-white/10 flex flex-col z-[55] transition-transform duration-300 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 border-b border-white/5">
-          <h1 className="text-lg font-black font-display uppercase tracking-tight text-volt">Drippy Admin</h1>
-        </div>
-
-        <nav className="flex-1 p-3 flex flex-col gap-1 overflow-y-auto">
-          {NAV_ITEMS.map((item) => {
-            const isActive = location.pathname === item.path;
-            const Icon = item.icon;
+        <nav className="flex-1 p-3 flex flex-col gap-1 overflow-y-auto pt-4">
+          {NAV_ITEMS.map((item, i) => {
+            const Icon = ICONS[i];
             return (
               <Link
                 key={item.label}
-                to={item.path}
-                onClick={() => setMobileOpen(false)}
+                to={item.to}
+                onClick={() => handleNavClick(item.to)}
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                  isActive
+                  item.isActive
                     ? 'bg-volt/10 text-volt border border-volt/20'
                     : 'text-ash hover:text-bone hover:bg-white/[0.04]'
                 }`}
@@ -76,16 +96,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
-      {mobileOpen && (
+      {/* Overlay */}
+      {sidebarOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-ink/70 backdrop-blur-sm z-30"
-          onClick={() => setMobileOpen(false)}
+          className="fixed top-16 inset-x-0 bottom-0 bg-ink/70 backdrop-blur-sm z-[50]"
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Main content */}
-      <main className="flex-1 min-w-0">{children}</main>
+      <main className="pt-16">{children}</main>
     </div>
   );
 }
