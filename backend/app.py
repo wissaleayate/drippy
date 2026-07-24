@@ -110,6 +110,19 @@ def delete_product_by_uuid(uuid_val):
         "message": "Product deleted successfully"
     }), 200
 
+@app.route("/products/uuid/<string:uuid_val>/featured", methods=["PUT"])
+def toggle_product_featured(uuid_val):
+    product = Product.query.filter_by(uuid=uuid_val).first()
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+
+    data = request.json
+    product.featured = bool(data.get("featured", not product.featured))
+    db.session.commit()
+
+    return jsonify(product.to_dict()), 200
+
+
 
 @app.route("/products", methods=["POST"])
 def add_product():

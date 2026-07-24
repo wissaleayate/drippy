@@ -16,6 +16,10 @@ class Product(db.Model):
     # NEW: We only ADD this new column. 
     # It is safe and won't conflict with your team's work.
     uuid = db.Column(db.String(36), unique=True, default=generate_uuid)
+
+    # NEW: controls whether this product shows on the homepage
+    featured = db.Column(db.Boolean, default=False)
+
     def to_dict(self):
         return {
             "uuid": self.uuid,
@@ -24,7 +28,8 @@ class Product(db.Model):
             "category": self.category,
             "price": self.price,
             "stock": self.stock,
-            "image": self.image
+            "image": self.image,
+            "featured": self.featured
         }
 
 

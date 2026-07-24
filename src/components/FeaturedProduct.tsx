@@ -1,14 +1,39 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../context/LanguageContext'
+
+interface ApiProduct {
+  uuid: string
+  name: string
+  brand: string
+  category: string
+  price: number
+  image?: string
+  description?: string
+  sizes?: string[]
+  featured?: boolean
+}
 
 export default function FeaturedProduct() {
   const { t } = useLang()
   const [selectedSize, setSelectedSize] = useState('')
-  const [selectedColor, setSelectedColor] = useState(0)
+  const [product, setProduct] = useState<ApiProduct | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const sizes = ['US 7', 'US 8', 'US 9', 'US 10', 'US 11', 'US 12']
-  const colors = ['#e8e0d4', '#c8ff00', '#e85d3a', '#0066cc']
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/products')
+      .then((res) => res.json())
+      .then((data: ApiProduct[]) => {
+        const featured = data.find((p) => p.featured)
+        setProduct(featured ?? data[0] ?? null)
+      })
+      .catch((err) => console.error('Failed to load featured product:', err))
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  if (isLoading || !product) return null
+
+  const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ['S', 'M', 'L']
 
   return (
     <section className="bg-carbon py-12 sm:py-16 md:py-24">
@@ -27,8 +52,8 @@ export default function FeaturedProduct() {
             <div className="absolute top-3 sm:top-5 left-3 sm:left-5 z-10 font-display font-black text-6xl sm:text-7xl md:text-8xl select-none pointer-events-none" style={{ color: 'transparent', WebkitTextStroke: '1px rgba(255,255,255,0.06)', lineHeight: 1 }}>001</div>
             <div className="relative overflow-hidden bg-zinc aspect-[4/3]">
               <img
-                src="https://i.pinimg.com/736x/ef/06/da/ef06dad5580e06dd1aa559b04645b0f1.jpg"
-                alt='ASICS GEL-1130'
+                src={product.image}
+                alt={product.name}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
@@ -44,37 +69,17 @@ export default function FeaturedProduct() {
           {/* Info */}
           <div className="lg:pl-10 xl:pl-16 mt-2 lg:mt-0">
             <p className="text-ash text-xs tracking-[0.2em] uppercase mb-2" style={{ fontFamily: 'DM Mono, monospace' }}>
-              {t.feat_eyebrow}
+              {product.brand}
             </p>
-            <h2 className="font-display font-black text-bone leading-none mb-1" style={{ fontSize: 'clamp(30px, 4vw, 68px)', letterSpacing: '-0.02em' }}>
-              PEGASUS
-            </h2>
-            <h2 className="font-display font-black leading-none mb-5 sm:mb-6" style={{ fontSize: 'clamp(30px, 4vw, 68px)', letterSpacing: '-0.02em', color: 'transparent', WebkitTextStroke: '1.5px rgba(245,245,240,0.4)' }}>
-              ULTRA X
+            <h2 className="font-display font-black text-bone leading-none mb-5 sm:mb-6" style={{ fontSize: 'clamp(30px, 4vw, 68px)', letterSpacing: '-0.02em' }}>
+              {product.name}
             </h2>
             <p className="text-ash text-sm leading-relaxed max-w-sm mb-5 sm:mb-6">
-              Reactfoam midsole delivers exceptional energy return with every stride. A precision-engineered outsole grips any surface. Built for those who refuse to slow down.
+              {product.description}
             </p>
 
             <div className="flex items-baseline gap-3 mb-5 sm:mb-6 flex-wrap">
-              <span className="font-display font-black text-volt text-2xl sm:text-3xl">27,900 DA</span>
-              <span className="text-ash text-sm line-through" style={{ fontFamily: 'DM Mono, monospace' }}>32,000 DA</span>
-              <span className="px-2 py-0.5 text-xs bg-volt/10 text-volt border border-volt/30" style={{ fontFamily: 'DM Mono, monospace' }}>{t.feat_discount}</span>
-            </div>
-
-            <div className="mb-4 sm:mb-5">
-              <p className="text-xs text-ash tracking-[0.15em] uppercase mb-2" style={{ fontFamily: 'DM Mono, monospace' }}>{t.feat_color}</p>
-              <div className="flex items-center gap-2.5">
-                {colors.map((c, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedColor(i)}
-                    className="w-6 h-6 rounded-full transition-all duration-200 cursor-pointer"
-                    style={{ background: c, outline: selectedColor === i ? `2px solid ${c}` : '2px solid transparent', outlineOffset: '3px' }}
-                    aria-label={`Color ${i + 1}`}
-                  />
-                ))}
-              </div>
+              <span className="font-display font-black text-volt text-2xl sm:text-3xl">{product.price.toLocaleString()} DA</span>
             </div>
 
             <div className="mb-5 sm:mb-6">
@@ -94,7 +99,7 @@ export default function FeaturedProduct() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Link to="/products" className="flex-1 sm:flex-none px-6 sm:px-8 py-3 text-xs font-semibold tracking-[0.1em] uppercase transition-all duration-300 text-center" style={{ background: '#f5a623', color: '#050505' }}>
+              <Link to={`/products/uuid/${product.uuid}`} className="flex-1 sm:flex-none px-6 sm:px-8 py-3 text-xs font-semibold tracking-[0.1em] uppercase transition-all duration-300 text-center" style={{ background: '#f5a623', color: '#050505' }}>
                 {t.feat_cta}
               </Link>
             </div>

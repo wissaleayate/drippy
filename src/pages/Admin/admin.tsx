@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package, Plus, RefreshCw, Copy, Trash2, Check } from 'lucide-react';
+import { Package, Plus, RefreshCw, Copy, Trash2, Check, Star } from 'lucide-react';
 
 interface AdminProduct {
   uuid: string;
@@ -9,6 +9,7 @@ interface AdminProduct {
   price: number;
   stock: number;
   image: string;
+  featured?: boolean;
 }
 const ALGERIA_WILAYAS = [
   'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna', 'Béjaïa', 'Biskra', 'Béchar',
@@ -119,7 +120,23 @@ export default function AdminPage() {
       showMessage('Could not copy automatically. UUID: ' + uuid);
     }
 };
+  const handleToggleFeatured = async (uuid: string, currentFeatured: boolean) => {
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}/featured`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured: !currentFeatured }),
+      });
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      setProducts((prev) => prev.map((p) => (p.uuid === uuid ? { ...p, featured: !currentFeatured } : p)));
+      showMessage(!currentFeatured ? 'Product added to homepage.' : 'Product removed from homepage.');
+    } catch (err) {
+      console.error('Failed to toggle featured:', err);
+      showMessage('Failed to update. Is the backend running?');
+    }
+  };
 
+  
   const handleDeleteProduct = async (uuid: string, name: string) => {
     const confirmed = window.confirm(`Are you sure you want to delete "${name}"? This cannot be undone.`);
     if (!confirmed) return;
@@ -390,6 +407,18 @@ export default function AdminPage() {
                             ) : (
                               <Copy className="w-3.5 h-3.5" />
                             )}
+                          </button>
+                          <button
+                            onClick={() => handleToggleFeatured(p.uuid, !!p.featured)}
+                            className={`p-2 rounded-lg border transition-all cursor-pointer tap-target ${
+                              p.featured
+                                ? 'bg-volt/10 border-volt/30 text-volt'
+                                : 'bg-white/[0.02] border-white/10 text-ash hover:text-bone hover:border-white/20'
+                            }`}
+                            title={p.featured ? 'Remove from homepage' : 'Show on homepage'}
+                            aria-label={p.featured ? `Remove ${p.name} from homepage` : `Show ${p.name} on homepage`}
+                          >
+                            <Star className={`w-3.5 h-3.5 ${p.featured ? 'fill-volt' : ''}`} />
                           </button>
                           <button
                             onClick={() => p.uuid && handleDeleteProduct(p.uuid, p.name)}
