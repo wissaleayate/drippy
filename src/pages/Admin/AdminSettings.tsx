@@ -36,9 +36,14 @@ export default function AdminSettings() {
     try {
       const res = await fetch('http://127.0.0.1:5000/settings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+        },
         body: JSON.stringify(settings),
       });
+
+
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
       setMessage('Settings saved successfully.');
       setTimeout(() => setMessage(''), 3000);

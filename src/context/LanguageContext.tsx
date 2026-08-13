@@ -429,7 +429,7 @@ const en: Translations = {
   cat_sneakers: 'Sneakers', cat_clothes: 'Clothes', cat_accessories: 'Accessories',
   cat_men: 'Men', cat_women: 'Women', cat_children: 'Children',
 
-  feat_eyebrow: 'Air Max Series — 2025', feat_color: 'Color', feat_size: 'Size',
+  feat_eyebrow: 'Air Max Series ', feat_color: 'Color', feat_size: 'Size',
   feat_cta: 'Shop This Style', feat_badge: 'Limited Edition', feat_discount: '−13%',
 
   grid_eyebrow: 'Collections', grid_heading: 'THE LINEUP', grid_view_all: 'View All Products',
@@ -453,7 +453,7 @@ const en: Translations = {
   fb_sort_featured: 'Sort: Featured', fb_sort_price_asc: 'Price: Low to High',
   fb_sort_price_desc: 'Price: High to Low', fb_sort_rating: 'Top Rated',
   fb_reset: 'Reset Filters', fb_active_filters: 'Active filters:',
-  fb_dept: 'Dept:', fb_brand_label: 'Brand:', fb_under: 'Under $',
+  fb_dept: 'Dept:', fb_brand_label: 'Brand:', fb_under: 'Under ',
   fb_size_label: 'Size:', fb_sorted: 'Sorted',
   fb_category: 'Category:', fb_all_products: 'All Products',
   fb_showing: 'Showing', fb_product: 'Product', fb_products: 'Products',

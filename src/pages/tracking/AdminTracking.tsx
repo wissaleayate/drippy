@@ -37,7 +37,10 @@ export default function AdminTracking() {
     try {
       const res = await fetch(`http://127.0.0.1:5000/orders/${orderId}/status`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+        },
         body: JSON.stringify({ status: newStatus }),
       });
 

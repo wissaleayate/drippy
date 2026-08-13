@@ -59,12 +59,6 @@ function buildFitSummary(reviews: Review[]) {
   ];
 }
 
-// Extra gallery images per product (lifestyle shots)
-const EXTRA_GALLERY = [
-  'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80',
-];
 
 const FIT_LABEL_MAP: Record<string, 'pdv_true_to_size' | 'pdv_runs_small' | 'pdv_runs_large'> = {
   'True to Size': 'pdv_true_to_size',
@@ -144,7 +138,7 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
 
   if (!product) return null;
 
-  const gallery = [product.image, ...EXTRA_GALLERY];
+  const gallery = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
   const fitSummary = buildFitSummary(reviews);
   const avgRating = reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
 

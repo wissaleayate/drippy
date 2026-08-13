@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, SlidersHorizontal, X, RotateCcw, ChevronDown } from 'lucide-react';
-import { FilterState, Category } from '../types';
-import { ALL_BRANDS, ALL_SIZES } from '../data/product';
+import { FilterState, Category, Product } from '../types';
 import { useLang } from '../context/LanguageContext';
 
 interface FilterBarProps {
@@ -11,6 +10,7 @@ interface FilterBarProps {
   selectedCategory: Category;
   setSelectedCategory?: (category: Category) => void;
   totalResults: number;
+  products: Product[];
 }
 
 export default function FilterBar({
@@ -18,13 +18,50 @@ export default function FilterBar({
   setFilters,
   selectedCategory,
   totalResults,
+  products,
 }: FilterBarProps) {
   const { t } = useLang();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Derive real filter options from the actual product list instead of fake static data
+  const { brands, sizes, minPrice, maxPrice } = useMemo(() => {
+    if (products.length === 0) {
+      return { brands: [], sizes: [], minPrice: 0, maxPrice: 50000 };
+    }
+    const brandSet = new Set<string>();
+    const sizeSet = new Set<string>();
+    let min = Infinity;
+    let max = -Infinity;
+
+    products.forEach((p) => {
+      if (p.brand) brandSet.add(p.brand);
+      (p.sizes ?? []).forEach((s) => sizeSet.add(s));
+      if (p.price < min) min = p.price;
+      if (p.price > max) max = p.price;
+    });
+
+    const sortedSizes = Array.from(sizeSet).sort((a, b) => {
+      const na = parseFloat(a);
+      const nb = parseFloat(b);
+      if (!isNaN(na) && !isNaN(nb)) return na - nb;
+      return a.localeCompare(b);
+    });
+
+    return {
+      brands: Array.from(brandSet).sort(),
+      sizes: sortedSizes,
+      minPrice: min === Infinity ? 0 : Math.round(min),
+      maxPrice: max === -Infinity ? 50000 : Math.round(max),
+    };
+  }, [products]);
+
+  // If the current filter's maxPrice is stuck at an old default that no longer makes sense
+  // (e.g. above the real max, or below the real min), the slider below still works correctly
+  // since we clamp its own min/max — the applied filter value doesn't need forcing here.
+
   const isFiltered =
     filters.brand !== 'All' ||
-    filters.maxPrice < 250 ||
+    filters.maxPrice < maxPrice ||
     filters.size !== 'All' ||
     filters.sortBy !== 'featured' ||
     (!!filters.department && filters.department !== 'all');
@@ -33,7 +70,7 @@ export default function FilterBar({
     setFilters({
       searchQuery: '',
       brand: 'All',
-      maxPrice: 250,
+      maxPrice: maxPrice,
       size: 'All',
       sortBy: 'featured',
       department: 'all',
@@ -142,33 +179,37 @@ export default function FilterBar({
             {/* Brand Filter */}
             <div className="flex flex-col gap-2.5">
               <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">{t.fb_brand}</span>
-              <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
-                <button
-                  onClick={() => handleBrandChange('All')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
-                    filters.brand === 'All'
-                      ? 'bg-volt border-volt text-ink font-bold shadow-xs'
-                      : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
-                  }`}
-                  id="brand-filter-all"
-                >
-                  {t.fb_all_brands}
-                </button>
-                {ALL_BRANDS.map((b) => (
+              {brands.length === 0 ? (
+                <span className="text-xs text-ash">No brands yet</span>
+              ) : (
+                <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
                   <button
-                    key={b}
-                    onClick={() => handleBrandChange(b)}
+                    onClick={() => handleBrandChange('All')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
-                      filters.brand === b
+                      filters.brand === 'All'
                         ? 'bg-volt border-volt text-ink font-bold shadow-xs'
                         : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
                     }`}
-                    id={`brand-filter-${b.toLowerCase().replace(/\s+/g, '-')}`}
+                    id="brand-filter-all"
                   >
-                    {b}
+                    {t.fb_all_brands}
                   </button>
-                ))}
-              </div>
+                  {brands.map((b) => (
+                    <button
+                      key={b}
+                      onClick={() => handleBrandChange(b)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                        filters.brand === b
+                          ? 'bg-volt border-volt text-ink font-bold shadow-xs'
+                          : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
+                      }`}
+                      id={`brand-filter-${b.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      {b}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Price Range Filter */}
@@ -176,23 +217,23 @@ export default function FilterBar({
               <div className="flex justify-between items-center">
                 <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">{t.fb_max_price}</span>
                   <span className="text-xs font-bold text-volt bg-volt/10 px-2 py-0.5 rounded-lg font-mono">
-                    ${filters.maxPrice}
+                    {filters.maxPrice.toLocaleString()} DA
                   </span>
                 </div>
                 <div className="flex flex-col gap-1.5 mt-1">
                   <input
                     type="range"
-                    min="10"
-                    max="250"
-                    step="5"
+                    min={minPrice}
+                    max={maxPrice}
+                    step={Math.max(1, Math.round((maxPrice - minPrice) / 50))}
                     value={filters.maxPrice}
                     onChange={handlePriceChange}
                     className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-volt"
                     id="price-range-slider"
                   />
                   <div className="flex justify-between text-[10px] font-bold text-[#8a7f72] px-1 font-mono">
-                    <span>Min: $10</span>
-                    <span>Max: $250+</span>
+                    <span>Min: {minPrice.toLocaleString()} DA</span>
+                    <span>Max: {maxPrice.toLocaleString()} DA</span>
                   </div>
                 </div>
               </div>
@@ -200,24 +241,28 @@ export default function FilterBar({
               {/* Size Filter */}
               <div className="flex flex-col gap-2.5">
                 <span className="text-xs font-bold text-ash uppercase tracking-wider font-mono">{t.fb_size}</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {ALL_SIZES.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => handleSizeChange(size)}
-                      className={`h-7 min-w-[28px] px-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer flex items-center justify-center ${
-                        filters.size === size
-                          ? 'bg-volt border-volt text-ink hover:bg-bone'
-                          : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
-                      }`}
-                      id={`size-filter-${size}`}
-                      aria-pressed={filters.size === size}
-                      aria-label={`Size ${size}`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
+                {sizes.length === 0 ? (
+                  <span className="text-xs text-ash">No sizes yet</span>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => handleSizeChange(size)}
+                        className={`h-7 min-w-[28px] px-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer flex items-center justify-center ${
+                          filters.size === size
+                            ? 'bg-volt border-volt text-ink hover:bg-bone'
+                            : 'bg-white/[0.04] border-white/10 text-bone hover:border-white/20 hover:bg-white/[0.08]'
+                        }`}
+                        id={`size-filter-${size}`}
+                        aria-pressed={filters.size === size}
+                        aria-label={`Size ${size}`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -250,12 +295,12 @@ export default function FilterBar({
                       </button>
                     </span>
                   )}
-                  {filters.maxPrice < 250 && (
+                  {filters.maxPrice < maxPrice && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/[0.06] text-bone border border-white/10">
-                      {t.fb_under}{filters.maxPrice}
+                      {t.fb_under}{filters.maxPrice.toLocaleString()} DA
                       <button
                         className="cursor-pointer text-ash hover:text-bone"
-                        onClick={() => setFilters((prev) => ({ ...prev, maxPrice: 250 }))}
+                        onClick={() => setFilters((prev) => ({ ...prev, maxPrice: maxPrice }))}
                         aria-label="Remove price filter"
                       >
                         <X className="w-3 h-3" />

@@ -7,6 +7,8 @@ export interface Product {
   originalPrice?: number; // For discount display
   sizes: string[];
   image: string;
+  gallery?: string[]; // additional product photos, main image is always gallery[0]
+  stock?: number;
   description: string;
   rating: number;
   reviewsCount: number;
@@ -24,4 +26,3 @@ export interface FilterState {
   sortBy: string;
   department?: string;
 }
-

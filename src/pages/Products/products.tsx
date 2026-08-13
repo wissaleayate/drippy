@@ -31,15 +31,17 @@ function normalizeProduct(raw: ApiProduct): Product {
     raw.category === 'women' || raw.category === 'children' ? raw.category : 'men';
   const image = raw.image ?? '';
 
+  const gallery = (raw as any).gallery && (raw as any).gallery.length > 0 ? (raw as any).gallery : [image];
   return {
     id: raw.uuid,
     name: raw.name,
     brand: raw.brand,
     category,
     price: raw.price,
-    // ---> UPDATED FOR DIRECT SERVER UPLOADS & LOCAL IMAGES <---
     image: image.startsWith('http') || image.startsWith('/') ? image : `/images/${image}`,
+    gallery,
     inStock: (raw.stock ?? 1) > 0,
+    stock: raw.stock ?? 0,
     description: raw.description ?? '',
     sizes: raw.sizes ?? ['S', 'M', 'L'],
     featured: raw.featured ?? false,
@@ -54,6 +56,7 @@ export default function ProductsPage() {
   const requestedCategory = searchParams.get('category');
   const requestedSearch = searchParams.get('search') ?? '';
   const requestedDepartment = searchParams.get('department');
+  const requestedOpenUuid = searchParams.get('open');
   const urlCategory: Category =
     requestedCategory === 'men' || requestedCategory === 'women' || requestedCategory === 'children'
       ? requestedCategory
@@ -91,10 +94,13 @@ export default function ProductsPage() {
         if (!response.ok) throw new Error(`Server responded ${response.status}`);
         return response.json() as Promise<ApiProduct[]>;
       })
-      .then((data) => setProducts(data.map(normalizeProduct)))
-      .catch((error: unknown) => {
-        console.error('Failed to load products:', error);
-        setProductsError('Could not load products. Is the backend running?');
+      .then((data) => {
+        const normalized = data.map(normalizeProduct);
+        setProducts(normalized);
+        if (requestedOpenUuid) {
+          const match = normalized.find((p) => p.id === requestedOpenUuid);
+          if (match) setDetailProduct(match);
+        }
       })
       .finally(() => setIsLoadingProducts(false));
   }, []);
@@ -154,7 +160,7 @@ export default function ProductsPage() {
     <div className="min-h-screen flex flex-col bg-ink text-bone" id="app-root-container">
       <Nav />
 
-      <div className="sticky top-14 z-20 bg-[#1a0e05]/90 backdrop-blur-md border-b border-white/5">
+      <div className="sticky top-14 z-20 backdrop-blur-md dr-border border-b" style={{ background: 'var(--bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-10 flex items-center justify-between">
           <div className="hidden lg:flex items-center gap-5 text-xs font-semibold text-ash">
             <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-volt" />{t.pp_free_shipping}</span>
@@ -187,7 +193,7 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <FilterBar filters={filters} setFilters={setFilters} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} totalResults={filteredProducts.length} />
+        <FilterBar filters={filters} setFilters={setFilters} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} totalResults={filteredProducts.length} products={products} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {isLoadingProducts ? <div className="text-center py-16 text-ash text-sm">{t.pp_loading}</div> : productsError ? <div className="text-center py-16 text-rose-400 text-sm">{t.pp_error}</div> : (

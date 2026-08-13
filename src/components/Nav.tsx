@@ -78,9 +78,9 @@ export default function Nav() {
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
-        background: 'rgba(26,14,5,0.97)',
+        background: 'var(--bg-primary)',
         backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(245,166,35,0.10)',
+        borderBottom: '1px solid rgba(245,166,35,0.15)',
       }}
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 h-14 flex items-center justify-between gap-3">
@@ -116,7 +116,7 @@ export default function Nav() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
                   placeholder={t.nav_search_placeholder}
-                  className="w-28 sm:w-44 px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
+                  className="dr-surface dr-border w-28 sm:w-44 px-3 py-1.5 rounded-lg border text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
                 />
               </form>
             ) : (
@@ -147,7 +147,7 @@ export default function Nav() {
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="tap-target flex items-center justify-center w-8 h-8 rounded-xl border border-white/10 hover:border-volt/40 text-ash hover:text-volt transition-all duration-200 cursor-pointer"
+            className="dr-border tap-target flex items-center justify-center w-8 h-8 rounded-xl border hover:border-volt/40 text-ash hover:text-volt transition-all duration-200 cursor-pointer"
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -157,22 +157,22 @@ export default function Nav() {
           <div className="relative hidden sm:block" ref={langRef}>
             <button
               onClick={() => setLangOpen((v) => !v)}
-              className="tap-target flex items-center gap-1.5 px-2 py-1.5 rounded-xl border border-white/10 hover:border-volt/40 text-ash hover:text-volt transition-all duration-200 cursor-pointer"
+              className="dr-border tap-target flex items-center gap-1.5 px-2 py-1.5 rounded-xl border hover:border-volt/40 text-ash hover:text-volt transition-all duration-200 cursor-pointer"
               aria-label={t.nav_language}
             >
               <Globe className="w-3.5 h-3.5" />
               <span className="text-[10px] font-mono uppercase font-bold">{lang}</span>
             </button>
             {langOpen && (
-              <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-40 rounded-2xl border border-white/10 bg-zinc shadow-xl overflow-hidden z-50`}>
+              <div className={`dr-border absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-40 rounded-2xl border bg-zinc shadow-xl overflow-hidden z-50`}>
                 {LANG_OPTIONS.map((opt) => (
                   <button
                     key={opt.code}
                     onClick={() => { setLang(opt.code); setLangOpen(false); }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors cursor-pointer ${
+                    className={`dr-surface-hover w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors cursor-pointer ${
                       lang === opt.code
                         ? 'bg-volt/10 text-volt font-bold'
-                        : 'text-ash hover:text-bone hover:bg-white/[0.04]'
+                        : 'text-ash hover:text-bone'
                     }`}
                   >
                     <span>{opt.flag}</span>
@@ -187,7 +187,7 @@ export default function Nav() {
           {!user && (
             <Link
               to="/login"
-              className="hidden md:inline-flex tap-target items-center gap-1.5 px-4 py-2 text-xs font-semibold tracking-[0.10em] uppercase border border-white/10 text-bone hover:border-volt/50 hover:text-volt rounded-xl transition-all duration-200"
+              className="dr-border hidden md:inline-flex tap-target items-center gap-1.5 px-4 py-2 text-xs font-semibold tracking-[0.10em] uppercase border text-bone hover:border-volt/50 hover:text-volt rounded-xl transition-all duration-200"
               style={{ fontFamily: 'DM Mono, monospace' }}
             >
               <User className="w-3.5 h-3.5" />
@@ -200,7 +200,7 @@ export default function Nav() {
             <div className="hidden md:block relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen((v) => !v)}
-                className="tap-target flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 hover:border-volt/40 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-200 cursor-pointer"
+                className="dr-border dr-surface tap-target flex items-center gap-2 px-3 py-1.5 rounded-xl border hover:border-volt/40 hover:bg-white/[0.05] transition-all duration-200 cursor-pointer"
               >
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-volt text-[10px] font-black text-ink select-none">
                   {initials}
@@ -212,21 +212,21 @@ export default function Nav() {
               </button>
 
               {dropdownOpen && (
-                <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-52 rounded-2xl border border-white/10 bg-zinc shadow-xl overflow-hidden z-50`}>
-                  <div className="px-4 py-3.5 border-b border-white/5">
+                <div className={`dr-border absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-52 rounded-2xl border bg-zinc shadow-xl overflow-hidden z-50`}>
+                  <div className="dr-border px-4 py-3.5 border-b">
                     <p className="text-xs font-bold text-bone truncate">{user.name}</p>
                     <p className="text-[11px] text-ash truncate mt-0.5">{user.email}</p>
                   </div>
                 <div className="py-1.5">
-                    <Link to="/profile" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-ash hover:text-bone hover:bg-white/[0.04] transition-colors">
+                    <Link to="/profile" onClick={() => setDropdownOpen(false)} className="dr-surface-hover flex items-center gap-3 px-4 py-2.5 text-sm text-ash hover:text-bone transition-colors">
                       <UserCircle2 className="w-4 h-4" />{t.nav_profile}
                     </Link>
-                    <Link to="/tracking" onClick={() => setDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-ash hover:text-bone hover:bg-white/[0.04] transition-colors">
+                    <Link to="/tracking" onClick={() => setDropdownOpen(false)} className="dr-surface-hover flex items-center gap-3 px-4 py-2.5 text-sm text-ash hover:text-bone transition-colors">
                       <Package className="w-4 h-4" />{t.nav_my_orders}
                     </Link>
                   </div>
-                  <div className="border-t border-white/5 py-1.5">
-                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-400 hover:text-rose-300 hover:bg-white/[0.04] transition-colors cursor-pointer">
+                  <div className="dr-border border-t py-1.5">
+                    <button onClick={handleLogout} className="dr-surface-hover w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-400 hover:text-rose-300 transition-colors cursor-pointer">
                       <LogOut className="w-4 h-4" />{t.nav_logout}
                     </button>
                   </div>
@@ -237,7 +237,7 @@ export default function Nav() {
 
           <Link
             to="/products"
-            className="hidden md:inline-flex tap-target items-center px-4 xl:px-5 py-2 text-xs font-semibold tracking-[0.12em] uppercase bg-volt text-ink hover:bg-bone transition-colors duration-200 whitespace-nowrap"
+            className="hidden md:inline-flex tap-target items-center px-4 xl:px-5 py-2 text-xs font-semibold tracking-[0.12em] uppercase bg-volt text-ink hover:bg-bone hover:text-ink transition-colors duration-200 whitespace-nowrap"
             style={{ fontFamily: 'DM Mono, monospace' }}
           >
             {t.nav_shop_now}
@@ -259,10 +259,10 @@ export default function Nav() {
 
       {/* Mobile menu */}
       <div
-        className="lg:hidden overflow-hidden transition-all duration-400"
-        style={{ maxHeight: menuOpen ? '600px' : '0', background: 'rgba(26,14,5,0.98)' }}
+        className="dr-border lg:hidden overflow-hidden transition-all duration-400 border-t"
+        style={{ maxHeight: menuOpen ? '600px' : '0', background: 'var(--bg-primary)' }}
       >
-        <div className="px-5 py-6 flex flex-col gap-5 border-t border-white/5">
+        <div className="px-5 py-6 flex flex-col gap-5">
           {/* Mobile search */}
           <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
             <div className="relative flex-1">
@@ -272,7 +272,7 @@ export default function Nav() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t.nav_search_placeholder}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
+                className="dr-surface dr-border w-full pl-9 pr-3 py-2.5 rounded-xl border text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
               />
             </div>
             <button type="submit" className="px-4 py-2.5 bg-volt text-ink text-xs font-mono font-bold rounded-xl">
@@ -302,7 +302,7 @@ export default function Nav() {
                 key={opt.code}
                 onClick={() => setLang(opt.code)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-mono font-bold border transition-all cursor-pointer ${
-                  lang === opt.code ? 'bg-volt/10 border-volt/40 text-volt' : 'border-white/10 text-ash hover:text-bone'
+                  lang === opt.code ? 'bg-volt/10 border-volt/40 text-volt' : 'dr-border text-ash hover:text-bone'
                 }`}
               >
                 {opt.flag} {opt.label}
@@ -319,13 +319,13 @@ export default function Nav() {
             <Link
               to="/login"
               onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center gap-2 text-ash text-sm font-mono border-t border-white/5 pt-4 mt-1"
+              className="dr-border inline-flex items-center gap-2 text-ash text-sm font-mono border-t pt-4 mt-1"
             >
               <User className="w-4 h-4" />
               {t.nav_login}
             </Link>
           ) : (
-            <div className="border-t border-white/5 pt-4 mt-1 flex flex-col gap-3">
+            <div className="dr-border border-t pt-4 mt-1 flex flex-col gap-3">
               <div className="flex items-center gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-volt text-xs font-black text-ink">
                   {initials}

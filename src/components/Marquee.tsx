@@ -26,7 +26,7 @@ export default function Marquee() {
   return (
     <div
       className="w-full overflow-hidden border-y py-3"
-      style={{ borderColor: 'rgba(200,255,0,0.2)', background: '#0a0a0a' }}
+      style={{ borderColor: 'var(--marquee-border)', background: 'var(--marquee-bg)' }}
       aria-hidden="true"
     >
       <div

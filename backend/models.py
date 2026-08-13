@@ -1,10 +1,12 @@
 import uuid
+from datetime import datetime
 from database import db
+from werkzeug.security import generate_password_hash, check_password_hash
+
 def generate_uuid():
     return str(uuid.uuid4())
 
 class Product(db.Model):
-    # Old code remains exactly the same:
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     brand = db.Column(db.String(50))
@@ -12,15 +14,15 @@ class Product(db.Model):
     price = db.Column(db.Float)
     stock = db.Column(db.Integer, default=0)
     image = db.Column(db.String(300))
-    
-    # NEW: We only ADD this new column. 
-    # It is safe and won't conflict with your team's work.
     uuid = db.Column(db.String(36), unique=True, default=generate_uuid)
-
-    # NEW: controls whether this product shows on the homepage
     featured = db.Column(db.Boolean, default=False)
+    sizes = db.Column(db.Text, default="")  # comma-separated, e.g. "39,40,41"
+    extra_images = db.Column(db.Text, default="")  # comma-separated URLs, additional gallery photos
 
     def to_dict(self):
+        gallery = [self.image] if self.image else []
+        if self.extra_images:
+            gallery += [u for u in self.extra_images.split(",") if u]
         return {
             "uuid": self.uuid,
             "name": self.name,
@@ -29,17 +31,45 @@ class Product(db.Model):
             "price": self.price,
             "stock": self.stock,
             "image": self.image,
-            "featured": self.featured
+            "featured": self.featured,
+            "sizes": [s for s in self.sizes.split(",") if s] if self.sizes else [],
+            "gallery": gallery
         }
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), unique=True, default=generate_uuid)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.String(50), nullable=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def to_dict(self, include_email=True):
+        data = {
+            "id": self.id,
+            "uuid": self.uuid,
+            "name": self.name,
+            "created_at": self.created_at
+        }
+        if include_email:
+            data["email"] = self.email
+        return data
 
 
 class Promotion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), unique=True, default=generate_uuid)
-    tag = db.Column(db.String(50))          # e.g. "NEW DROP"
-    subtitle = db.Column(db.String(100))    # e.g. "New Balance / Collection 01"
-    title_line1 = db.Column(db.String(100)) # e.g. "STEP"
-    title_line2 = db.Column(db.String(100)) # e.g. "INTO STYLE"
+    tag = db.Column(db.String(50))
+    subtitle = db.Column(db.String(100))
+    title_line1 = db.Column(db.String(100))
+    title_line2 = db.Column(db.String(100))
     description = db.Column(db.String(300))
     button_text = db.Column(db.String(50), default="EXPLORE DROP")
     button_link = db.Column(db.String(200), default="/products")
@@ -97,9 +127,10 @@ class Order(db.Model):
     uuid = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
     customer = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
-    address = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(150), nullable=True)
+    address = db.Column(db.String(200), nullable=True)
     wilaya = db.Column(db.String(100), nullable=True)
-    delivery_type = db.Column(db.String(20), nullable=True)  # "home" or "pickup"
+    delivery_type = db.Column(db.String(20), nullable=True)
     shipping_price = db.Column(db.Float, default=0.0)
     status = db.Column(db.String(50), default="Nouveau")
     items = db.Column(db.Text, nullable=True)
@@ -112,6 +143,7 @@ class Order(db.Model):
             "uuid": self.uuid,
             "customer": self.customer,
             "phone": self.phone,
+            "email": self.email,
             "address": self.address,
             "wilaya": self.wilaya,
             "delivery_type": self.delivery_type,

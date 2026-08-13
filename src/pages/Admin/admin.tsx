@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package, Plus, RefreshCw, Copy, Trash2, Check, Star } from 'lucide-react';
+import { Package, Plus, RefreshCw, Copy, Trash2, Check, Star, Users as UsersIcon } from 'lucide-react';
 
 interface AdminProduct {
   uuid: string;
@@ -43,6 +43,40 @@ interface AdminPromotion {
   display_order: number;
 }
 
+interface AdminUser {
+  id: number;
+  uuid: string;
+  name: string;
+  email: string;
+  created_at: string;
+}
+
+function authHeader() {
+  return { Authorization: `Bearer ${localStorage.getItem('adminToken')}` };
+}
+
+
+// Utility function to generate EU size ranges based on category
+function euSizeRange(category: string): string[] {
+  if (category === 'children') {
+    const sizes: string[] = [];
+    for (let s = 15; s <= 39; s++) sizes.push(String(s));
+    return sizes;
+  }
+  if (category === 'women') {
+    const sizes: string[] = [];
+    for (let s = 35; s <= 44; s++) sizes.push(String(s));
+    return sizes;
+  }
+  // men
+  const sizes: string[] = [];
+  for (let s = 38; s <= 48; s++) sizes.push(String(s));
+  return sizes;
+}
+
+
+
+
 export default function AdminPage() {
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -58,6 +92,12 @@ export default function AdminPage() {
     price: '',
     stock: '',
   });
+  const [availableSizes, setAvailableSizes] = useState<string[]>(euSizeRange('men'));
+  const [selectedSizes, setSelectedSizes] = useState<string[]>(euSizeRange('men'));
+
+
+
+
   const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
   const [promotions, setPromotions] = useState<AdminPromotion[]>([]);
   const [isLoadingPromotions, setIsLoadingPromotions] = useState(true);
@@ -82,6 +122,10 @@ export default function AdminPage() {
     delivery_time: '2 - 3 Days',
   });
   const [isSubmittingRate, setIsSubmittingRate] = useState(false);
+
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+
   const loadProducts = () => {
     setIsLoadingProducts(true);
     fetch('http://127.0.0.1:5000/products')
@@ -96,12 +140,27 @@ export default function AdminPage() {
       });
   };
 
+  const loadUsers = () => {
+    setIsLoadingUsers(true);
+    fetch('http://127.0.0.1:5000/admin/users', {
+      headers: authHeader(),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data);
+        setIsLoadingUsers(false);
+      })
+      .catch((err) => {
+        console.error('Failed to load users:', err);
+        setIsLoadingUsers(false);
+      });
+  };
+
   const handleCopyUuid = async (uuid: string) => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(uuid);
       } else {
-        // Fallback for browsers/contexts that block the Clipboard API
         const textArea = document.createElement('textarea');
         textArea.value = uuid;
         textArea.style.position = 'fixed';
@@ -124,7 +183,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}/featured`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({ featured: !currentFeatured }),
       });
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
@@ -144,6 +203,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}`, {
         method: 'DELETE',
+        headers: authHeader(),
       });
 
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
@@ -190,6 +250,7 @@ export default function AdminPage() {
     try {
       const res = await fetch('http://127.0.0.1:5000/promotions', {
         method: 'POST',
+        headers: authHeader(),
         body: formData,
       });
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
@@ -212,6 +273,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`http://127.0.0.1:5000/promotions/uuid/${uuid}`, {
         method: 'DELETE',
+        headers: authHeader(),
       });
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
       setPromotions((prev) => prev.filter((p) => p.uuid !== uuid));
@@ -246,7 +308,7 @@ export default function AdminPage() {
     try {
       const res = await fetch('http://127.0.0.1:5000/delivery-rates', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({
           wilaya: newRate.wilaya,
           home_price: newRate.home_price,
@@ -273,6 +335,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`http://127.0.0.1:5000/delivery-rates/uuid/${uuid}`, {
         method: 'DELETE',
+        headers: authHeader(),
       });
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
       setDeliveryRates((prev) => prev.filter((r) => r.uuid !== uuid));
@@ -287,6 +350,7 @@ export default function AdminPage() {
     loadProducts();
     loadPromotions();
     loadDeliveryRates();
+    loadUsers();
   }, []);
 
   const showMessage = (text: string) => {
@@ -307,17 +371,21 @@ export default function AdminPage() {
     formData.append('category', newProduct.category);
     formData.append('price', newProduct.price);
     formData.append('stock', newProduct.stock);
+    formData.append('sizes', selectedSizes.join(','));
     formData.append('image', imageFile);
 
     try {
       const res = await fetch('http://127.0.0.1:5000/products', {
         method: 'POST',
+        headers: authHeader(),
         body: formData,
       });
       if (!res.ok) throw new Error(`Server responded ${res.status}`);
       showMessage('Product added.');
       setNewProduct({ name: '', brand: '', category: 'men', price: '', stock: '' });
-      setImageFile(null);
+      setAvailableSizes(euSizeRange('men'));
+      setSelectedSizes(euSizeRange('men'));
+      setImageFile(null); 
       loadProducts();
     } catch (err) {
       console.error('Failed to add product:', err);
@@ -352,7 +420,18 @@ export default function AdminPage() {
           <form onSubmit={handleAddProduct} className="mb-8 p-5 sm:p-6 rounded-2xl border border-white/5 bg-white/[0.01] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" aria-label="Add product form">
             <input type="text" placeholder="Name" value={newProduct.name} onChange={(e) => setNewProduct((p) => ({ ...p, name: e.target.value }))} className="px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-bone focus:outline-none focus:border-volt/50" aria-label="Product name" />
             <input type="text" placeholder="Brand" value={newProduct.brand} onChange={(e) => setNewProduct((p) => ({ ...p, brand: e.target.value }))} className="px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-bone focus:outline-none focus:border-volt/50" aria-label="Brand" />
-            <select value={newProduct.category} onChange={(e) => setNewProduct((p) => ({ ...p, category: e.target.value }))} className="px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-bone focus:outline-none focus:border-volt/50" aria-label="Category">
+            <select
+              value={newProduct.category}
+              onChange={(e) => {
+                const newCategory = e.target.value;
+                setNewProduct((p) => ({ ...p, category: newCategory }));
+                const range = euSizeRange(newCategory);
+                setAvailableSizes(range);
+                setSelectedSizes(range);
+              }}
+              className="px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-bone focus:outline-none focus:border-volt/50"
+              aria-label="Category"
+            >
               <option value="men" className="bg-zinc">men</option>
               <option value="women" className="bg-zinc">women</option>
               <option value="children" className="bg-zinc">children</option>
@@ -366,6 +445,57 @@ export default function AdminPage() {
               className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-bone file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-volt file:text-ink file:text-xs"
               aria-label="Product image"
             />
+
+            <div className="sm:col-span-2 lg:col-span-3 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-ash uppercase tracking-wider">
+                  Available EU Sizes ({newProduct.category})
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSizes(availableSizes)}
+                    className="text-[10px] text-volt hover:underline cursor-pointer"
+                  >
+                    Select all
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSizes([])}
+                    className="text-[10px] text-ash hover:underline cursor-pointer"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-2 rounded-lg bg-white/[0.02] border border-white/10">
+                {availableSizes.map((size) => {
+                  const isChecked = selectedSizes.includes(size);
+                  return (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() =>
+                        setSelectedSizes((prev) =>
+                          isChecked ? prev.filter((s) => s !== size) : [...prev, size]
+                        )
+                      }
+                      className={`h-7 min-w-[32px] px-1.5 rounded-md text-xs font-bold border transition-all cursor-pointer ${
+                        isChecked
+                          ? 'bg-volt border-volt text-ink'
+                          : 'bg-white/[0.03] border-white/10 text-ash hover:border-white/20'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-ash">
+                Auto-suggested for "{newProduct.category}" — click to check/uncheck what's actually in stock.
+              </p>
+            </div>
+
             <button type="submit" disabled={isSubmittingProduct} className="sm:col-span-2 lg:col-span-3 flex items-center justify-center gap-2 py-3 rounded-xl bg-volt text-ink text-xs font-mono font-bold uppercase tracking-wider hover:bg-bone transition-all cursor-pointer disabled:opacity-50 tap-target">
               <Plus className="w-4 h-4" aria-hidden="true" /> {isSubmittingProduct ? 'Adding...' : 'Add Product'}
             </button>
@@ -558,6 +688,38 @@ export default function AdminPage() {
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className="mb-16" aria-labelledby="users-heading">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-9 w-9 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt" aria-hidden="true">
+              <UsersIcon className="w-4 h-4" />
+            </div>
+            <h2 id="users-heading" className="text-xl font-bold font-display uppercase tracking-wider text-bone">Registered Users ({users.length})</h2>
+          </div>
+
+          {isLoadingUsers ? <p className="text-sm text-ash" aria-live="polite">Loading...</p> : (
+            <div className="overflow-x-auto rounded-2xl border border-white/5">
+              <table className="w-full text-left text-sm min-w-[500px]">
+                <thead>
+                  <tr className="bg-white/[0.02] text-ash text-xs uppercase font-mono">
+                    <th className="px-4 py-3" scope="col">Name</th>
+                    <th className="px-4 py-3" scope="col">Email</th>
+                    <th className="px-4 py-3" scope="col">Joined</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {users.map((u) => (
+                    <tr key={u.uuid}>
+                      <td className="px-4 py-3 text-bone">{u.name}</td>
+                      <td className="px-4 py-3 text-ash">{u.email}</td>
+                      <td className="px-4 py-3 text-ash font-mono text-xs">{u.created_at}</td>
                     </tr>
                   ))}
                 </tbody>

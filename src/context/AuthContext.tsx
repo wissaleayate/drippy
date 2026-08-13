@@ -13,7 +13,7 @@ export interface AuthUser {
   email: string;
   avatar?: string;
   deliveryInfo?: SavedDeliveryInfo;
-  wishlist?: string[]; // array of product UUIDs
+  wishlist?: string[];
 }
 
 interface AuthContextType {
@@ -31,6 +31,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = 'drippy_auth_user';
+const API_BASE = 'http://127.0.0.1:5000';
+
+function getLocalExtras(userId: string): { deliveryInfo?: SavedDeliveryInfo; wishlist?: string[] } {
+  try {
+    const stored = localStorage.getItem(`drippy_user_extras_${userId}`);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
+function setLocalExtras(userId: string, extras: { deliveryInfo?: SavedDeliveryInfo; wishlist?: string[] }) {
+  localStorage.setItem(`drippy_user_extras_${userId}`, JSON.stringify(extras));
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
@@ -51,74 +65,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  /**
-   * Login — currently backed by localStorage.
-   * Replace the body with a real API call when the backend is ready:
-   *
-   *   const response = await fetch('/api/auth/login', {
-   *     method: 'POST',
-   *     headers: { 'Content-Type': 'application/json' },
-   *     body: JSON.stringify({ email, password }),
-   *   });
-   *   if (!response.ok) throw new Error('Invalid credentials');
-   *   const data = await response.json();
-   *   setUser(data.user);
-   */
-  const login = async (email: string, _password: string): Promise<void> => {
+  const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 900));
+      const res = await fetch(`${API_BASE}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      // Check if a registered user exists in localStorage
-      const registeredKey = `drippy_registered_${email.toLowerCase()}`;
-      const registered = localStorage.getItem(registeredKey);
-      if (!registered) throw new Error('No account found with that email. Please register first.');
+      const data = await res.json();
 
-      const registeredUser = JSON.parse(registered) as { name: string; email: string; id: string; deliveryInfo?: SavedDeliveryInfo; wishlist?: string[] };
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed. Please try again.');
+      }
+
+      const extras = getLocalExtras(String(data.id));
       setUser({
-        id: registeredUser.id,
-        name: registeredUser.name,
-        email: registeredUser.email,
-        deliveryInfo: registeredUser.deliveryInfo,
-        wishlist: registeredUser.wishlist,
+        id: String(data.id),
+        name: data.name,
+        email: data.email,
+        deliveryInfo: extras.deliveryInfo,
+        wishlist: extras.wishlist,
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  /**
-   * Register — currently backed by localStorage.
-   * Replace the body with a real API call when the backend is ready:
-   *
-   *   const response = await fetch('/api/auth/register', {
-   *     method: 'POST',
-   *     headers: { 'Content-Type': 'application/json' },
-   *     body: JSON.stringify({ name, email, password }),
-   *   });
-   *   if (!response.ok) throw new Error('Registration failed');
-   *   const data = await response.json();
-   *   setUser(data.user);
-   */
-  const register = async (name: string, email: string, _password: string): Promise<void> => {
+  const register = async (name: string, email: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await fetch(`${API_BASE}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-      const registeredKey = `drippy_registered_${email.toLowerCase()}`;
-      if (localStorage.getItem(registeredKey)) {
-        throw new Error('An account with this email already exists.');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Registration failed. Please try again.');
       }
 
-      const newUser: AuthUser = {
-        id: `user_${Date.now()}`,
-        name,
-        email,
-      };
-
-      localStorage.setItem(registeredKey, JSON.stringify(newUser));
-      setUser(newUser);
+      setUser({
+        id: String(data.id),
+        name: data.name,
+        email: data.email,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -132,22 +126,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => {
       if (!prev) return prev;
       const updated = { ...prev, deliveryInfo: info };
-      syncRegisteredRecord(prev.email, { deliveryInfo: info });
+      setLocalExtras(prev.id, { deliveryInfo: info, wishlist: prev.wishlist });
       return updated;
     });
-  };
-
-  const syncRegisteredRecord = (email: string, patch: Partial<AuthUser>) => {
-    const registeredKey = `drippy_registered_${email.toLowerCase()}`;
-    const existing = localStorage.getItem(registeredKey);
-    if (existing) {
-      try {
-        const parsed = JSON.parse(existing);
-        localStorage.setItem(registeredKey, JSON.stringify({ ...parsed, ...patch }));
-      } catch {
-        // ignore parse errors
-      }
-    }
   };
 
   const toggleWishlist = (productId: string) => {
@@ -158,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ? current.filter((id) => id !== productId)
         : [...current, productId];
       const updated = { ...prev, wishlist: updatedList };
-      syncRegisteredRecord(prev.email, { wishlist: updatedList });
+      setLocalExtras(prev.id, { deliveryInfo: prev.deliveryInfo, wishlist: updatedList });
       return updated;
     });
   };
@@ -167,41 +148,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return user?.wishlist?.includes(productId) ?? false;
   };
 
-  const updateAccountInfo = (name: string, email: string): { success: boolean; error?: string } => {
-    if (!user) return { success: false, error: 'Not logged in.' };
-
-    const trimmedEmail = email.trim().toLowerCase();
-    const trimmedName = name.trim();
-
-    if (!trimmedName || !trimmedEmail) {
-      return { success: false, error: 'Name and email cannot be empty.' };
-    }
-
-    const emailChanged = trimmedEmail !== user.email.toLowerCase();
-
-    if (emailChanged) {
-      const newKey = `drippy_registered_${trimmedEmail}`;
-      if (localStorage.getItem(newKey)) {
-        return { success: false, error: 'An account with this email already exists.' };
-      }
-      // Move the registered record to the new email key
-      const oldKey = `drippy_registered_${user.email.toLowerCase()}`;
-      const existing = localStorage.getItem(oldKey);
-      localStorage.removeItem(oldKey);
-      if (existing) {
-        try {
-          const parsed = JSON.parse(existing);
-          localStorage.setItem(newKey, JSON.stringify({ ...parsed, name: trimmedName, email: trimmedEmail }));
-        } catch {
-          localStorage.setItem(newKey, JSON.stringify({ ...user, name: trimmedName, email: trimmedEmail }));
-        }
-      }
-    } else {
-      syncRegisteredRecord(user.email, { name: trimmedName });
-    }
-
-    setUser((prev) => (prev ? { ...prev, name: trimmedName, email: trimmedEmail } : prev));
-    return { success: true };
+  const updateAccountInfo = (_name: string, _email: string): { success: boolean; error?: string } => {
+    // Editing name/email against the real backend isn't wired up yet —
+    // would need a PUT /users/<id> endpoint. Left as a follow-up.
+    return { success: false, error: 'Account editing is not available yet.' };
   };
 
   return (

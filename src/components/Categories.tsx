@@ -37,7 +37,12 @@ export default function Categories() {
           {audiences.map((audience) => (
             <article key={audience.slug} className="group relative flex h-[300px] sm:h-[360px] items-center justify-center overflow-hidden bg-zinc md:h-[460px]">
               <img src={audience.image} alt={audience.nameKey} className="absolute inset-0 h-full w-full object-cover opacity-75 transition duration-700 ease-out group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/15 to-ink/20" />
+              {/*
+                Fixed black-based scrim (NOT theme tokens) — this card is a
+                photo with text/buttons on top, always dark-scrimmed regardless
+                of site theme, same reasoning as Hero.tsx.
+              */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/15" />
 
               <div className="relative z-10 flex w-full max-w-[20rem] flex-col items-center px-5">
                 <h3 className="mb-4 sm:mb-6 font-display text-4xl sm:text-5xl font-black uppercase leading-none tracking-wide text-white drop-shadow-lg md:text-6xl">
@@ -48,7 +53,7 @@ export default function Categories() {
                     <Link
                       key={department.slug}
                       to={`/products?category=${audience.slug}&department=${department.slug}`}
-                      className="rounded-full bg-bone px-5 py-2 sm:py-2.5 text-center text-xs sm:text-sm font-semibold text-ink shadow-lg transition duration-300 hover:scale-[1.02] hover:bg-volt focus-visible:bg-volt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+                      className="rounded-full bg-white px-5 py-2 sm:py-2.5 text-center text-xs sm:text-sm font-semibold text-[#111827] shadow-lg transition duration-300 hover:scale-[1.02] hover:bg-volt hover:text-ink focus-visible:bg-volt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                     >
                       {department.name}
                     </Link>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Nav from '../../components/Nav'
 import Footer from '../../components/Footer'
-import { Share2, Check } from 'lucide-react'
+import { Share2, Check, ShoppingBag } from 'lucide-react'
 import { useLang } from '../../context/LanguageContext'
 
 interface Product {
@@ -16,6 +16,12 @@ interface Product {
   image?: string
 }
 
+function stockLabel(stock: number, t: any) {
+  if (stock <= 0) return { text: t.pdp_out_of_stock, color: 'text-rose-400' }
+  if (stock <= 5) return { text: `Only ${stock} left in stock`, color: 'text-amber-400' }
+  return { text: t.pdp_in_stock, color: 'text-emerald-400' }
+}
+
 export default function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>()
   const { t } = useLang()
@@ -24,7 +30,7 @@ export default function ProductDetailsPage() {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    fetch(`http://localhost:5000/products/uuid/${id}`)
+    fetch(`http://127.0.0.1:5000/products/uuid/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Product not found')
         return res.json()
@@ -33,7 +39,6 @@ export default function ProductDetailsPage() {
         setProduct(data)
         setLoading(false)
 
-        // Track this product as "recently viewed"
         try {
           const storageKey = 'drippy_recently_viewed'
           const existing: string[] = JSON.parse(localStorage.getItem(storageKey) ?? '[]')
@@ -73,6 +78,8 @@ export default function ProductDetailsPage() {
     )
   }
 
+  const stockInfo = stockLabel(product.stock, t)
+
   return (
     <div className="bg-ink text-bone min-h-screen flex flex-col justify-between">
       <Nav />
@@ -108,23 +115,27 @@ export default function ProductDetailsPage() {
             <p className="text-3xl font-bold text-bone font-mono">{product.price.toLocaleString()} DA</p>
             <p className="text-sm text-ash mt-1">
               {t.pdp_availability}{' '}
-              {product.stock > 0 ? (
-                <span className="text-emerald-400">{product.stock} {t.pdp_in_stock}</span>
-              ) : (
-                <span className="text-rose-400">{t.pdp_out_of_stock}</span>
-              )}
+              <span className={stockInfo.color}>{stockInfo.text}</span>
             </p>
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 pt-2">
+            <Link
+              to={`/products?open=${product.uuid}`}
+              className="min-h-[44px] bg-volt text-ink font-bold px-6 py-3 rounded-lg flex items-center gap-2 active:scale-95 transition-all duration-150 hover:opacity-90"
+            >
+              <ShoppingBag className="w-4 h-4" aria-hidden="true" />
+              Buy This Product
+            </Link>
+
             <button
               onClick={handleShare}
               aria-label={t.pdp_share}
-              className={`min-h-[44px] font-bold px-6 py-3 rounded-lg flex items-center gap-2 active:scale-95 transition-all duration-150 cursor-pointer ${
+              className={`min-h-[44px] font-bold px-6 py-3 rounded-lg flex items-center gap-2 active:scale-95 transition-all duration-150 cursor-pointer border ${
                 copied
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-volt text-ink hover:opacity-90'
+                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                  : 'bg-transparent text-bone border-bone/20 hover:bg-bone/5'
               }`}
             >
               {copied ? (

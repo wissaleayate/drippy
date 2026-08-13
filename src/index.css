@@ -31,19 +31,32 @@
 
 /* ─── Light mode overrides ──────────────────────────────────────────────────── */
 html.light {
-  --bg-primary:   #f0e6cc;
-  --bg-surface:   #f7f7f7;
-  --bg-elevated:  #f0f0f0;
-  --text-primary: #1a0e05;
-  --text-muted:   #6b5f50;
+  --bg-primary:   #ffffff;
+  --bg-surface:   #ffffff;
+  --bg-elevated:  #f9fafb;
+  --text-primary: #111827;
+  --text-muted:   #6b7280;
 
-  /* Swap ink ↔ bone so components using var(--color-ink) / var(--color-bone) adapt */
-  --color-ink:    #f0e6cc;
-  --color-bone:   #1a0e05;
-  --color-ash:    #6b5f50;
-  --color-carbon: #f7f7f7;
-  --color-zinc:   #f0f0f0;
+  --color-ink:    #ffffff;
+  --color-bone:   #111827;
+  --color-ash:    #6b7280;
+  --color-carbon: #ffffff;
+  --color-zinc:   #f9fafb;
+
+  --border-subtle: #e5e7eb;
+  --surface-1: #f9fafb;
+  --surface-2: #f3f4f6;
 }
+
+:root {
+  --border-subtle: rgba(255, 255, 255, 0.10);
+  --surface-1: rgba(255, 255, 255, 0.02);
+  --surface-2: rgba(255, 255, 255, 0.05);
+}
+
+.dr-border { border-color: var(--border-subtle); }
+.dr-surface { background-color: var(--surface-1); }
+.dr-surface-hover:hover { background-color: var(--surface-2); }
 
 /* ─── Base ──────────────────────────────────────────────────────────────────── */
 html {
@@ -241,3 +254,58 @@ body {
     color: #000000 !important;
   }
 }
+/* ══════════════════════════════════════════════════════════════════════════
+   LIGHT MODE DESIGN ENHANCEMENT LAYER
+   Everything below is scoped under html.light — dark mode is untouched.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/
+
+/* ─── 2. Elevation / shadow system for a white background ───────────────────
+   Dark mode gets depth for free (lighter panel vs dark page). Light mode
+   needs real shadows or every card/dropdown/modal looks pasted flat onto
+   the page. */
+html.light .shadow-md  { box-shadow: 0 2px 8px rgba(17, 24, 39, 0.06), 0 1px 2px rgba(17, 24, 39, 0.04) !important; }
+html.light .shadow-lg  { box-shadow: 0 8px 20px rgba(17, 24, 39, 0.08), 0 2px 6px rgba(17, 24, 39, 0.05) !important; }
+html.light .shadow-xl  { box-shadow: 0 16px 36px rgba(17, 24, 39, 0.10), 0 4px 10px rgba(17, 24, 39, 0.06) !important; }
+html.light .shadow-2xl { box-shadow: 0 24px 48px rgba(17, 24, 39, 0.14), 0 8px 16px rgba(17, 24, 39, 0.08) !important; }
+
+/* ─── 3. Fallback for translucent white surface/hover overlays ──────────────
+   Any component still using raw bg-white/[x] or border-white/x (not yet
+   migrated to .dr-surface / .dr-border) gets a visible light-gray fallback
+   here instead of disappearing into the white background. */
+html.light .bg-white\/\[0\.02\],
+html.light .bg-white\/\[0\.03\] { background-color: #f9fafb !important; }
+
+html.light .bg-white\/\[0\.04\],
+html.light .bg-white\/\[0\.05\] { background-color: #f3f4f6 !important; }
+
+html.light .bg-white\/\[0\.1\] { background-color: #e5e7eb !important; }
+
+html.light .hover\:bg-white\/\[0\.04\]:hover,
+html.light .hover\:bg-white\/\[0\.05\]:hover { background-color: #f3f4f6 !important; }
+
+html.light .border-white\/5,
+html.light .border-white\/10 { border-color: #e5e7eb !important; }
+
+html.light .border-white\/20 { border-color: #d1d5db !important; }
+
+html.light .hover\:border-white\/10:hover,
+html.light .hover\:border-white\/20:hover { border-color: #d1d5db !important; }
+
+/* ─── 4. Muted text contrast safety net ──────────────────────────────────── */
+html.light .text-ash\/50,
+html.light .text-ash\/60 { color: #6b7280 !important; }
+
+/* ─── Marquee ticker — theme-aware background/border ─────────────────────────
+   Dark value matches the original hardcoded #0a0a0a exactly (no dark mode
+   change). Light value is a clean strip per the light-mode design brief. */
+:root {
+  --marquee-bg: #0a0a0a;
+  --marquee-border: rgba(200, 255, 0, 0.2);
+}
+html.light {
+  --marquee-bg: #fafafa;
+  --marquee-border: #e5e7eb;
+}
+ 

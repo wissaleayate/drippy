@@ -14,11 +14,15 @@ export default function ProductQuickView({ product, onClose, onAddToCart }: Prod
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
+  const [activeImage, setActiveImage] = useState<string>('');
 
   if (!product) return null;
 
+  const gallery: string[] = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
+  const mainImage = activeImage || gallery[0] || product.image;
+  const stock = product.stock ?? 0;
+
   const handleShare = () => {
-    // Generates the shareable link based on your dynamic product uuid route
     const productUrl = `${window.location.origin}/products/uuid/${product.id}`;
     navigator.clipboard.writeText(productUrl).then(() => {
       setCopied(true);
@@ -69,17 +73,35 @@ export default function ProductQuickView({ product, onClose, onAddToCart }: Prod
             <X className="w-5 h-5" />
           </button>
 
-          {/* Left Side: Product Image with discount overlay */}
-          <div className="relative w-full md:w-1/2 bg-gray-50 aspect-10/11 md:aspect-auto">
-            <img
-              src={product.image}
-              alt={product.name}
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center"
-            />
-            {product.originalPrice && product.originalPrice > product.price && (
-              <div className="absolute top-5 left-5 bg-red-500 text-white font-black px-3 py-1.5 rounded-full text-xs tracking-wider uppercase shadow-md">
-                SAVE ${Math.round(product.originalPrice - product.price)}
+          {/* Left Side: Product Image with discount overlay + gallery thumbnails */}
+          <div className="relative w-full md:w-1/2 bg-gray-50 flex flex-col">
+            <div className="relative aspect-10/11 md:aspect-auto md:flex-1">
+              <img
+                src={mainImage}
+                alt={product.name}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover object-center"
+              />
+              {product.originalPrice && product.originalPrice > product.price && (
+                <div className="absolute top-5 left-5 bg-red-500 text-white font-black px-3 py-1.5 rounded-full text-xs tracking-wider uppercase shadow-md">
+                  SAVE {Math.round(product.originalPrice - product.price).toLocaleString()} DA
+                </div>
+              )}
+            </div>
+
+            {gallery.length > 1 && (
+              <div className="flex gap-2 p-3 overflow-x-auto bg-gray-50">
+                {gallery.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImage(img)}
+                    className={`flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                      mainImage === img ? 'border-indigo-600' : 'border-transparent opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={img} alt={`${product.name} view ${idx + 1}`} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -102,7 +124,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart }: Prod
                 <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
                   {product.name}
                 </h2>
-                
+
                 {/* SHARE BUTTON */}
                 <button
                   onClick={handleShare}
@@ -129,14 +151,18 @@ export default function ProductQuickView({ product, onClose, onAddToCart }: Prod
 
               {/* Price Row */}
               <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-2xl font-black text-gray-950">${product.price.toFixed(2)}</span>
+                <span className="text-2xl font-black text-gray-950">{product.price.toLocaleString()} DA</span>
                 {product.originalPrice && product.originalPrice > product.price && (
                   <span className="text-sm text-gray-400 line-through font-medium">
-                    ${product.originalPrice.toFixed(2)}
+                    {product.originalPrice.toLocaleString()} DA
                   </span>
                 )}
-                <span className="text-xs font-bold text-emerald-600 ml-1">
-                  {product.inStock ? 'In Stock & Ready to Ship' : 'Temporarily Out of Stock'}
+                <span className={`text-xs font-bold ml-1 ${!product.inStock ? 'text-rose-600' : stock <= 5 ? 'text-amber-500' : 'text-emerald-600'}`}>
+                  {!product.inStock
+                    ? 'Temporarily Out of Stock'
+                    : stock <= 5
+                    ? `Only ${stock} left in stock`
+                    : 'In Stock & Ready to Ship'}
                 </span>
               </div>
 

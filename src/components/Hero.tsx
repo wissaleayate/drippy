@@ -128,12 +128,17 @@ export default function Hero() {
               style={{ filter: 'brightness(.52) contrast(1.08)' }}
             />
 
-            {/* Gradient overlay — heavier left fade for text legibility */}
-            <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
+            {/*
+              Gradient overlay — fixed black-based (NOT theme tokens).
+              This hero is a "dark scrim over photo" section by design, in both
+              light and dark site themes — the photo doesn't get lighter when
+              the rest of the site does, so the scrim must stay dark too.
+            */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
             {/* Slide counter – top right, clear of fixed nav (56 px) */}
-            <div className="absolute right-5 top-16 font-mono text-[10px] tracking-[.2em] text-bone/50 sm:right-8 sm:top-[62px]">
+            <div className="absolute right-5 top-16 font-mono text-[10px] tracking-[.2em] text-white/50 sm:right-8 sm:top-[62px]">
               0{index + 1}&thinsp;/&thinsp;0{banners.length}
             </div>
 
@@ -141,7 +146,7 @@ export default function Hero() {
             <div className="absolute inset-x-0 bottom-0 px-5 pb-7 sm:px-8 sm:pb-9 md:max-w-xl md:px-10 md:pb-11">
               {/* Eyebrow + badge */}
               <div className="mb-2 flex items-center gap-2.5">
-                <span className="font-mono text-[9px] uppercase tracking-[.18em] text-bone/55 sm:text-[10px]">
+                <span className="font-mono text-[9px] uppercase tracking-[.18em] text-white/60 sm:text-[10px]">
                   {banner.eyebrow}
                 </span>
                 <span className="flex items-center gap-1 rounded-full border border-volt/30 bg-volt/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-volt">
@@ -150,8 +155,8 @@ export default function Hero() {
                 </span>
               </div>
 
-              {/* Headline */}
-              <h1 className="font-display font-black leading-[.82] tracking-tight text-bone"
+              {/* Headline — fixed white, always sits on the dark-scrimmed photo */}
+              <h1 className="font-display font-black leading-[.82] tracking-tight text-white"
                 style={{ fontSize: 'clamp(2rem, 7vw, 5.5rem)' }}>
                 {banner.title}
               </h1>
@@ -160,7 +165,7 @@ export default function Hero() {
                 style={{
                   fontSize: 'clamp(2rem, 7vw, 5.5rem)',
                   color: 'transparent',
-                  WebkitTextStroke: '1.5px rgba(240,230,204,.65)',
+                  WebkitTextStroke: '1.5px rgba(255,255,255,.65)',
                 }}
               >
                 {banner.outline}
@@ -168,7 +173,7 @@ export default function Hero() {
 
               {/* Description + CTA */}
               <div className="mt-3 flex flex-col items-start gap-3 sm:mt-4 sm:flex-row sm:items-end sm:justify-between">
-                <p className="max-w-xs text-xs leading-relaxed text-bone/60 sm:text-sm sm:max-w-sm">
+                <p className="max-w-xs text-xs leading-relaxed text-white/70 sm:text-sm sm:max-w-sm">
                   {banner.description}
                 </p>
                 <Link
@@ -200,7 +205,7 @@ export default function Hero() {
             aria-selected={index === activeIndex}
             onClick={() => goTo(index)}
             className={`h-1 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-volt ${
-              index === activeIndex ? 'w-8 bg-volt' : 'w-2 bg-bone/35 hover:bg-bone/60'
+              index === activeIndex ? 'w-8 bg-volt' : 'w-2 bg-white/35 hover:bg-white/60'
             }`}
           />
         ))}

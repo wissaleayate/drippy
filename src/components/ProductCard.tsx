@@ -61,6 +61,13 @@ export default function ProductCard({ product, onQuickView, onAddToCart }: Produ
               {t.pc_sold_out}
             </span>
           )}
+
+          {product.inStock && typeof (product as any).stock === 'number' && (product as any).stock <= 5 && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-amber-500 text-ink backdrop-blur-xs">
+              Only {(product as any).stock} left
+            </span>
+          )}
+          
           {product.featured && product.inStock && (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-wider uppercase bg-volt text-ink backdrop-blur-xs">
               {t.pc_featured}

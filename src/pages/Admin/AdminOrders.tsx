@@ -53,9 +53,10 @@ export default function AdminOrders() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
+          Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+      },
+      body: JSON.stringify({ status: newStatus }),
+  });
 
       if (!res.ok) throw new Error('Failed to update order status');
 
