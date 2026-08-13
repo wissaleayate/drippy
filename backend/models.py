@@ -125,6 +125,7 @@ class StoreSettings(db.Model):
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.Integer, nullable=True)
     customer = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(150), nullable=True)
@@ -158,10 +159,12 @@ class Order(db.Model):
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_uuid = db.Column(db.String(36))
+    user_id = db.Column(db.Integer, nullable=True)
     username = db.Column(db.String(100))
     rating = db.Column(db.Integer)
     fit = db.Column(db.String(30))
     comment = db.Column(db.String(500))
+    image_urls = db.Column(db.Text, default="")
     created_at = db.Column(db.String(50), nullable=True)
 
     def to_dict(self):
@@ -172,5 +175,7 @@ class Review(db.Model):
             "rating": self.rating,
             "fit": self.fit,
             "comment": self.comment,
+            "images": [u for u in self.image_urls.split(",") if u] if self.image_urls else [],
+            "verified_purchase": True,
             "created_at": self.created_at
         }

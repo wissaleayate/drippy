@@ -280,6 +280,7 @@ export default function CartUI() {
           wilaya: customerWilaya,
           delivery_type: deliveryType,
           items: backendItems,
+          user_id: user ? user.id : null,
         }),
       });
 

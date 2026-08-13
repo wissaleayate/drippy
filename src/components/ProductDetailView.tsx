@@ -31,6 +31,7 @@ interface Review {
   comment: string;
   created_at: string;
   verified_purchase?: boolean;
+  images?: string[];
 }
 
 const FIT_COLORS: Record<Review['fit'], string> = {
@@ -58,7 +59,6 @@ function buildFitSummary(reviews: Review[]) {
     { label: 'Runs Large', pct: Math.round((counts['Runs Large'] / total) * 100) },
   ];
 }
-
 
 const FIT_LABEL_MAP: Record<string, 'pdv_true_to_size' | 'pdv_runs_small' | 'pdv_runs_large'> = {
   'True to Size': 'pdv_true_to_size',
@@ -90,27 +90,44 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
   const { user, toggleWishlist, isInWishlist } = useAuth();
   const { t, isRTL } = useLang();
 
-  const isVerifiedBuyer = useMemo(() => {
-    if (!user || !product) return false;
-    const storageKey = `drippy_purchases_${user.id}`;
-    const purchased: string[] = JSON.parse(localStorage.getItem(storageKey) ?? '[]');
-    return purchased.includes(product.id);
+  const [isVerifiedBuyer, setIsVerifiedBuyer] = useState(false);
+  const [checkingPurchase, setCheckingPurchase] = useState(true);
+
+  useEffect(() => {
+    if (!user || !product) {
+      setIsVerifiedBuyer(false);
+      setCheckingPurchase(false);
+      return;
+    }
+    setCheckingPurchase(true);
+    fetch(`http://127.0.0.1:5000/users/${user.id}/purchases`)
+      .then((res) => res.json())
+      .then((purchasedUuids: string[]) => {
+        setIsVerifiedBuyer(purchasedUuids.includes(product.id));
+      })
+      .catch((err) => {
+        console.error('Failed to check purchase history:', err);
+        setIsVerifiedBuyer(false);
+      })
+      .finally(() => setCheckingPurchase(false));
   }, [user, product]);
+
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
-  const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
   const [newRating, setNewRating] = useState(5);
   const [newFit, setNewFit] = useState<Review['fit']>('True to Size');
   const [newComment, setNewComment] = useState('');
+  const [reviewPhotos, setReviewPhotos] = useState<File[]>([]);
+  const [reviewPhotoPreviews, setReviewPhotoPreviews] = useState<string[]>([]);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewMsg, setReviewMsg] = useState('');
+  const reviewFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!product) return;
@@ -122,7 +139,6 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
       .finally(() => setIsLoadingReviews(false));
   }, [product]);
 
-  // Track this product as "recently viewed" (per-browser, works logged out too)
   useEffect(() => {
     if (!product) return;
     const storageKey = 'drippy_recently_viewed';
@@ -158,15 +174,21 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
     setTimeout(() => setSuccessMsg(false), 2200);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleReviewPhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
+    setReviewPhotos((prev) => [...prev, ...files]);
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (ev) => {
-        if (ev.target?.result) setUploadedPhotos((p) => [...p, ev.target!.result as string]);
+        if (ev.target?.result) setReviewPhotoPreviews((p) => [...p, ev.target!.result as string]);
       };
       reader.readAsDataURL(file);
     });
+  };
+
+  const removeReviewPhoto = (index: number) => {
+    setReviewPhotos((prev) => prev.filter((_, i) => i !== index));
+    setReviewPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -175,32 +197,41 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
       setReviewMsg(t.pdv_share_experience);
       return;
     }
+    if (!user) return;
+
     setIsSubmittingReview(true);
     setReviewMsg('');
+
+    const formData = new FormData();
+    formData.append('product_uuid', product.id);
+    formData.append('username', user.name ?? 'Anonymous');
+    formData.append('rating', String(newRating));
+    formData.append('fit', newFit);
+    formData.append('comment', newComment);
+    formData.append('user_id', user.id);
+    reviewPhotos.forEach((file) => formData.append('images', file));
+
     try {
       const res = await fetch('http://127.0.0.1:5000/reviews', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          product_uuid: product.id,
-          username: user?.name ?? 'Anonymous',
-          rating: newRating,
-          fit: newFit,
-          comment: newComment,
-          verified_purchase: isVerifiedBuyer,
-        }),
+        body: formData,
       });
-      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server responded ${res.status}`);
+      }
       const created: Review = await res.json();
-      setReviews((prev) => [{ ...created, verified_purchase: isVerifiedBuyer }, ...prev]);
+      setReviews((prev) => [created, ...prev]);
       setNewComment('');
       setNewRating(5);
       setNewFit('True to Size');
+      setReviewPhotos([]);
+      setReviewPhotoPreviews([]);
       setReviewMsg(t.pdv_review_posted);
       setTimeout(() => setReviewMsg(''), 3000);
     } catch (err) {
       console.error('Failed to submit review:', err);
-      setReviewMsg(t.pdv_review_error);
+      setReviewMsg(err instanceof Error ? err.message : t.pdv_review_error);
     } finally {
       setIsSubmittingReview(false);
     }
@@ -265,37 +296,43 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
                   </div>
                 )}
 
-                <button
-                  onClick={() => setActiveImg((i) => (i - 1 + gallery.length) % gallery.length)}
-                  aria-label={t.pdv_prev_image}
-                  className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-white/[0.02] border border-white/5 text-bone shadow hover:scale-105 transition-all cursor-pointer`}
-                >
-                  {isRTL ? <ChevronRight className="w-4 h-4" aria-hidden="true" /> : <ChevronLeft className="w-4 h-4" aria-hidden="true" />}
-                </button>
-                <button
-                  onClick={() => setActiveImg((i) => (i + 1) % gallery.length)}
-                  aria-label={t.pdv_next_image}
-                  className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-white/[0.02] border border-white/5 text-bone shadow hover:scale-105 transition-all cursor-pointer`}
-                >
-                  {isRTL ? <ChevronLeft className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
-                </button>
+                {gallery.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setActiveImg((i) => (i - 1 + gallery.length) % gallery.length)}
+                      aria-label={t.pdv_prev_image}
+                      className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-white/[0.02] border border-white/5 text-bone shadow hover:scale-105 transition-all cursor-pointer`}
+                    >
+                      {isRTL ? <ChevronRight className="w-4 h-4" aria-hidden="true" /> : <ChevronLeft className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button
+                      onClick={() => setActiveImg((i) => (i + 1) % gallery.length)}
+                      aria-label={t.pdv_next_image}
+                      className={`absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 h-9 w-9 flex items-center justify-center rounded-full bg-white/[0.02] border border-white/5 text-bone shadow hover:scale-105 transition-all cursor-pointer`}
+                    >
+                      {isRTL ? <ChevronLeft className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                  </>
+                )}
               </div>
 
-              <div className="flex gap-2 p-3 overflow-x-auto scrollbar-none">
-                {gallery.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveImg(i)}
-                    aria-label={`${t.pdv_image} ${i + 1}`}
-                    aria-pressed={activeImg === i}
-                    className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                      activeImg === i ? 'border-volt scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-90'
-                    }`}
-                  >
-                    <img src={img} alt={`${product.name} ${i + 1}`} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
+              {gallery.length > 1 && (
+                <div className="flex gap-2 p-3 overflow-x-auto scrollbar-none">
+                  {gallery.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImg(i)}
+                      aria-label={`${t.pdv_image} ${i + 1}`}
+                      aria-pressed={activeImg === i}
+                      className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                        activeImg === i ? 'border-volt scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-90'
+                      }`}
+                    >
+                      <img src={img} alt={`${product.name} ${i + 1}`} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
@@ -374,7 +411,7 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
                 {product.description}
               </p>
 
-              {/* ── Fit Summary (now real data) ─────────────────────────── */}
+              {/* ── Fit Summary ─────────────────────────── */}
               <div className="mb-6">
                 <p className="text-xs font-bold text-ash uppercase tracking-wider mb-3 font-mono">{t.pdv_fit_summary}</p>
                 {reviews.length === 0 ? (
@@ -469,13 +506,15 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
               </div>
             </div>
 
-            {/* ── Write a Review Form ─────────────────────────────────── */}
+            {/* ── Write a Review Form (with photo upload merged in) ────── */}
             <div className="mb-8 p-6 bg-white/[0.01] border border-white/5 rounded-2xl">
               <h4 className="text-sm font-bold text-bone mb-4">{t.pdv_write_review}</h4>
               {!user ? (
                 <p className="text-xs text-ash">
                   {t.pdv_login_to_review} <Link to="/login" className="text-volt underline">{t.pdv_login}</Link> {t.pdv_to_review_suffix}
                 </p>
+              ) : checkingPurchase ? (
+                <p className="text-xs text-ash">Checking your purchase history…</p>
               ) : !isVerifiedBuyer ? (
                 <div className="flex items-center gap-2.5 py-3 px-4 bg-white/[0.02] border border-white/5 rounded-xl">
                   <ShieldCheck className="w-4 h-4 text-ash shrink-0" />
@@ -531,6 +570,44 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
                     className="w-full px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-sm text-bone placeholder:text-ash focus:outline-none focus:border-volt/50"
                   />
 
+                  {/* Photo upload, merged into the review form */}
+                  <div className="flex flex-col gap-2">
+                    <span className="text-xs font-bold text-ash uppercase tracking-wider">Add Photos (optional)</span>
+                    <button
+                      type="button"
+                      onClick={() => reviewFileInputRef.current?.click()}
+                      className="self-start inline-flex items-center gap-2 px-4 py-2 bg-white/[0.03] border border-white/10 text-bone text-xs font-mono font-bold rounded-xl hover:bg-white/[0.06] transition-colors cursor-pointer"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      Choose Photos
+                    </button>
+                    <input
+                      ref={reviewFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleReviewPhotoSelect}
+                    />
+                    {reviewPhotoPreviews.length > 0 && (
+                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-1">
+                        {reviewPhotoPreviews.map((src, i) => (
+                          <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-zinc group">
+                            <img src={src} alt={`review-upload-${i}`} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => removeReviewPhoto(i)}
+                              className="absolute top-1 right-1 h-5 w-5 rounded-full bg-ink/80 text-bone flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                              aria-label="Remove photo"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   {reviewMsg && <p className="text-xs font-semibold text-volt">{reviewMsg}</p>}
 
                   <button
@@ -571,6 +648,21 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
 
                     <p className="text-sm text-ash leading-relaxed mb-4">{review.comment}</p>
 
+                    {review.images && review.images.length > 0 && (
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
+                        {review.images.map((img, idx) => (
+                          <div key={idx} className="aspect-square rounded-xl overflow-hidden bg-zinc border border-white/5">
+                            <img
+                              src={img}
+                              alt={`Review photo ${idx + 1}`}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-zoom-in"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${FIT_COLORS[review.fit]}`}>
                         {FIT_LABEL_MAP[review.fit] ? t[FIT_LABEL_MAP[review.fit] as keyof Translations] as string : review.fit}
@@ -586,38 +678,6 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
                 ))}
               </div>
             )}
-
-            {/* Upload your photos CTA */}
-            <div className="mt-8 p-6 bg-white/[0.01] border-2 border-dashed border-white/10 rounded-2xl text-center">
-            <Camera className="w-8 h-8 text-ash/30 mx-auto mb-2" />
-            <p className="text-sm font-bold text-bone mb-1">{t.pdv_share_look}</p>
-            <p className="text-xs text-ash mb-4">{t.pdv_upload_photos_sub}</p>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-volt text-ink text-xs font-mono font-bold rounded-xl hover:bg-bone transition-colors shadow-sm cursor-pointer shadow-volt/5"
-            >
-              <Camera className="w-3.5 h-3.5" />
-              {t.pdv_upload_btn}
-            </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleFileUpload}
-              />
-
-              {uploadedPhotos.length > 0 && (
-                <div className="mt-4 grid grid-cols-4 sm:grid-cols-6 gap-2">
-                  {uploadedPhotos.map((src, i) => (
-                    <div key={i} className="aspect-square rounded-xl overflow-hidden bg-zinc">
-                      <img src={src} alt={`upload-${i}`} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         </motion.div>
       </div>

@@ -617,6 +617,7 @@ def add_order():
     address = data.get("address")
     wilaya = data.get("wilaya")
     delivery_type = data.get("delivery_type", "home")
+    user_id = data.get("user_id")
 
     if email and not is_valid_email(email):
         return jsonify({"error": "Invalid email address"}), 400
@@ -638,6 +639,7 @@ def add_order():
     current_time = datetime.now().strftime("%d-%m-%Y %H:%M")
 
     order = Order(
+        user_id=user_id,
         customer=customer,
         phone=phone,
         email=email,
@@ -752,20 +754,64 @@ def get_reviews_for_product(product_uuid):
     return jsonify([review.to_dict() for review in reviews])
 
 
+@app.route("/users/<int:user_id>/purchases", methods=["GET"])
+def get_user_purchases(user_id):
+    orders = Order.query.filter_by(user_id=user_id).all()
+    purchased_uuids = set()
+    for order in orders:
+        try:
+            items = json.loads(order.items) if order.items else []
+        except Exception:
+            items = []
+        for item in items:
+            if item.get("id"):
+                purchased_uuids.add(str(item["id"]))
+    return jsonify(list(purchased_uuids))
+
+
 @app.route("/reviews", methods=["POST"])
 def add_review():
-    data = request.json
+    product_uuid = request.form.get("product_uuid")
+    username = request.form.get("username")
+    rating = request.form.get("rating")
+    fit = request.form.get("fit")
+    comment = request.form.get("comment")
+    user_id = request.form.get("user_id")
 
-    required = ["product_uuid", "username", "rating", "fit", "comment"]
-    if not all(data.get(field) for field in required):
+    if not all([product_uuid, username, rating, fit, comment, user_id]):
         return jsonify({"error": "Missing required fields"}), 400
 
+    # Verify this user actually purchased this exact product before allowing a review
+    orders = Order.query.filter_by(user_id=user_id).all()
+    purchased_uuids = set()
+    for order in orders:
+        try:
+            items = json.loads(order.items) if order.items else []
+        except Exception:
+            items = []
+        for item in items:
+            if item.get("id"):
+                purchased_uuids.add(str(item["id"]))
+
+    if product_uuid not in purchased_uuids:
+        return jsonify({"error": "You can only review products you have purchased."}), 403
+
+    image_urls = []
+    for photo in request.files.getlist('images'):
+        if photo and photo.filename and allowed_file(photo.filename):
+            filename = secure_filename(photo.filename)
+            unique_filename = f"{int(datetime.now().timestamp())}_{filename}"
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
+            image_urls.append(f"http://127.0.0.1:5000/uploads/{unique_filename}")
+
     review = Review(
-        product_uuid=data["product_uuid"],
-        username=data["username"],
-        rating=data["rating"],
-        fit=data["fit"],
-        comment=data["comment"],
+        product_uuid=product_uuid,
+        user_id=int(user_id),
+        username=username,
+        rating=int(rating),
+        fit=fit,
+        comment=comment,
+        image_urls=",".join(image_urls),
         created_at=datetime.now().strftime("%d-%m-%Y %H:%M")
     )
 
