@@ -660,6 +660,12 @@ def add_order():
 
     return jsonify(order.to_dict()), 201
 
+@app.route('/orders/user/<string:email>', methods=['GET'])
+def get_orders_for_user(email):
+    email = email.strip().lower()
+    orders = Order.query.filter(Order.email.ilike(email)).order_by(Order.id.desc()).all()
+    return jsonify([o.to_dict() for o in orders])
+
 
 @app.route('/orders/<order_id_or_uuid>', methods=['GET'])
 def get_order_status(order_id_or_uuid):

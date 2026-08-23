@@ -139,13 +139,18 @@ class Order(db.Model):
     created_at = db.Column(db.String(50), nullable=True)
 
     def to_dict(self):
+        # Combine wilaya and address so the frontend always displays the delivery location
+        full_address = f"{self.wilaya}"
+        if self.address:
+            full_address += f" - {self.address}"
+
         return {
             "id": self.id,
             "uuid": self.uuid,
             "customer": self.customer,
             "phone": self.phone,
             "email": self.email,
-            "address": self.address,
+            "address": full_address,  # <--- This now includes the wilaya!
             "wilaya": self.wilaya,
             "delivery_type": self.delivery_type,
             "shipping_price": self.shipping_price,

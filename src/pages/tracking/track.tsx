@@ -183,14 +183,7 @@ export default function TrackingPage() {
               </div>
 
               <div className="rounded-3xl border border-white/5 bg-white/[0.01] p-6 space-y-4">
-                <span className="text-xs font-mono uppercase tracking-widest text-ash block mb-2 text-center">{t.track_need_help}</span>
-                <button onClick={() => setShowSupportModal(true)} className="w-full py-4 px-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-volt/30 text-bone hover:text-volt transition-all duration-300 cursor-pointer flex items-center justify-between text-sm group">
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-white/[0.05] group-hover:bg-volt/10 flex items-center justify-center text-ash group-hover:text-volt transition-all"><MessageSquare className="w-4 h-4" /></div>
-                    <span className="font-semibold tracking-wide">{t.track_live_chat}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-ash group-hover:text-volt transition-transform group-hover:translate-x-1" />
-                </button>
+                <span className="text-xs font-mono uppercase tracking-widest text-ash block mb-2 text-center">{t.track_need_help}</span>                
                 <button onClick={() => setShowSupportModal(true)} className="w-full py-4 px-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-volt/30 text-bone hover:text-volt transition-all duration-300 cursor-pointer flex items-center justify-between text-sm group">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-xl bg-white/[0.05] group-hover:bg-volt/10 flex items-center justify-center text-ash group-hover:text-volt transition-all"><PhoneCall className="w-4 h-4" /></div>

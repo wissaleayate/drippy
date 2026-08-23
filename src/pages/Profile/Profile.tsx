@@ -13,32 +13,86 @@ interface ApiProduct {
   image?: string;
 }
 
-const ALGERIA_WILAYAS = [
-  'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna', 'Béjaïa', 'Biskra', 'Béchar',
-  'Blida', 'Bouira', 'Tamanrasset', 'Tébessa', 'Tlemcen', 'Tiaret', 'Tizi Ouzou', 'Alger',
-  'Djelfa', 'Jijel', 'Sétif', 'Saïda', 'Skikda', 'Sidi Bel Abbès', 'Annaba', 'Guelma',
-  'Constantine', 'Médéa', 'Mostaganem', "M'Sila", 'Mascara', 'Ouargla', 'Oran', 'El Bayadh',
-  'Illizi', 'Bordj Bou Arréridj', 'Boumerdès', 'El Tarf', 'Tindouf', 'Tissemsilt', 'El Oued',
-  'Khenchela', 'Souk Ahras', 'Tipaza', 'Mila', 'Aïn Defla', 'Naâma', 'Aïn Témouchent',
-  'Ghardaïa', 'Relizane', "Timimoun", "Bordj Badji Mokhtar", "Ouled Djellal", "Béni Abbès",
-  "In Salah", "In Guezzam", "Touggourt", "Djanet", "El M'Ghair", "El Meniaa",
+export const ALGERIA_WILAYAS = [
+  '01 - Adrar',
+  '02 - Chlef',
+  '03 - Laghouat',
+  '04 - Oum El Bouaghi',
+  '05 - Batna',
+  '06 - Béjaïa',
+  '07 - Biskra',
+  '08 - Béchar',
+  '09 - Blida',
+  '10 - Bouira',
+  '11 - Tamanrasset',
+  '12 - Tébessa',
+  '13 - Tlemcen',
+  '14 - Tiaret',
+  '15 - Tizi Ouzou',
+  '16 - Alger',
+  '17 - Djelfa',
+  '18 - Jijel',
+  '19 - Sétif',
+  '20 - Saïda',
+  '21 - Skikda',
+  '22 - Sidi Bel Abbès',
+  '23 - Annaba',
+  '24 - Guelma',
+  '25 - Constantine',
+  '26 - Médéa',
+  '27 - Mostaganem',
+  "28 - M'Sila",
+  '29 - Mascara',
+  '30 - Ouargla',
+  '31 - Oran',
+  '32 - El Bayadh',
+  '33 - Illizi',
+  '34 - Bordj Bou Arréridj',
+  '35 - Boumerdès',
+  '36 - El Tarf',
+  '37 - Tindouf',
+  '38 - Tissemsilt',
+  '39 - El Oued',
+  '40 - Khenchela',
+  '41 - Souk Ahras',
+  '42 - Tipaza',
+  '43 - Mila',
+  '44 - Aïn Defla',
+  '45 - Naâma',
+  '46 - Aïn Témouchent',
+  '47 - Ghardaïa',
+  '48 - Relizane',
+  '49 - Timimoun',
+  '50 - Bordj Badji Mokhtar',
+  '51 - Ouled Djellal',
+  '52 - Béni Abbès',
+  '53 - In Salah',
+  '54 - In Guezzam',
+  '55 - Touggourt',
+  '56 - Djanet',
+  "57 - El M'Ghair",
+  '58 - El Meniaa',
+  '59 - Aflou',
+  '60 - Barika',
+  '61 - El Kantara',
+  '62 - Bir El Ater',
+  '63 - El Aricha',
+  '64 - Ksar Chellala',
+  '65 - Aïn Oussera',
+  '66 - Messaad',
+  '67 - Ksar El Boukhari',
+  '68 - Bou Saâda',
+  '69 - El Abiodh Sidi Cheikh',
 ];
 
-// ─── Placeholder order data ────────────────────────────────────────────────
-// TODO (backend): replace this with a real fetch to the backend once orders
-// are tied to logged-in accounts, e.g.:
-//   fetch(`http://127.0.0.1:5000/orders/user/${user.id}`)
-interface ProfileOrder {
-  id: string;
-  date: string;
+interface ApiOrder {
+  id: number;
+  uuid: string;
   status: string;
-  total: string;
-  itemCount: number;
+  total_price: number;
+  items: string;
+  created_at: string;
 }
-
-const PLACEHOLDER_ORDERS: ProfileOrder[] = [
-  { id: '—', date: '—', status: 'No orders yet', total: '—', itemCount: 0 },
-];
 
 const STATUS_COLORS: Record<string, string> = {
   Nouveau: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
@@ -78,7 +132,22 @@ export default function ProfilePage() {
 
   const [recentProducts, setRecentProducts] = useState<ApiProduct[]>([]);
   const [isLoadingRecent, setIsLoadingRecent] = useState(true);
+  const [orders, setOrders] = useState<ApiOrder[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
 
+  useEffect(() => {
+    if (!user?.email) {
+      setOrders([]);
+      setIsLoadingOrders(false);
+      return;
+    }
+    setIsLoadingOrders(true);
+    fetch(`http://127.0.0.1:5000/orders/user/${encodeURIComponent(user.email)}`)
+      .then((res) => res.json())
+      .then((data: ApiOrder[]) => setOrders(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Failed to load orders:', err))
+      .finally(() => setIsLoadingOrders(false));
+  }, [user?.email]);
   useEffect(() => {
     setIsLoadingRecent(true);
     let recentIds: string[] = [];
@@ -158,9 +227,7 @@ export default function ProfilePage() {
     .join('')
     .toUpperCase();
 
-  // TODO (backend): swap this placeholder for real order data once available
-  const orders = PLACEHOLDER_ORDERS;
-  const hasRealOrders = orders.length > 0 && orders[0].id !== '—';
+  const hasRealOrders = orders.length > 0;
 
   return (
     <div className="min-h-screen flex flex-col bg-ink text-bone">
@@ -411,13 +478,6 @@ export default function ProfilePage() {
         )}
 
         {/* Order History */}
-        <section aria-labelledby="orders-heading"></section>
-
-        {/* Order History */}
-        <section aria-labelledby="orders-heading"></section>
-        {/* Order History */}
-        <section aria-labelledby="orders-heading"></section>
-        {/* Order History */}
         <section aria-labelledby="orders-heading">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-9 w-9 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-volt">
@@ -428,33 +488,44 @@ export default function ProfilePage() {
             </h2>
           </div>
 
-          {hasRealOrders ? (
+          {isLoadingOrders ? (
+            <p className="text-sm text-ash">Loading...</p>
+          ) : hasRealOrders ? (
             <div className="flex flex-col gap-4">
-              {orders.map((order) => (
-                <div
-                  key={order.id}
-                  className="p-5 rounded-2xl border border-white/5 bg-white/[0.01] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-ash">
-                      <Package className="w-4 h-4" />
+              {orders.map((order) => {
+                let itemCount = 0;
+                try {
+                  const parsed = JSON.parse(order.items || '[]');
+                  itemCount = Array.isArray(parsed) ? parsed.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0) : 0;
+                } catch {
+                  itemCount = 0;
+                }
+                return (
+                  <div
+                    key={order.uuid}
+                    className="p-5 rounded-2xl border border-white/5 bg-white/[0.01] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-ash">
+                        <Package className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-bone">Order #{order.id}</p>
+                        <p className="text-xs text-ash flex items-center gap-1.5 mt-0.5">
+                          <Calendar className="w-3 h-3" />
+                          {order.created_at} · {itemCount} item{itemCount !== 1 ? 's' : ''}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-bone">Order #{order.id}</p>
-                      <p className="text-xs text-ash flex items-center gap-1.5 mt-0.5">
-                        <Calendar className="w-3 h-3" />
-                        {order.date} · {order.itemCount} item{order.itemCount !== 1 ? 's' : ''}
-                      </p>
+                    <div className="flex items-center gap-3 sm:justify-end">
+                      <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${STATUS_COLORS[order.status] ?? 'bg-white/[0.04] text-ash border-white/10'}`}>
+                        {order.status}
+                      </span>
+                      <span className="text-sm font-bold text-bone font-mono">{order.total_price?.toLocaleString()} DA</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:justify-end">
-                    <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${STATUS_COLORS[order.status] ?? 'bg-white/[0.04] text-ash border-white/10'}`}>
-                      {order.status}
-                    </span>
-                    <span className="text-sm font-bold text-bone font-mono">{order.total}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-16 px-6 rounded-3xl border border-dashed border-white/10 bg-white/[0.01]">

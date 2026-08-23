@@ -53,11 +53,6 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <p className="mb-2 font-mono text-xs uppercase tracking-[0.24em] text-volt">{t.login_eyebrow}</p>
           <h1 className="font-display text-3xl sm:text-4xl font-black uppercase leading-[0.9] text-bone mb-2">{t.login_heading}</h1>
-          <p className="text-sm text-ash mb-6 sm:mb-8">
-            {t.login_no_account}{' '}
-            <Link to="/register" className="text-volt hover:underline font-semibold">{t.login_register}</Link>
-          </p>
-
           <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-ash font-mono">{t.login_email}</label>
@@ -90,6 +85,11 @@ export default function LoginPage() {
             <span className="text-xs text-ash font-mono">{t.login_or}</span>
             <span className="flex-1 h-px bg-white/5" />
           </div>
+
+          <p className="text-center text-sm text-ash mb-3">
+            {t.login_no_account}{' '}
+            <Link to="/register" className="text-volt hover:underline font-semibold">{t.login_register}</Link>
+          </p>
 
           <p className="text-center text-xs text-ash/60">
             {t.login_agree}{' '}
