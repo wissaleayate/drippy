@@ -67,10 +67,9 @@ export interface Translations {
   footer_tagline: string;
   footer_copyright: string;
   footer_built: string;
-  footer_col_collections: string;
+  
   footer_col_support: string;
-  footer_col_company: string;
-  footer_col_legal: string;
+  
 
   // Product Card
   pc_sold_out: string;
@@ -437,12 +436,12 @@ const en: Translations = {
   grid_cat_lifestyle: 'Lifestyle', grid_cat_training: 'Training', grid_cat_basketball: 'Basketball',
 
   brand_eyebrow: 'Our Mission', brand_line1: 'NOT JUST SNEAKERS.', brand_line2: 'A LIFESTYLE.',
-  brand_desc: 'At Drippy, we believe sneakers are more than footwear. They represent confidence, creativity, and everyday comfort. We bring authentic collections from the brands you love.',
+  
   brand_stat_reviews: 'Positive Reviews', brand_stat_wilaya: 'Wilaya', brand_stat_shipping: 'Fast Shipping', brand_stat_authentic: 'Authentic Products',
 
   footer_tagline: '',
   footer_copyright: '',
-  footer_col_company: 'Company', footer_col_legal: 'Legal',
+  footer_col_support: 'Support',
 
   pc_sold_out: 'Sold Out', pc_featured: 'Featured', pc_off: 'OFF',
   pc_price: 'Price', pc_sizes: 'Sizes', pc_reviews: 'reviews',
@@ -458,7 +457,7 @@ const en: Translations = {
   fb_category: 'Category:', fb_all_products: 'All Products',
   fb_showing: 'Showing', fb_product: 'Product', fb_products: 'Products',
 
-  pp_heading: 'Our Collections', pp_subheading: 'Discover clean silhouettes, functional designs, and premium organic fabrics tailored for the modern closet.',
+  pp_heading: 'Our Collections', 
   pp_free_shipping: 'Free shipping above 15,000 DA', pp_est_delivery: 'Est. Delivery: 2–3 Days',
   pp_bag: 'Bag', pp_loading: 'Loading products…', pp_error: 'Could not load products. Is the backend running?',
   pp_no_products: 'No Products Found', pp_no_products_sub: 'Try adjusting your keyword search or resetting active filters.',
@@ -674,14 +673,13 @@ const fr: Translations = {
   grid_cat_lifestyle: 'Lifestyle', grid_cat_training: 'Training', grid_cat_basketball: 'Basketball',
 
   brand_eyebrow: 'Notre Mission', brand_line1: 'PAS QUE DES SNEAKERS.', brand_line2: 'UN MODE DE VIE.',
-  brand_desc: 'Chez Drippy, nous croyons que les sneakers sont plus que des chaussures. Elles représentent la confiance, la créativité et le confort quotidien. Nous proposons des collections authentiques des marques que vous aimez.',
+ 
   brand_stat_reviews: 'Avis Positifs', brand_stat_wilaya: 'Wilaya', brand_stat_shipping: 'Livraison Rapide', brand_stat_authentic: 'Produits Authentiques',
 
-  footer_tagline: 'Conçu pour la poursuite incessante du meilleur. Depuis 2025.',
-  footer_copyright: '© 2025 NK Inc. Tous droits réservés.',
-  footer_built: 'Conçu avec précision. Optimisé pour la vitesse.',
-  footer_col_collections: 'Collections', footer_col_support: 'Support',
-  footer_col_company: 'Entreprise', footer_col_legal: 'Légal',
+  
+  
+  
+  footer_col_support: 'Support',
 
   pc_sold_out: 'Épuisé', pc_featured: 'Vedette', pc_off: 'RÉD.',
   pc_price: 'Prix', pc_sizes: 'Tailles', pc_reviews: 'avis',
@@ -697,7 +695,7 @@ const fr: Translations = {
   fb_category: 'Catégorie:', fb_all_products: 'Tous Produits',
   fb_showing: 'Affichage', fb_product: 'Produit', fb_products: 'Produits',
 
-  pp_heading: 'Nos Collections', pp_subheading: 'Découvrez des silhouettes épurées, des designs fonctionnels et des tissus premium pour le dressing moderne.',
+  pp_heading: 'Nos Collections', 
   pp_free_shipping: 'Livraison gratuite dès 15 000 DA', pp_est_delivery: 'Livraison estimée: 2–3 jours',
   pp_bag: 'Panier', pp_loading: 'Chargement des produits…', pp_error: 'Impossible de charger les produits.',
   pp_no_products: 'Aucun Produit Trouvé', pp_no_products_sub: 'Essayez de modifier vos filtres ou votre recherche.',
@@ -735,10 +733,7 @@ const fr: Translations = {
   admin_tracking_updated: 'Statut mis à jour!',
   admin_tracking_update_failed: 'Échec de la mise à jour.',
 
-  footer_running: 'Running', footer_training: 'Training', footer_lifestyle: 'Lifestyle',
-  footer_basketball: 'Basketball', footer_collaborations: 'Collaborations',
-  footer_about: 'À propos', footer_sustainability: 'Durabilité',
-  footer_careers: 'Carrières', footer_press: 'Presse',
+ 
   footer_privacy: 'Politique de Confidentialité', footer_terms: 'CGU', footer_cookies: 'Cookies',
 
   pdv_brand: 'Marque', pdv_for: 'pour', pdv_share: 'PARTAGER', pdv_copied: 'COPIÉ!',
@@ -910,14 +905,14 @@ const ar: Translations = {
   grid_cat_lifestyle: 'لايف ستايل', grid_cat_training: 'تدريب', grid_cat_basketball: 'كرة سلة',
 
   brand_eyebrow: 'مهمتنا', brand_line1: 'ليست مجرد أحذية.', brand_line2: 'إنها أسلوب حياة.',
-  brand_desc: 'في Drippy، نؤمن بأن الأحذية الرياضية أكثر من مجرد حذاء. إنها تجسّد الثقة والإبداع والراحة اليومية. نقدّم مجموعات أصيلة من العلامات التي تحبها.',
+ 
   brand_stat_reviews: 'آراء إيجابية', brand_stat_wilaya: 'ولاية', brand_stat_shipping: 'شحن سريع', brand_stat_authentic: 'منتجات أصيلة',
 
-  footer_tagline: 'مصمم لمواصلة التميز. منذ 2025.',
-  footer_copyright: '© 2025 NK Inc. جميع الحقوق محفوظة.',
-  footer_built: 'صُمّم بدقة. بُني للسرعة.',
-  footer_col_collections: 'المجموعات', footer_col_support: 'الدعم',
-  footer_col_company: 'الشركة', footer_col_legal: 'قانوني',
+  
+ 
+ 
+  
+  footer_col_support: 'الدعم',
 
   pc_sold_out: 'نفذ المخزون', pc_featured: 'مميز', pc_off: 'خصم',
   pc_price: 'السعر', pc_sizes: 'المقاسات', pc_reviews: 'تقييم',
@@ -933,7 +928,7 @@ const ar: Translations = {
   fb_category: 'الفئة:', fb_all_products: 'جميع المنتجات',
   fb_showing: 'عرض', fb_product: 'منتج', fb_products: 'منتجات',
 
-  pp_heading: 'مجموعاتنا', pp_subheading: 'اكتشف تصاميم نظيفة وأقمشة فاخرة للخزانة العصرية.',
+  pp_heading: 'مجموعاتنا', 
   pp_free_shipping: 'شحن مجاني فوق 15,000 دج', pp_est_delivery: 'التسليم المتوقع: 2–3 أيام',
   pp_bag: 'الحقيبة', pp_loading: 'جارٍ تحميل المنتجات…', pp_error: 'تعذر تحميل المنتجات.',
   pp_no_products: 'لا توجد منتجات', pp_no_products_sub: 'حاول تعديل بحثك أو إعادة ضبط الفلاتر.',
@@ -971,11 +966,8 @@ const ar: Translations = {
   admin_tracking_update_failed: 'فشل تحديث الحالة.',
   admin_tracking_order_details: 'تفاصيل الطلب',
 
-  footer_running: 'جري', footer_training: 'تدريب', footer_lifestyle: 'لايف ستايل',
-  footer_basketball: 'كرة سلة', footer_collaborations: 'تعاونات',
-  footer_about: 'من نحن', footer_sustainability: 'الاستدامة',
-  footer_careers: 'وظائف', footer_press: 'الصحافة',
-  footer_privacy: 'سياسة الخصوصية', footer_terms: 'الشروط والأحكام', footer_cookies: 'إعدادات الكوكيز',
+ 
+  
 
   pdv_brand: 'الماركة', pdv_for: 'لـ', pdv_share: 'مشاركة', pdv_copied: 'تم النسخ!',
   pdv_reviews: 'تقييم', pdv_in_stock: '✓ متوفر', pdv_out_of_stock: 'نفذ المخزون',

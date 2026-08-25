@@ -22,7 +22,7 @@ export default function Categories() {
         <div className="mb-6 sm:mb-8 flex flex-col justify-between gap-3 sm:gap-4 md:mb-10 md:flex-row md:items-end">
           <div>
             <p className="mb-2 font-mono text-xs uppercase tracking-[0.24em] text-volt">{t.cat_eyebrow}</p>
-            <h2 className="font-display text-3xl sm:text-4xl font-black uppercase leading-[0.85] text-bone md:text-6xl">
+            <h2 className="font-display text-3xl sm:text-4xl font-black uppercase leading-[1.2] text-bone md:text-6xl">
               {t.cat_heading.split('\n').map((line, i) => (
                 <span key={i}>{line}{i === 0 && <br />}</span>
               ))}

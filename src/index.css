@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Cairo:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 
 @theme {
@@ -92,14 +92,14 @@ body {
 
 /* Arabic font enhancement */
 [lang="ar"] {
-  font-family: 'Outfit', 'Noto Sans Arabic', 'Segoe UI', Arial, sans-serif;
-  line-height: 1.8;
+  font-family: 'Cairo', sans-serif;
+  line-height: 1.2 !important;
+  letter-spacing: 0;
 }
 
 [lang="ar"] .font-display {
-  font-family: 'Barlow Condensed', 'Cairo', 'Noto Sans Arabic', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
-
 /* ─── Touch-friendly minimum tap targets ────────────────────────────────────── */
 .tap-target {
   min-height: 44px;

@@ -4,7 +4,7 @@ export default function Footer() {
   const { t, isRTL } = useLang()
 
   const footerLinks = {
-    [t.footer_col_collections]: [t.footer_running, t.footer_training, t.footer_lifestyle, t.footer_basketball, t.footer_collaborations],
+  
     [t.footer_col_support]: [t.nav_delivery, t.track_heading, t.nav_contact],
     
   }
