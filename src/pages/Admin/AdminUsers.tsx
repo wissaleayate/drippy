@@ -19,7 +19,7 @@ export default function AdminUsers() {
 
   useEffect(() => {
     setIsLoadingUsers(true);
-    fetch('http://127.0.0.1:5000/admin/users', {
+    fetch(`${import.meta.env.VITE_API_URL}/admin/users` ,{
       headers: authHeader(),
     })
       .then((res) => res.json())

@@ -194,7 +194,7 @@ export default function CartUI() {
 
   useEffect(() => {
     if (!isCartOpen) return;
-    fetch('http://127.0.0.1:5000/delivery-rates')
+    fetch(`${import.meta.env.VITE_API_URL}/delivery-rates`)
       .then((res) => res.json())
       .then((data: ApiDeliveryRate[]) => setDeliveryRates(Array.isArray(data) ? data : []))
       .catch((err) => console.error('Failed to load delivery rates:', err));
@@ -235,7 +235,7 @@ export default function CartUI() {
     setOtpError('');
     setIsSendingOtp(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/send-otp', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: customerEmail }),
@@ -260,7 +260,7 @@ export default function CartUI() {
     setIsVerifyingOtp(true);
     setOtpError('');
     try {
-      const res = await fetch('http://127.0.0.1:5000/verify-otp', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: customerEmail, code: otpCode }),
@@ -330,7 +330,7 @@ export default function CartUI() {
     }));
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/orders', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

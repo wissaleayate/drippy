@@ -42,7 +42,7 @@ export default function AdminPromotions() {
 
   const loadPromotions = () => {
     setIsLoadingPromotions(true);
-    fetch('http://127.0.0.1:5000/promotions')
+    fetch(`${import.meta.env.VITE_API_URL}/promotions`)
       .then((res) => res.json())
       .then((data) => {
         setPromotions(data);
@@ -77,7 +77,7 @@ export default function AdminPromotions() {
     formData.append('image', promoImageFile);
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/promotions', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/promotions`, {
         method: 'POST',
         headers: authHeader(),
         body: formData,
@@ -100,7 +100,7 @@ export default function AdminPromotions() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/promotions/uuid/${uuid}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/promotions/uuid/${uuid}`, {
         method: 'DELETE',
         headers: authHeader(),
       });

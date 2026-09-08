@@ -77,7 +77,7 @@ export default function Hero() {
   const goTo = (index: number) => setActiveIndex((index + banners.length) % banners.length)
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/promotions')
+   fetch(`${import.meta.env.VITE_API_URL}/promotions`)
       .then((res) => res.json())
       .then((data: ApiPromotion[]) => {
         if (Array.isArray(data) && data.length > 0) {

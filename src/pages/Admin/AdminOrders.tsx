@@ -30,7 +30,7 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/orders');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders`);
       if (!res.ok) throw new Error('Failed to fetch orders');
       const data = await res.json();
       setOrders(data);
@@ -49,7 +49,7 @@ export default function AdminOrders() {
   const handleUpdateStatus = async (orderId: number, newStatus: 'Confirmed' | 'Cancelled' | 'Pending') => {
     setUpdatingId(orderId);
     try {
-      const res = await fetch(`http://127.0.0.1:5000/orders/${orderId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

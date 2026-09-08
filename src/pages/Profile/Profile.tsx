@@ -120,7 +120,7 @@ export default function ProfilePage() {
       return;
     }
     setIsLoadingWishlist(true);
-    fetch('http://127.0.0.1:5000/products')
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => res.json())
       .then((data: ApiProduct[]) => {
         const matched = data.filter((p) => user.wishlist!.includes(p.uuid));
@@ -161,7 +161,7 @@ export default function ProfilePage() {
       setIsLoadingRecent(false);
       return;
     }
-    fetch('http://127.0.0.1:5000/products')
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => res.json())
       .then((data: ApiProduct[]) => {
         const byId = new Map(data.map((p) => [p.uuid, p]));

@@ -89,7 +89,7 @@ export default function ProductsPage() {
   }, [requestedSearch]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/products')
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((response) => {
         if (!response.ok) throw new Error(`Server responded ${response.status}`);
         return response.json() as Promise<ApiProduct[]>;

@@ -104,7 +104,7 @@ export default function AdminDeliveryRates() {
 
   const loadDeliveryRates = () => {
     setIsLoadingRates(true);
-    fetch('http://127.0.0.1:5000/delivery-rates')
+    fetch(`${import.meta.env.VITE_API_URL}/delivery-rates`)
       .then((res) => res.json())
       .then((data) => {
         setDeliveryRates(data);
@@ -128,7 +128,7 @@ export default function AdminDeliveryRates() {
     }
     setIsSubmittingRate(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/delivery-rates', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/delivery-rates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({

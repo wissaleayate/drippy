@@ -15,7 +15,7 @@ export default function AdminLogin() {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/admin/login', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

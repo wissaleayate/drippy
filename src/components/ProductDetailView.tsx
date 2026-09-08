@@ -212,7 +212,7 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
     reviewPhotos.forEach((file) => formData.append('images', file));
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/reviews', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/reviews`, {
         method: 'POST',
         body: formData,
       });

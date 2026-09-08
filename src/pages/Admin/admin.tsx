@@ -189,7 +189,7 @@ export default function AdminPage() {
 
   const loadProducts = () => {
     setIsLoadingProducts(true);
-    fetch('http://127.0.0.1:5000/products')
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -203,7 +203,7 @@ export default function AdminPage() {
 
   const loadUsers = () => {
     setIsLoadingUsers(true);
-    fetch('http://127.0.0.1:5000/admin/users', {
+    fetch(`${import.meta.env.VITE_API_URL}/admin/users`, {
       headers: authHeader(),
     })
       .then((res) => res.json())
@@ -278,7 +278,7 @@ export default function AdminPage() {
   };
   const loadPromotions = () => {
     setIsLoadingPromotions(true);
-    fetch('http://127.0.0.1:5000/promotions')
+    fetch(`${import.meta.env.VITE_API_URL}/promotions`)
       .then((res) => res.json())
       .then((data) => {
         setPromotions(data);
@@ -309,7 +309,7 @@ export default function AdminPage() {
     formData.append('image', promoImageFile);
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/promotions', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/promotions`, {
         method: 'POST',
         headers: authHeader(),
         body: formData,
@@ -332,7 +332,7 @@ export default function AdminPage() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/promotions/uuid/${uuid}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/promotions/uuid/${uuid}`, {
         method: 'DELETE',
         headers: authHeader(),
       });
@@ -347,7 +347,7 @@ export default function AdminPage() {
 
   const loadDeliveryRates = () => {
     setIsLoadingRates(true);
-    fetch('http://127.0.0.1:5000/delivery-rates')
+    fetch(`${import.meta.env.VITE_API_URL}/delivery-rates`)
       .then((res) => res.json())
       .then((data) => {
         setDeliveryRates(data);
@@ -367,7 +367,7 @@ export default function AdminPage() {
     }
     setIsSubmittingRate(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/delivery-rates', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/delivery-rates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({
@@ -394,7 +394,7 @@ export default function AdminPage() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/delivery-rates/uuid/${uuid}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/delivery-rates/uuid/${uuid}`, {
         method: 'DELETE',
         headers: authHeader(),
       });
@@ -436,7 +436,7 @@ export default function AdminPage() {
     formData.append('image', imageFile);
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/products', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
         method: 'POST',
         headers: authHeader(),
         body: formData,

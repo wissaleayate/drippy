@@ -20,7 +20,7 @@ export default function ProductGrid() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/products')
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => res.json())
       .then((data: ApiProduct[]) => {
         const featuredOnly = data.filter((p) => p.featured)

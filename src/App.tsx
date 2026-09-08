@@ -70,7 +70,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    fetch('http://127.0.0.1:5000/admin/verify', {
+    fetch(`${import.meta.env.VITE_API_URL}/admin/verify`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {

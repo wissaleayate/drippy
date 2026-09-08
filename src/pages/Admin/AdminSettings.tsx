@@ -18,7 +18,7 @@ export default function AdminSettings() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/settings')
+    fetch(`${import.meta.env.VITE_API_URL}/settings`)
       .then((res) => res.json())
       .then((data) => {
         setSettings(data);
@@ -34,7 +34,7 @@ export default function AdminSettings() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/settings', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/settings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

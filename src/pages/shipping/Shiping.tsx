@@ -80,7 +80,7 @@ export default function ShippingPage() {
   ];
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/delivery-rates')
+    fetch(`${import.meta.env.VITE_API_URL}/delivery-rates`)
       .then((res) => res.json())
       .then((data: ApiDeliveryRate[]) => {
         if (Array.isArray(data) && data.length > 0) {

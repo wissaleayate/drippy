@@ -23,7 +23,7 @@ export default function FeaturedProduct() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/products')
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => res.json())
       .then((data: ApiProduct[]) => {
         const featuredList = data.filter((p) => p.featured)

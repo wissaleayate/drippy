@@ -62,7 +62,7 @@ export default function AdminProducts() {
 
   const loadProducts = () => {
     setIsLoadingProducts(true);
-    fetch('http://127.0.0.1:5000/products')
+   fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -187,7 +187,7 @@ export default function AdminProducts() {
     extraImageFiles.forEach((file) => formData.append('extra_images', file));
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/products', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
         method: 'POST',
         headers: authHeader(),
         body: formData,

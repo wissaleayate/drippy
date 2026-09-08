@@ -31,7 +31,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_STORAGE_KEY = 'drippy_auth_user';
-const API_BASE = 'http://127.0.0.1:5000';
+
+const API_BASE = import.meta.env.VITE_API_URL; 
 
 function getLocalExtras(userId: string): { deliveryInfo?: SavedDeliveryInfo; wishlist?: string[] } {
   try {
