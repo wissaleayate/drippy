@@ -142,7 +142,7 @@ export default function ProfilePage() {
       return;
     }
     setIsLoadingOrders(true);
-    fetch(`http://127.0.0.1:5000/orders/user/${encodeURIComponent(user.email)}`)
+    fetch(`${import.meta.env.VITE_API_URL}/orders/user/${encodeURIComponent(user.email)}`)
       .then((res) => res.json())
       .then((data: ApiOrder[]) => setOrders(Array.isArray(data) ? data : []))
       .catch((err) => console.error('Failed to load orders:', err))

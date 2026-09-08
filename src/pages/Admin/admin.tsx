@@ -242,7 +242,7 @@ export default function AdminPage() {
 };
   const handleToggleFeatured = async (uuid: string, currentFeatured: boolean) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}/featured`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products/uuid/${uuid}/featured`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({ featured: !currentFeatured }),
@@ -262,7 +262,7 @@ export default function AdminPage() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products/uuid/${uuid}`, {
         method: 'DELETE',
         headers: authHeader(),
       });

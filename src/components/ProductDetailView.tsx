@@ -100,7 +100,7 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
       return;
     }
     setCheckingPurchase(true);
-    fetch(`http://127.0.0.1:5000/users/${user.id}/purchases`)
+    fetch(`${import.meta.env.VITE_API_URL}/users/${user.id}/purchases`)
       .then((res) => res.json())
       .then((purchasedUuids: string[]) => {
         setIsVerifiedBuyer(purchasedUuids.includes(product.id));
@@ -132,7 +132,7 @@ export default function ProductDetailView({ product, onClose, onAddToCart }: Pro
   useEffect(() => {
     if (!product) return;
     setIsLoadingReviews(true);
-    fetch(`http://127.0.0.1:5000/reviews/product/${product.id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/reviews/product/${product.id}`)
       .then((res) => res.json())
       .then((data) => setReviews(data))
       .catch((err) => console.error('Failed to load reviews:', err))

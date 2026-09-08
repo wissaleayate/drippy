@@ -104,7 +104,7 @@ export default function AdminProducts() {
 
   const handleToggleFeatured = async (uuid: string, currentFeatured: boolean) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}/featured`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products/uuid/${uuid}/featured`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({ featured: !currentFeatured }),
@@ -123,7 +123,7 @@ export default function AdminProducts() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products/uuid/${uuid}`, {
         method: 'DELETE',
         headers: authHeader(),
       });
@@ -151,7 +151,7 @@ export default function AdminProducts() {
   const saveEdit = async (uuid: string) => {
     setIsSavingEdit(true);
     try {
-      const res = await fetch(`http://127.0.0.1:5000/products/uuid/${uuid}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products/uuid/${uuid}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeader() },
         body: JSON.stringify({ stock: editStock, price: editPrice }),

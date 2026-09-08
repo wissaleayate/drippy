@@ -155,7 +155,7 @@ export default function AdminDeliveryRates() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/delivery-rates/uuid/${uuid}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/delivery-rates/uuid/${uuid}`, {
         method: 'DELETE',
         headers: authHeader(),
       });

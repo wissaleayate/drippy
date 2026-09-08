@@ -22,7 +22,7 @@ export default function AdminTracking() {
     setOrder(null);
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/orders/${uuid}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${uuid}`);
       if (!res.ok) throw new Error('Order not found');
       const data = await res.json();
       setOrder(data);
@@ -35,7 +35,7 @@ export default function AdminTracking() {
 
   const handleUpdateStatus = async (orderId: string, newStatus: string) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/orders/${orderId}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

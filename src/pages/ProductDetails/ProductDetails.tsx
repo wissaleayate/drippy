@@ -30,7 +30,7 @@ export default function ProductDetailsPage() {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/products/uuid/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/products/uuid/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Product not found')
         return res.json()

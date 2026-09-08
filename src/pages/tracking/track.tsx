@@ -49,7 +49,7 @@ export default function TrackingPage() {
     setActiveOrder(null);
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/orders/${trimmed}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${trimmed}`);
       if (res.status === 404) {
         setErrorMsg(`No order found with key "${trimmed}". Double-check your unique code.`);
         setIsLoading(false);
