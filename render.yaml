@@ -1,10 +1,50 @@
-services:
-  - type: web
-    runtime: static
-    name: drippy
-    buildCommand: pnpm install && pnpm run build
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+# Exported from Render on 2026-09-08T21:09:39Z
+version: "1"
+projects:
+- name: My project
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: drippy-backend
+      runtime: python
+      repo: https://github.com/wissaleayate/drippy
+      plan: free
+      envVars:
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: drippy
+          property: connectionString
+      region: frankfurt
+      buildCommand: pip install -r requirements.txt
+      startCommand: gunicorn app:app
+      autoDeployTrigger: commit
+      rootDir: backend
+    - type: web
+      name: 'Drippy '
+      runtime: static
+      repo: https://github.com/wissaleayate/drippy
+      envVars:
+      - key: VITE_API_URL
+        sync: false
+      buildCommand: npm install && npm run build
+      staticPublishPath: dist
+      autoDeployTrigger: commit
+    databases:
+    - name: drippy
+      databaseName: drippy_e56i
+      user: drippy_e56i_user
+      plan: free
+      region: frankfurt
+      ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+      postgresMajorVersion: "18"
